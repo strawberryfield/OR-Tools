@@ -103,7 +103,13 @@ namespace mgmenu
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, Settings.Language, new Vector2(100, 100), Color.Black);
+            int y = 100;
+            foreach(var dir in Settings.Folders.Folders)
+            {
+                spriteBatch.DrawString(font, dir.Value, new Vector2(100, y), Color.Black);
+                y = y + 20;
+            }
+            
 
             spriteBatch.End();
 
