@@ -2,11 +2,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ORTS.Menu;
 using ORTS.Settings;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace mgmenu
 {
@@ -23,6 +26,8 @@ namespace mgmenu
         bool Initialized;
         UserSettings Settings;
         GettextResourceManager catalog = new GettextResourceManager("Menu");
+        List<Folder> Folders = new List<Folder>();
+        public List<Route> Routes = new List<Route>();
 
         public MgMenu()
         {
@@ -41,11 +46,14 @@ namespace mgmenu
             var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
             Settings = new UserSettings(options);
             LoadLanguage();
+            LoadFolderList();
+            LoadRouteList();
 
             base.Initialize();
         }
 
-        void LoadLanguage()
+        #region read OR data
+        private void LoadLanguage()
         {
             if (Settings.Language.Length > 0)
             {
@@ -56,6 +64,18 @@ namespace mgmenu
                 catch { }
             }
         }
+
+        private void LoadFolderList()
+        {
+            Folders = Folder.GetFolders(Settings).OrderBy(f => f.Name).ToList();
+        }
+
+        private void LoadRouteList()
+        {
+            foreach (var f in Folders)
+                Routes.AddRange(Route.GetRoutes(f));
+        }
+        #endregion
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -103,10 +123,10 @@ namespace mgmenu
 
             spriteBatch.Begin();
 
-            int y = 100;
-            foreach(var dir in Settings.Folders.Folders)
+            int y = 10;
+            foreach(var dir in Routes)
             {
-                spriteBatch.DrawString(font, dir.Value, new Vector2(100, y), Color.Black);
+                spriteBatch.DrawString(font, dir.Name, new Vector2(100, y), Color.Black);
                 y = y + 20;
             }
             
@@ -116,5 +136,7 @@ namespace mgmenu
 
             base.Draw(gameTime);
         }
+
+        
     }
 }

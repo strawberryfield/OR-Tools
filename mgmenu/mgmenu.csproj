@@ -111,6 +111,10 @@
       <Project>{da94d876-7d35-46c3-aece-aface72c686c}</Project>
       <Name>ORTS.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ORTS.Menu\ORTS.Menu.csproj">
+      <Project>{1C5B0B41-2FE9-41C9-8B21-CCDCBEB3DDA5}</Project>
+      <Name>ORTS.Menu</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ORTS.Settings\ORTS.Settings.csproj">
       <Project>{67f84996-8769-4fd8-819b-464af269037b}</Project>
       <Name>ORTS.Settings</Name>
