@@ -20,6 +20,8 @@ using System.IO;
 using GNU.Gettext;
 using MSTS;
 using Orts.Formats.Msts;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace ORTS.Menu
 {
@@ -29,10 +31,10 @@ namespace ORTS.Menu
         public readonly string Description;
         public readonly string Path;
         public readonly string Image;
-
+        public readonly Texture2D Texture;
         GettextResourceManager catalog = new GettextResourceManager("ORTS.Menu");
 
-        Route(string path)
+        Route(string path, Game game)
         {
             if (Directory.Exists(path))
             {
@@ -43,6 +45,7 @@ namespace ORTS.Menu
                     Name = trkFile.Tr_RouteFile.Name.Trim();
                     Description = trkFile.Tr_RouteFile.Description.Trim();
                     Image = trkFile.Tr_RouteFile.LoadingScreen.Trim();
+                    
                 }
                 catch
                 {
@@ -50,6 +53,17 @@ namespace ORTS.Menu
                 }
                 if (string.IsNullOrEmpty(Name)) Name = "<" + catalog.GetString("unnamed:") + " " + System.IO.Path.GetFileNameWithoutExtension(path) + ">";
                 if (string.IsNullOrEmpty(Description)) Description = null;
+                if (string.IsNullOrEmpty(Image)) Image = "load.ace";
+
+                string imagePath = System.IO.Path.Combine(path, this.Image);
+                if(File.Exists(imagePath))
+                {
+                    Texture = Orts.Formats.Msts.AceFile.Texture2DFromFile(game.GraphicsDevice, imagePath);
+                }
+                else
+                {
+                    Texture = null;
+                }
             }
             else
             {
@@ -63,7 +77,7 @@ namespace ORTS.Menu
             return Name;
         }
 
-        public static List<Route> GetRoutes(Folder folder)
+        public static List<Route> GetRoutes(Folder folder, Game game)
         {
             var routes = new List<Route>();
             var directory = System.IO.Path.Combine(folder.Path, "ROUTES");
@@ -73,7 +87,7 @@ namespace ORTS.Menu
                 {
                     try
                     {
-                        routes.Add(new Route(routeDirectory));
+                        routes.Add(new Route(routeDirectory, game));
                     }
                     catch { }
                 }

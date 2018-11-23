@@ -73,7 +73,7 @@ namespace mgmenu
         private void LoadRouteList()
         {
             foreach (var f in Folders)
-                Routes.AddRange(Route.GetRoutes(f));
+                Routes.AddRange(Route.GetRoutes(f, this));
         }
         #endregion
 
@@ -126,8 +126,13 @@ namespace mgmenu
             int y = 10;
             foreach(var dir in Routes)
             {
-                spriteBatch.DrawString(font, dir.Name, new Vector2(100, y), Color.Black);
-                y = y + 20;
+                //spriteBatch.DrawString(font, string.Format("{0}: {1}",dir.Name,dir.Path), new Vector2(10, y), Color.Black);
+                //y = y + 20;
+                if(dir.Texture != null) spriteBatch.Draw(dir.Texture, 
+                    new Rectangle(y*2, y, 240, 180),
+                    new Rectangle(0, 0, dir.Texture.Width, dir.Texture.Height), 
+                    Color.White);
+                y += 20;
             }
             
 
