@@ -9,7 +9,7 @@
     <ProjectGuid>{E7CB66E8-D39A-44FD-8028-66BEE35CDF50}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MgMenu</RootNamespace>
+    <RootNamespace>Casasoft.Mgmenu</RootNamespace>
     <AssemblyName>mgmenu</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
@@ -79,6 +79,7 @@
     <Compile Include="MgMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelRoute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GNU.Gettext, Version=1.1.5151.39896, Culture=neutral, processorArchitecture=MSIL">

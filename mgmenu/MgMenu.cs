@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace mgmenu
+namespace Casasoft.MgMenu
 {
     /// <summary>
     /// This is the main type for your game.
@@ -28,6 +28,9 @@ namespace mgmenu
         GettextResourceManager catalog = new GettextResourceManager("Menu");
         List<Folder> Folders = new List<Folder>();
         public List<Route> Routes = new List<Route>();
+
+        // Panels
+        SelRoute selRoute;
 
         public MgMenu()
         {
@@ -48,6 +51,8 @@ namespace mgmenu
             LoadLanguage();
             LoadFolderList();
             LoadRouteList();
+
+            selRoute = new SelRoute(Routes);
 
             base.Initialize();
         }
@@ -108,7 +113,7 @@ namespace mgmenu
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            selRoute.Update();
 
             base.Update(gameTime);
         }
@@ -123,18 +128,7 @@ namespace mgmenu
 
             spriteBatch.Begin();
 
-            int y = 10;
-            foreach(var dir in Routes)
-            {
-                //spriteBatch.DrawString(font, string.Format("{0}: {1}",dir.Name,dir.Path), new Vector2(10, y), Color.Black);
-                //y = y + 20;
-                if(dir.Texture != null) spriteBatch.Draw(dir.Texture, 
-                    new Rectangle(y*2, y, 240, 180),
-                    new Rectangle(0, 0, dir.Texture.Width, dir.Texture.Height), 
-                    Color.White);
-                y += 20;
-            }
-            
+            selRoute.Draw(spriteBatch);
 
             spriteBatch.End();
 

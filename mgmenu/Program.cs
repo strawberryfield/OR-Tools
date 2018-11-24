@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace mgmenu
+namespace Casasoft.MgMenu
 {
 #if WINDOWS || LINUX
     /// <summary>
