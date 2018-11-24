@@ -15,7 +15,9 @@ namespace Casasoft.MgMenu
         private List<Route> routes;
 
         private int maxRoutes;
-        private int selected;
+        private MouseState oldMouseState;
+
+        public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
@@ -25,6 +27,15 @@ namespace Casasoft.MgMenu
         {
             routes = Routes;
             maxRoutes = routes.Count;
+            ReInit();
+        }
+
+        /// <summary>
+        /// ReInit input devices status
+        /// </summary>
+        public void ReInit()
+        {
+            oldMouseState = Mouse.GetState();
         }
 
         /// <summary>
@@ -32,18 +43,30 @@ namespace Casasoft.MgMenu
         /// </summary>
         public void Update()
         {
-            if ((GamePad.GetState(PlayerIndex.One).Buttons.LeftStick == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Left)) &&
-                selected > 0)
-                selected--;
+            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            KeyboardState keyboardState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
 
-            if ((GamePad.GetState(PlayerIndex.One).Buttons.RightStick == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Right)) &&
-                selected < maxRoutes - 1)
-                selected++;
+            if ((gamePadState.Buttons.LeftStick == ButtonState.Pressed ||
+                keyboardState.IsKeyDown(Keys.Left) ||
+                mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue) &&
+                Selected > 0)
+                Selected--;
+
+            if ((gamePadState.Buttons.RightStick == ButtonState.Pressed ||
+                keyboardState.IsKeyDown(Keys.Right) ||
+                mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue) &&
+                Selected < maxRoutes - 1)
+                Selected++;
+
+            oldMouseState = mouseState;
         }
 
-        
+
+        /// <summary>
+        /// Draws the screen
+        /// </summary>
+        /// <param name="sb"></param>
         public void Draw(SpriteBatch sb)
         {
             int y = 10;
@@ -51,7 +74,7 @@ namespace Casasoft.MgMenu
             int sizeX = 48;
             int sizeY = 36;
             int stepX = sizeX + 12;
-            x = x - selected * stepX;
+            x = x - Selected * stepX;
 
             foreach (var dir in routes)
             {

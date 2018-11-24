@@ -23,7 +23,6 @@ namespace Casasoft.MgMenu
         SpriteFont font;
 
         // OR data and settings
-        bool Initialized;
         UserSettings Settings;
         GettextResourceManager catalog = new GettextResourceManager("Menu");
         List<Folder> Folders = new List<Folder>();
@@ -36,6 +35,12 @@ namespace Casasoft.MgMenu
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            this.IsFixedTimeStep = true;
+            this.graphics.SynchronizeWithVerticalRetrace = true;
+            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
+
+            this.IsMouseVisible = true;
         }
 
         /// <summary>
@@ -110,7 +115,8 @@ namespace Casasoft.MgMenu
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             selRoute.Update();
