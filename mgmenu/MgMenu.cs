@@ -66,6 +66,7 @@ namespace Casasoft.MgMenu
             graphics.ApplyChanges();
 
             base.Initialize();
+
         }
 
         #region read OR data
@@ -121,7 +122,7 @@ namespace Casasoft.MgMenu
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.Back) ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
