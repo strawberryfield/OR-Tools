@@ -41,6 +41,7 @@ namespace Casasoft.MgMenu
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
 
             this.IsMouseVisible = true;
+
         }
 
         /// <summary>
@@ -58,6 +59,11 @@ namespace Casasoft.MgMenu
             LoadRouteList();
 
             selRoute = new SelRoute(Routes);
+
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
