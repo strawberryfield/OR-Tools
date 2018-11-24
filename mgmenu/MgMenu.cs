@@ -58,7 +58,7 @@ namespace Casasoft.MgMenu
             LoadFolderList();
             LoadRouteList();
 
-            selRoute = new SelRoute(Routes);
+            selRoute = new SelRoute(Routes, this);
 
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;

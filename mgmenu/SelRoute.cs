@@ -17,16 +17,34 @@ namespace Casasoft.MgMenu
         private int maxRoutes;
         private MouseState oldMouseState;
 
+        private int thumbSizeX = 120;
+        private int thumbSizeY = 90;
+        private int thumbStep;
+        private int thumbX;
+        private int thumbY = 90;
+        private int screenX;
+        private int screenY;
+
         public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public SelRoute(List<Route> Routes)
+        public SelRoute(List<Route> Routes, Game game)
         {
             routes = Routes;
             maxRoutes = routes.Count;
+
+            screenX = game.GraphicsDevice.DisplayMode.Width;
+            screenY = game.GraphicsDevice.DisplayMode.Height;
+
+            thumbSizeX = (thumbSizeX * screenY) / 768;
+            thumbSizeY = (thumbSizeY * screenY) / 768;
+            thumbStep = (thumbSizeX * 115) / 100;
+            thumbY = (thumbY * screenY) / 768;
+            thumbX = (screenX - thumbSizeX) / 2;
+
             ReInit();
         }
 
@@ -69,23 +87,27 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         public void Draw(SpriteBatch sb)
         {
-            int y = 10;
-            int x = 300;
-            int sizeX = 48;
-            int sizeY = 36;
-            int stepX = sizeX + 12;
-            x = x - Selected * stepX;
+            int x = thumbX - Selected * thumbStep;
 
             foreach (var dir in routes)
             {
                 //spriteBatch.DrawString(font, string.Format("{0}: {1}",dir.Name,dir.Path), new Vector2(10, y), Color.Black);
                 //y = y + 20;
-                if (dir.Texture != null) sb.Draw(dir.Texture,
-                     new Rectangle(x, y, sizeX, sizeY),
-                     new Rectangle(0, 0, dir.Texture.Width, dir.Texture.Height),
-                     Color.White);
-                x += stepX;
+                if (x + thumbSizeX >= 0 && x < screenX)
+                    if (dir.Texture != null)
+                        sb.Draw(dir.Texture,
+                         new Rectangle(x, thumbY, thumbSizeX, thumbSizeY),
+                         new Rectangle(0, 0, dir.Texture.Width, dir.Texture.Height),
+                         Color.White);
+                x += thumbStep;
             }
+
+            Route current = routes[Selected];
+            if (current.Texture != null)
+                sb.Draw(current.Texture,
+                 new Rectangle(20, 200, 640, 480),
+                 new Rectangle(0, 0, current.Texture.Width, current.Texture.Height),
+                 Color.White);
 
         }
     }
