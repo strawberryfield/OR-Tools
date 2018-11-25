@@ -58,7 +58,7 @@ namespace Casasoft.MgMenu
         /// <summary>
         /// Manages keyboard and controller input
         /// </summary>
-        public override void Update()
+        public override int Update()
         {
             GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
@@ -76,7 +76,16 @@ namespace Casasoft.MgMenu
                 Selected < maxItems - 1)
                 Selected++;
 
+            if (gamePadState.IsButtonDown(Buttons.LeftShoulder) || gamePadState.IsButtonDown(Buttons.LeftStick) ||
+                keyboardState.IsKeyDown(Keys.Home))
+                Selected = 0;
+
+            if (gamePadState.IsButtonDown(Buttons.RightShoulder) || gamePadState.IsButtonDown(Buttons.RightStick) ||
+                keyboardState.IsKeyDown(Keys.End))
+                Selected = maxItems - 1;
+
             oldMouseState = mouseState;
+            return 0;
         }
 
     }

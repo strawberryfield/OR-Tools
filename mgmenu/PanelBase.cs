@@ -64,7 +64,7 @@ namespace Casasoft.MgMenu
         /// <summary>
         /// Manages keyboard and controller input
         /// </summary>
-        public virtual void Update()
+        public virtual int Update()
         {
             GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
@@ -73,6 +73,7 @@ namespace Casasoft.MgMenu
             // Your code 
 
             oldMouseState = mouseState;
+            return 0;
         }
 
 
