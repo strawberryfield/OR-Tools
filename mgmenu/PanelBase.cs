@@ -34,7 +34,7 @@ namespace Casasoft.MgMenu
         protected int screenY;
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="game"></param>
         public PanelBase( Game game)

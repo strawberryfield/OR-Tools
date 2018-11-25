@@ -23,23 +23,9 @@ using System.Collections.Generic;
 
 namespace Casasoft.MgMenu
 {
-    public class SelRoute : PanelBase
+    public class SelRoute : PanelHScroller
     {
         private List<Route> routes;
-
-        private int maxRoutes;
-        private Rectangle textBox;
-        private Texture2D noImage;
-
-        private int thumbSizeX = 120;
-        private int thumbSizeY = 90;
-        private int thumbStep;
-        private int thumbX;
-        private int thumbY = 90;
-        private int detailSizeX = 640;
-        private int detailSizeY = 480;
-
-        public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
@@ -48,42 +34,8 @@ namespace Casasoft.MgMenu
         public SelRoute(List<Route> Routes, Game game) : base(game)
         {
             routes = Routes;
-            maxRoutes = routes.Count;
-
-            thumbSizeX = (thumbSizeX * screenY) / 768;
-            thumbSizeY = (thumbSizeY * screenY) / 768;
-            thumbStep = (thumbSizeX * 115) / 100;
-            thumbY = (thumbY * screenY) / 768;
-            thumbX = (screenX - thumbSizeX) / 2;
-
-            textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
-            noImage = game.Content.Load<Texture2D>("no-image");
+            maxItems = routes.Count;
         }
-
-        /// <summary>
-        /// Manages keyboard and controller input
-        /// </summary>
-        public override void Update()
-        {
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
-            KeyboardState keyboardState = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
-
-            if ((gamePadState.IsButtonDown(Buttons.LeftThumbstickLeft) || gamePadState.IsButtonDown(Buttons.DPadLeft) ||
-                keyboardState.IsKeyDown(Keys.Left) ||
-                mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue) &&
-                Selected > 0)
-                Selected--;
-
-            if ((gamePadState.IsButtonDown(Buttons.LeftThumbstickRight) || gamePadState.IsButtonDown(Buttons.DPadRight) ||
-                keyboardState.IsKeyDown(Keys.Right) ||
-                mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue) &&
-                Selected < maxRoutes - 1)
-                Selected++;
-
-            oldMouseState = mouseState;
-        }
-
 
         /// <summary>
         /// Draws the screen
