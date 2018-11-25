@@ -108,6 +108,17 @@ namespace Casasoft.MgMenu
             }
             return returnString + line;
         }
+
+        /// <summary>
+        /// Draw a resized image
+        /// </summary>
+        /// <param name="sb">SpriteBatch to use for drawing</param>
+        /// <param name="img"></param>
+        /// <param name="area">Position and size of the image</param>
+        protected void DrawResized(SpriteBatch sb, Texture2D img, Rectangle area)
+        {
+            sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), Color.White);
+        }
     }
 }
 

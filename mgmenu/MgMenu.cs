@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
+#define WINDOWED
+
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -76,19 +78,22 @@ namespace Casasoft.MgMenu
 
             selRoute = new SelRoute(Routes, this);
 
+#if WINDOWED
+            graphics.PreferredBackBufferWidth = 1366;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.IsFullScreen = false;
+#else
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
             graphics.IsFullScreen = true;
-            //graphics.PreferredBackBufferWidth = 1366;
-            //graphics.PreferredBackBufferHeight = 768;
-            //graphics.IsFullScreen = false;
+#endif
             graphics.ApplyChanges();
 
             base.Initialize();
 
         }
 
-        #region read OR data
+#region read OR data
         private void LoadLanguage()
         {
             if (Settings.Language.Length > 0)
@@ -111,7 +116,7 @@ namespace Casasoft.MgMenu
             foreach (var f in Folders)
                 Routes.AddRange(Route.GetRoutes(f, this));
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load

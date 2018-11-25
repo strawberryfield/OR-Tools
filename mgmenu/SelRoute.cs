@@ -29,6 +29,7 @@ namespace Casasoft.MgMenu
 
         private int maxRoutes;
         private Rectangle textBox;
+        private Texture2D noImage;
 
         private int thumbSizeX = 120;
         private int thumbSizeY = 90;
@@ -56,6 +57,7 @@ namespace Casasoft.MgMenu
             thumbX = (screenX - thumbSizeX) / 2;
 
             textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
+            noImage = game.Content.Load<Texture2D>("no-image");
         }
 
         /// <summary>
@@ -94,22 +96,16 @@ namespace Casasoft.MgMenu
             foreach (var dir in routes)
             {
                 if (x + thumbSizeX >= 0 && x < screenX)
-                    if (dir.Texture != null)
-                        sb.Draw(dir.Texture,
-                         new Rectangle(x, thumbY, thumbSizeX, thumbSizeY),
-                         new Rectangle(0, 0, dir.Texture.Width, dir.Texture.Height),
-                         Color.White);
+                    DrawResized(sb, dir.Texture == null ? noImage : dir.Texture, 
+                        new Rectangle(x, thumbY, thumbSizeX, thumbSizeY));
                 x += thumbStep;
             }
 
             sb.Draw(boxBackground, textBox, Color.White);
 
             Route current = routes[Selected];
-            if (current.Texture != null)
-                sb.Draw(current.Texture, 
-                    new Rectangle(20, 200, detailSizeX, detailSizeY),
-                    new Rectangle(0, 0, current.Texture.Width, current.Texture.Height),
-                    Color.White);
+            DrawResized(sb, current.Texture == null ? noImage : current.Texture,
+                new Rectangle(20, 200, detailSizeX, detailSizeY));
 
             if (!string.IsNullOrWhiteSpace(current.Name))
                 sb.DrawString(titleFont, current.Name, new Vector2(detailSizeX + 50, 200), Color.Black);
