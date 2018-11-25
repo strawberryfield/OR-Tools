@@ -26,6 +26,7 @@ using ORTS.Settings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -44,7 +45,13 @@ namespace Casasoft.MgMenu
         UserSettings Settings;
         GettextResourceManager catalog = new GettextResourceManager("Menu");
         List<Folder> Folders = new List<Folder>();
-        public List<Route> Routes = new List<Route>();
+        List<Route> Routes = new List<Route>();
+
+        public string SelectedFolder { get; private set; }
+        public Route SelectedRoute { get; private set; }
+
+        enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime }
+        LoopStatus loopStatus;
 
         // Panels
         SelRoute selRoute;
@@ -89,8 +96,9 @@ namespace Casasoft.MgMenu
 #endif
             graphics.ApplyChanges();
 
-            base.Initialize();
+            loopStatus = LoopStatus.SelRoute;
 
+            base.Initialize();
         }
 
 #region read OR data
@@ -146,11 +154,37 @@ namespace Casasoft.MgMenu
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.Back) ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            selRoute.Update();
+            switch (loopStatus)
+            {
+                case LoopStatus.SelRoute:
+                    switch (selRoute.Update())
+                    {
+                        case -1:
+                            Exit();
+                            break;
+                        case 1:
+                            SelectedRoute = Routes[selRoute.Selected];
+                            SelectedFolder = Directory.GetParent(Directory.GetParent(SelectedRoute.Path).FullName).FullName;
+                            loopStatus = LoopStatus.SelActivity;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case LoopStatus.SelActivity:
+                    Exit();
+                    break;
+                case LoopStatus.SelLoco:
+                    break;
+                case LoopStatus.SelConsist:
+                    break;
+                case LoopStatus.SelPath:
+                    break;
+                case LoopStatus.SelTime:
+                    break;
+                default:
+                    break;
+            }
 
             base.Update(gameTime);
         }

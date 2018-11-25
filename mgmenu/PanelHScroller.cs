@@ -64,6 +64,15 @@ namespace Casasoft.MgMenu
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
 
+            if (gamePadState.IsButtonDown(Buttons.Back) ||
+                keyboardState.IsKeyDown(Keys.Escape))
+                return -1;
+
+            if (gamePadState.IsButtonDown(Buttons.Start) ||
+                keyboardState.IsKeyDown(Keys.Enter))
+                return 1;
+
+
             if ((gamePadState.IsButtonDown(Buttons.LeftThumbstickLeft) || gamePadState.IsButtonDown(Buttons.DPadLeft) ||
                 keyboardState.IsKeyDown(Keys.Left) ||
                 mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue) &&
