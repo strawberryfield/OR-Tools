@@ -16,6 +16,9 @@ namespace Casasoft.MgMenu
 
         private int maxRoutes;
         private MouseState oldMouseState;
+        private SpriteFont font;
+        private Texture2D boxBackground;
+        private Rectangle textBox;
 
         private int thumbSizeX = 120;
         private int thumbSizeY = 90;
@@ -24,6 +27,8 @@ namespace Casasoft.MgMenu
         private int thumbY = 90;
         private int screenX;
         private int screenY;
+        private int detailSizeX = 640;
+        private int detailSizeY = 480;
 
         public int Selected { get; set; }
 
@@ -44,6 +49,14 @@ namespace Casasoft.MgMenu
             thumbStep = (thumbSizeX * 115) / 100;
             thumbY = (thumbY * screenY) / 768;
             thumbX = (screenX - thumbSizeX) / 2;
+
+            font = game.Content.Load<SpriteFont>("NormalText");
+
+            boxBackground = new Texture2D(game.GraphicsDevice, 1, 1);
+            Color[] colorData = new Color[1];
+            colorData[0] = Color.WhiteSmoke;
+            boxBackground.SetData<Color>(colorData);
+            textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
 
             ReInit();
         }
@@ -91,8 +104,6 @@ namespace Casasoft.MgMenu
 
             foreach (var dir in routes)
             {
-                //spriteBatch.DrawString(font, string.Format("{0}: {1}",dir.Name,dir.Path), new Vector2(10, y), Color.Black);
-                //y = y + 20;
                 if (x + thumbSizeX >= 0 && x < screenX)
                     if (dir.Texture != null)
                         sb.Draw(dir.Texture,
@@ -102,13 +113,38 @@ namespace Casasoft.MgMenu
                 x += thumbStep;
             }
 
+            sb.Draw(boxBackground, textBox, Color.White);
+
             Route current = routes[Selected];
             if (current.Texture != null)
-                sb.Draw(current.Texture,
-                 new Rectangle(20, 200, 640, 480),
-                 new Rectangle(0, 0, current.Texture.Width, current.Texture.Height),
-                 Color.White);
+                sb.Draw(current.Texture, 
+                    new Rectangle(20, 200, detailSizeX, detailSizeY),
+                    new Rectangle(0, 0, current.Texture.Width, current.Texture.Height),
+                    Color.White);
 
+            if (!string.IsNullOrWhiteSpace(current.Name))
+                sb.DrawString(font, current.Name, new Vector2(detailSizeX + 50, 200), Color.Black);
+            if (!string.IsNullOrWhiteSpace(current.Description))
+                sb.DrawString(font, this.WrapText(current.Description, textBox),
+                    new Vector2(detailSizeX + 50, 220), Color.Black);
         }
+
+        private string WrapText(string text, Rectangle TextBox)
+        {
+            string line = string.Empty;
+            string returnString = string.Empty;
+            string[] wordArray = text.Split(' ');
+
+            foreach (string word in wordArray)
+            {
+                if (font.MeasureString(line + word).Length() > TextBox.Width)
+                {
+                    returnString = returnString + line + '\n';
+                    line = string.Empty;
+                }
+                line = line + word + ' ';
+            }
+            return returnString + line;
+        } 
     }
 }
