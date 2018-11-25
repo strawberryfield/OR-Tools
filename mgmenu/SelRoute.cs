@@ -23,14 +23,11 @@ using System.Collections.Generic;
 
 namespace Casasoft.MgMenu
 {
-    public class SelRoute
+    public class SelRoute : PanelBase
     {
         private List<Route> routes;
 
         private int maxRoutes;
-        private MouseState oldMouseState;
-        private SpriteFont font;
-        private Texture2D boxBackground;
         private Rectangle textBox;
 
         private int thumbSizeX = 120;
@@ -38,8 +35,6 @@ namespace Casasoft.MgMenu
         private int thumbStep;
         private int thumbX;
         private int thumbY = 90;
-        private int screenX;
-        private int screenY;
         private int detailSizeX = 640;
         private int detailSizeY = 480;
 
@@ -49,13 +44,10 @@ namespace Casasoft.MgMenu
         /// Constructor
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public SelRoute(List<Route> Routes, Game game)
+        public SelRoute(List<Route> Routes, Game game) : base(game)
         {
             routes = Routes;
             maxRoutes = routes.Count;
-
-            screenX = game.GraphicsDevice.DisplayMode.Width;
-            screenY = game.GraphicsDevice.DisplayMode.Height;
 
             thumbSizeX = (thumbSizeX * screenY) / 768;
             thumbSizeY = (thumbSizeY * screenY) / 768;
@@ -63,29 +55,13 @@ namespace Casasoft.MgMenu
             thumbY = (thumbY * screenY) / 768;
             thumbX = (screenX - thumbSizeX) / 2;
 
-            font = game.Content.Load<SpriteFont>("NormalText");
-
-            boxBackground = new Texture2D(game.GraphicsDevice, 1, 1);
-            Color[] colorData = new Color[1];
-            colorData[0] = Color.WhiteSmoke;
-            boxBackground.SetData<Color>(colorData);
             textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
-
-            ReInit();
-        }
-
-        /// <summary>
-        /// ReInit input devices status
-        /// </summary>
-        public void ReInit()
-        {
-            oldMouseState = Mouse.GetState();
         }
 
         /// <summary>
         /// Manages keyboard and controller input
         /// </summary>
-        public void Update()
+        public override void Update()
         {
             GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
@@ -111,7 +87,7 @@ namespace Casasoft.MgMenu
         /// Draws the screen
         /// </summary>
         /// <param name="sb"></param>
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             int x = thumbX - Selected * thumbStep;
 
@@ -136,28 +112,11 @@ namespace Casasoft.MgMenu
                     Color.White);
 
             if (!string.IsNullOrWhiteSpace(current.Name))
-                sb.DrawString(font, current.Name, new Vector2(detailSizeX + 50, 200), Color.Black);
+                sb.DrawString(titleFont, current.Name, new Vector2(detailSizeX + 50, 200), Color.Black);
             if (!string.IsNullOrWhiteSpace(current.Description))
                 sb.DrawString(font, this.WrapText(current.Description, textBox),
-                    new Vector2(detailSizeX + 50, 220), Color.Black);
+                    new Vector2(detailSizeX + 50, 250), Color.Black);
         }
 
-        private string WrapText(string text, Rectangle TextBox)
-        {
-            string line = string.Empty;
-            string returnString = string.Empty;
-            string[] wordArray = text.Split(' ');
-
-            foreach (string word in wordArray)
-            {
-                if (font.MeasureString(line + word).Length() > TextBox.Width)
-                {
-                    returnString = returnString + line + '\n';
-                    line = string.Empty;
-                }
-                line = line + word + ' ';
-            }
-            return returnString + line;
-        } 
-    }
+     }
 }

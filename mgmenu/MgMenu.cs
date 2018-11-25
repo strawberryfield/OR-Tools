@@ -76,12 +76,12 @@ namespace Casasoft.MgMenu
 
             selRoute = new SelRoute(Routes, this);
 
-            //graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
-            //graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            //graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1366;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            graphics.IsFullScreen = true;
+            //graphics.PreferredBackBufferWidth = 1366;
+            //graphics.PreferredBackBufferHeight = 768;
+            //graphics.IsFullScreen = false;
             graphics.ApplyChanges();
 
             base.Initialize();
