@@ -18,41 +18,43 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ORTS.Menu;
+using System.Collections.Generic;
 
 namespace Casasoft.MgMenu
 {
-    public class PanelHScroller : PanelBase
+    public class SelActivity : PanelBase
     {
-        protected int maxItems;
-        protected Rectangle textBox;
-        protected Texture2D noImage;
-
-        protected int thumbSizeX = 120;
-        protected int thumbSizeY = 90;
-        protected int thumbStep;
-        protected int thumbX;
-        protected int thumbY = 90;
+        private List<Activity> activities;
+        private int maxItems;
+        private Rectangle textBox;
+        private Rectangle scroller;
         protected int detailSizeX = 640;
-        protected int detailSizeY = 480;
+        protected int detailSizeY = 580;
 
         public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="spriteBatch"></param>
-        public PanelHScroller(Game game) : base(game)
+        /// <param name="game"></param>
+        public SelActivity(Game game) : base(game)
         {
-            maxItems = 0;
+            activities = new List<Activity>();
+            maxItems = activities.Count;
 
-            thumbSizeX = (thumbSizeX * screenY) / 768;
-            thumbSizeY = (thumbSizeY * screenY) / 768;
-            thumbStep = (thumbSizeX * 115) / 100;
-            thumbY = (thumbY * screenY) / 768;
-            thumbX = (screenX - thumbSizeX) / 2;
+            scroller = new Rectangle(20, 100, detailSizeX, detailSizeY);
+            textBox = new Rectangle(detailSizeX + 40, 100, detailSizeX, detailSizeY);
+        }
 
-            textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
-            noImage = game.Content.Load<Texture2D>("no-image");
+        /// <summary>
+        /// Assign data list
+        /// </summary>
+        /// <param name="Activities"></param>
+        public void SetList(List<Activity> Activities)
+        {
+            activities = Activities;
+            maxItems = activities.Count;
         }
 
         /// <summary>
@@ -66,14 +68,14 @@ namespace Casasoft.MgMenu
             if (GamePadPressed(Buttons.Start) || KeyboardPressed(Keys.Enter))
                 return 1;
 
-            if ((GamePadPressed(Buttons.LeftThumbstickLeft) || GamePadPressed(Buttons.DPadLeft) ||
-                KeyboardPressed(Keys.Left) ||
+            if ((GamePadPressed(Buttons.LeftThumbstickUp) || GamePadPressed(Buttons.DPadUp) ||
+                KeyboardPressed(Keys.Up) ||
                 MouseScrollerUp()) &&
                 Selected > 0)
                 Selected--;
 
-            if ((GamePadPressed(Buttons.LeftThumbstickRight) || GamePadPressed(Buttons.DPadRight) ||
-                KeyboardPressed(Keys.Right) ||
+            if ((GamePadPressed(Buttons.LeftThumbstickDown) || GamePadPressed(Buttons.DPadDown) ||
+                KeyboardPressed(Keys.Down) ||
                 MouseScrollerDown()) &&
                 Selected < maxItems - 1)
                 Selected++;
@@ -87,6 +89,11 @@ namespace Casasoft.MgMenu
                 Selected = maxItems - 1;
 
             return 0;
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            // todo
         }
 
     }

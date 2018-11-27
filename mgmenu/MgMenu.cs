@@ -46,6 +46,8 @@ namespace Casasoft.MgMenu
         GettextResourceManager catalog = new GettextResourceManager("Menu");
         List<Folder> Folders = new List<Folder>();
         List<Route> Routes = new List<Route>();
+        List<Activity> Activities = new List<Activity>();
+        List<TimetableInfo> TimetableSets = new List<TimetableInfo>();
 
         public string SelectedFolder { get; private set; }
         public Route SelectedRoute { get; private set; }
@@ -55,6 +57,7 @@ namespace Casasoft.MgMenu
 
         // Panels
         SelRoute selRoute;
+        SelActivity selActivity;
 
         public MgMenu()
         {
@@ -66,7 +69,6 @@ namespace Casasoft.MgMenu
             this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
 
             this.IsMouseVisible = true;
-
         }
 
         /// <summary>
@@ -84,6 +86,7 @@ namespace Casasoft.MgMenu
             LoadRouteList();
 
             selRoute = new SelRoute(Routes, this);
+            selActivity = new SelActivity(this);
 
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -163,16 +166,29 @@ namespace Casasoft.MgMenu
                             Exit();
                             break;
                         case 1:
+                            loopStatus = LoopStatus.SelActivity;
                             SelectedRoute = Routes[selRoute.Selected];
                             SelectedFolder = Directory.GetParent(Directory.GetParent(SelectedRoute.Path).FullName).FullName;
-                            loopStatus = LoopStatus.SelActivity;
+                            Folder f = Folders.Where(i => i.Path == SelectedFolder).FirstOrDefault();
+                            Activities = Activity.GetActivities(f, SelectedRoute);
+                            selActivity.SetList(Activities);
                             break;
                         default:
                             break;
                     }
                     break;
                 case LoopStatus.SelActivity:
-                    Exit();
+                    switch (selActivity.Update())
+                    {
+                        case -1:
+                            loopStatus = LoopStatus.SelRoute;
+                            break;
+                        case 1:
+                            Exit();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case LoopStatus.SelLoco:
                     break;
@@ -199,8 +215,26 @@ namespace Casasoft.MgMenu
 
             spriteBatch.Begin();
 
-            selRoute.Draw(spriteBatch);
-
+            switch (loopStatus)
+            {
+                case LoopStatus.SelRoute:
+                    selRoute.Draw(spriteBatch);
+                    break;
+                case LoopStatus.SelActivity:
+                    selActivity.Draw(spriteBatch);
+                    break;
+                case LoopStatus.SelLoco:
+                    break;
+                case LoopStatus.SelConsist:
+                    break;
+                case LoopStatus.SelPath:
+                    break;
+                case LoopStatus.SelTime:
+                    break;
+                default:
+                    break;
+            }
+            
             spriteBatch.End();
 
 

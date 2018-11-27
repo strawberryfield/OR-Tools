@@ -25,7 +25,6 @@ namespace Casasoft.MgMenu
 {
     public class PanelBase
     {
-        protected MouseState oldMouseState;
         protected SpriteFont font;
         protected SpriteFont titleFont;
         protected Texture2D boxBackground;
@@ -53,6 +52,14 @@ namespace Casasoft.MgMenu
             ReInit();
         }
 
+        #region input check
+        protected MouseState oldMouseState;
+        protected MouseState mouseState;
+        protected KeyboardState oldKeyboardState;
+        protected KeyboardState keyboardState;
+        protected GamePadState oldGamePadState;
+        protected GamePadState gamePadState;
+
         /// <summary>
         /// ReInit input devices status
         /// </summary>
@@ -66,17 +73,68 @@ namespace Casasoft.MgMenu
         /// </summary>
         public virtual int Update()
         {
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
-            KeyboardState keyboardState = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
+            gamePadState = GamePad.GetState(PlayerIndex.One);
+            keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
-            // Your code 
+            int ret = CheckInput(); 
 
             oldMouseState = mouseState;
+            oldKeyboardState = keyboardState;
+            oldGamePadState = gamePadState;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// specific input check
+        /// </summary>
+        /// <returns></returns>
+        protected virtual int CheckInput()
+        {
             return 0;
         }
 
+        /// <summary>
+        /// True if scroll up
+        /// </summary>
+        /// <returns></returns>
+        protected bool MouseScrollerUp()
+        {
+            return mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue;
+        }
 
+        /// <summary>
+        /// True if scroll down
+        /// </summary>
+        /// <returns></returns>
+        protected bool MouseScrollerDown()
+        {
+            return mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue;
+        }
+
+        /// <summary>
+        /// True if key switched from up to down
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected bool KeyboardPressed(Keys key)
+        {
+            return oldKeyboardState.IsKeyUp(key) && keyboardState.IsKeyDown(key);
+        }
+
+        /// <summary>
+        /// True if button switched fron up to down
+        /// </summary>
+        /// <param name="button"></param>
+        /// <returns></returns>
+        protected bool GamePadPressed(Buttons button)
+        {
+            return oldGamePadState.IsButtonUp(button) && gamePadState.IsButtonDown(button);
+        }
+        #endregion
+
+        #region draw
         /// <summary>
         /// Draws the screen
         /// </summary>
@@ -120,6 +178,8 @@ namespace Casasoft.MgMenu
         {
             sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), Color.White);
         }
+        #endregion
+
     }
 }
 

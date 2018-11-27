@@ -81,6 +81,7 @@
     <Compile Include="PanelHScroller.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelActivity.cs" />
     <Compile Include="SelRoute.cs" />
   </ItemGroup>
   <ItemGroup>
