@@ -66,7 +66,7 @@ namespace Casasoft.MgMenu
 
             this.IsFixedTimeStep = true;
             this.graphics.SynchronizeWithVerticalRetrace = true;
-            this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
+//           this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
 
             this.IsMouseVisible = true;
         }
@@ -184,7 +184,6 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelRoute;
                             break;
                         case 1:
-                            Exit();
                             break;
                         default:
                             break;

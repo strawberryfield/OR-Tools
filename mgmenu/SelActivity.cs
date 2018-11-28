@@ -31,6 +31,8 @@ namespace Casasoft.MgMenu
         private Rectangle scroller;
         protected int detailSizeX = 640;
         protected int detailSizeY = 580;
+        protected int itemHeight = 40;
+        protected int boxesY = 100;
 
         public int Selected { get; set; }
 
@@ -43,8 +45,9 @@ namespace Casasoft.MgMenu
             activities = new List<Activity>();
             maxItems = activities.Count;
 
-            scroller = new Rectangle(20, 100, detailSizeX, detailSizeY);
-            textBox = new Rectangle(detailSizeX + 40, 100, detailSizeX, detailSizeY);
+            scroller = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
+            textBox = new Rectangle(detailSizeX + 40, boxesY, detailSizeX, detailSizeY);
+            Selected = 0;
         }
 
         /// <summary>
@@ -93,7 +96,38 @@ namespace Casasoft.MgMenu
 
         public override void Draw(SpriteBatch sb)
         {
-            // todo
+            sb.Draw(boxBackground, scroller, Color.White);
+            sb.Draw(boxBackground, textBox, Color.White);
+
+            int y = boxesY + 5;
+            for(int j = 0; j < maxItems; j++)
+            {
+                Activity item = activities[j];
+                string txt = string.IsNullOrWhiteSpace(item.Name) ? "???" : item.Name;
+                if (j == Selected)
+                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 40, y), Color.Blue);
+                else
+                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 5, y), Color.Black);
+                y += itemHeight;
+            }
+
+            Activity current = activities[Selected];
+            y = boxesY + 5;
+            if (!string.IsNullOrWhiteSpace(current.Description))
+            {
+                sb.DrawString(font, this.WrapText(current.Description, textBox),
+                    new Vector2(textBox.Left + 5, y), Color.Black);
+                y += (int)font.MeasureString(current.Description).Y + 5;
+            }
+
+            if (!string.IsNullOrWhiteSpace(current.Briefing))
+            {
+                sb.DrawString(titleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
+                sb.DrawString(font, this.WrapText(current.Briefing, textBox),
+                    new Vector2(textBox.Left + 5, y + 25), Color.Black);
+                y += (int)font.MeasureString(current.Briefing).Y + 5;
+            }
+
         }
 
     }
