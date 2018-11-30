@@ -18,6 +18,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.BitmapFonts;
 using ORTS.Menu;
 using System.Collections.Generic;
 
@@ -48,6 +49,8 @@ namespace Casasoft.MgMenu
             scroller = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
             textBox = new Rectangle(detailSizeX + 40, boxesY, detailSizeX, detailSizeY);
             Selected = 0;
+
+            Caption = "Choose an activity";
         }
 
         /// <summary>
@@ -96,6 +99,8 @@ namespace Casasoft.MgMenu
 
         public override void Draw(SpriteBatch sb)
         {
+            base.Draw(sb);
+
             sb.Draw(boxBackground, scroller, Color.White);
             sb.Draw(boxBackground, textBox, Color.White);
 
@@ -117,15 +122,15 @@ namespace Casasoft.MgMenu
             {
                 sb.DrawString(font, this.WrapText(current.Description, textBox),
                     new Vector2(textBox.Left + 5, y), Color.Black);
-                y += (int)font.MeasureString(current.Description).Y + 5;
+                y += (int)font.MeasureString(current.Description).Height + 5;
             }
 
             if (!string.IsNullOrWhiteSpace(current.Briefing))
             {
-                sb.DrawString(titleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
+                sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
                 sb.DrawString(font, this.WrapText(current.Briefing, textBox),
                     new Vector2(textBox.Left + 5, y + 25), Color.Black);
-                y += (int)font.MeasureString(current.Briefing).Y + 5;
+                y += (int)font.MeasureString(current.Briefing).Height + 5;
             }
 
         }

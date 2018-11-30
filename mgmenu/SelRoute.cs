@@ -17,7 +17,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.BitmapFonts;
 using ORTS.Menu;
 using System.Collections.Generic;
 
@@ -35,6 +35,8 @@ namespace Casasoft.MgMenu
         {
             routes = Routes;
             maxItems = routes.Count;
+
+            Caption = "Choose a route";
         }
 
         /// <summary>
@@ -43,6 +45,8 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)
         {
+            base.Draw(sb);
+
             int x = thumbX - Selected * thumbStep;
 
             foreach (var dir in routes)

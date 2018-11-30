@@ -18,19 +18,22 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ORTS.Menu;
-using System.Collections.Generic;
+using MonoGame.Extended.BitmapFonts;
 
 namespace Casasoft.MgMenu
 {
     public class PanelBase
     {
-        protected SpriteFont font;
-        protected SpriteFont titleFont;
+        protected BitmapFont font;
+        protected BitmapFont titleFont;
+        protected BitmapFont subtitleFont;
+        protected BitmapFont headerFont;
         protected Texture2D boxBackground;
         
         protected int screenX;
         protected int screenY;
+
+        public string Caption { get; set; }
 
         /// <summary>
         /// Constructor
@@ -41,13 +44,17 @@ namespace Casasoft.MgMenu
             screenX = game.GraphicsDevice.DisplayMode.Width;
             screenY = game.GraphicsDevice.DisplayMode.Height;
 
-            font = game.Content.Load<SpriteFont>("NormalText");
-            titleFont = game.Content.Load<SpriteFont>("TitleText");
+            font = game.Content.Load<BitmapFont>("NormalText");
+            titleFont = game.Content.Load<BitmapFont>("TitleText");
+            subtitleFont = game.Content.Load<BitmapFont>("SubtitleText");
+            headerFont = game.Content.Load<BitmapFont>("HeaderText");
 
             boxBackground = new Texture2D(game.GraphicsDevice, 1, 1);
             Color[] colorData = new Color[1];
             colorData[0] = Color.WhiteSmoke;
             boxBackground.SetData<Color>(colorData);
+
+            Caption = "Selector";
 
             ReInit();
         }
@@ -63,9 +70,11 @@ namespace Casasoft.MgMenu
         /// <summary>
         /// ReInit input devices status
         /// </summary>
-        public void ReInit()
+        public virtual void ReInit()
         {
             oldMouseState = Mouse.GetState();
+            oldKeyboardState = Keyboard.GetState();
+            oldGamePadState = GamePad.GetState(PlayerIndex.One);
         }
 
         /// <summary>
@@ -141,7 +150,8 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         public virtual void Draw(SpriteBatch sb)
         {
-            // Your code
+            if (!string.IsNullOrWhiteSpace(Caption))
+                sb.DrawString(headerFont, Caption, new Vector2(20,-5), Color.WhiteSmoke);
         }
 
         /// <summary>
@@ -158,7 +168,7 @@ namespace Casasoft.MgMenu
 
             foreach (string word in wordArray)
             {
-                if (font.MeasureString(line + word).Length() > TextBox.Width)
+                if (font.MeasureString(line + word).Width > TextBox.Width)
                 {
                     returnString = returnString + line + '\n';
                     line = string.Empty;

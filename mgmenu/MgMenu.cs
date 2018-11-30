@@ -15,12 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-#define WINDOWED
+//#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using ORTS.Menu;
 using ORTS.Settings;
 using System;
@@ -39,7 +38,6 @@ namespace Casasoft.MgMenu
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteFont font;
 
         // OR data and settings
         UserSettings Settings;
@@ -138,7 +136,6 @@ namespace Casasoft.MgMenu
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            font = Content.Load<SpriteFont>("NormalText");
         }
 
         /// <summary>
@@ -167,6 +164,7 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelActivity;
+                            selActivity.ReInit();
                             SelectedRoute = Routes[selRoute.Selected];
                             SelectedFolder = Directory.GetParent(Directory.GetParent(SelectedRoute.Path).FullName).FullName;
                             Folder f = Folders.Where(i => i.Path == SelectedFolder).FirstOrDefault();
@@ -182,6 +180,7 @@ namespace Casasoft.MgMenu
                     {
                         case -1:
                             loopStatus = LoopStatus.SelRoute;
+                            selRoute.ReInit();
                             break;
                         case 1:
                             break;

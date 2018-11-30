@@ -10,8 +10,26 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\packages\MonoGame.Extended.Content.Pipeline.1.1.0\tools\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin HeaderText.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:HeaderText.fnt
+
+#begin HeaderText_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HeaderText_0.png
 
 #begin no-image.png
 /importer:TextureImporter
@@ -25,17 +43,54 @@
 /processorParam:TextureFormat=Color
 /build:no-image.png
 
-#begin NormalText.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:NormalText.spritefont
+#begin NormalText.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:NormalText.fnt
 
-#begin TitleText.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
+#begin NormalText_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:TitleText.spritefont
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NormalText_0.png
+
+#begin SubtitleText.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:SubtitleText.fnt
+
+#begin SubtitleText_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:SubtitleText_0.png
+
+#begin TitleText.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:TitleText.fnt
+
+#begin TitleText_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:TitleText_0.png
 
