@@ -52,7 +52,7 @@ namespace Casasoft.MgMenu
             foreach (var dir in routes)
             {
                 if (x + thumbSizeX >= 0 && x < screenX)
-                    DrawResized(sb, dir.Texture == null ? noImage : dir.Texture, 
+                    DrawResized(sb, dir.Texture == null ? noImage : dir.Texture,
                         new Rectangle(x, thumbY, thumbSizeX, thumbSizeY));
                 x += thumbStep;
             }

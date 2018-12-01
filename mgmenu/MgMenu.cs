@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-//#define WINDOWED
+#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
@@ -28,6 +28,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Path = ORTS.Menu.Path;
 
 namespace Casasoft.MgMenu
 {
@@ -36,27 +38,35 @@ namespace Casasoft.MgMenu
     /// </summary>
     public class MgMenu : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
 
         // OR data and settings
-        UserSettings Settings;
-        GettextResourceManager catalog = new GettextResourceManager("Menu");
-        List<Folder> Folders = new List<Folder>();
-        List<Route> Routes = new List<Route>();
-        List<Activity> Activities = new List<Activity>();
-        List<TimetableInfo> TimetableSets = new List<TimetableInfo>();
+        private UserSettings Settings;
+        private GettextResourceManager catalog = new GettextResourceManager("Menu");
+        private List<Folder> Folders = new List<Folder>();
+        private List<Route> Routes = new List<Route>();
+        private List<Activity> Activities = new List<Activity>();
+        private List<TimetableInfo> TimetableSets = new List<TimetableInfo>();
+        private List<Consist> Consists = new List<Consist>();
+        private List<Locomotive> Locos = new List<Locomotive>();
+        private List<Path> Paths = new List<Path>();
 
-        public string SelectedFolder { get; private set; }
+        public Folder SelectedFolder { get; private set; }
         public Route SelectedRoute { get; private set; }
+        public Path SelectedPath { get; private set; }
+        public Consist SelectedConsist { get; private set; }
 
-        enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime }
-        LoopStatus loopStatus;
+        private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime }
+        private LoopStatus loopStatus;
 
         // Panels
         SelRoute selRoute;
         SelActivity selActivity;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MgMenu()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -86,6 +96,11 @@ namespace Casasoft.MgMenu
             selRoute = new SelRoute(Routes, this);
             selActivity = new SelActivity(this);
 
+            SelectedFolder = null;
+            SelectedRoute = null;
+            SelectedPath = null;
+            SelectedConsist = null;
+
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
@@ -103,6 +118,9 @@ namespace Casasoft.MgMenu
         }
 
 #region read OR data
+        /// <summary>
+        /// Loads OR language settings
+        /// </summary>
         private void LoadLanguage()
         {
             if (Settings.Language.Length > 0)
@@ -115,15 +133,22 @@ namespace Casasoft.MgMenu
             }
         }
 
+        /// <summary>
+        /// Gets a list of assets folders for OR
+        /// </summary>
         private void LoadFolderList()
         {
             Folders = Folder.GetFolders(Settings).OrderBy(f => f.Name).ToList();
         }
 
+        /// <summary>
+        /// Gets all the routes in all folders
+        /// </summary>
         private void LoadRouteList()
         {
             foreach (var f in Folders)
                 Routes.AddRange(Route.GetRoutes(f, this));
+            Routes = Routes.OrderBy(n => n.Name).ToList();
         }
 #endregion
 
@@ -135,7 +160,6 @@ namespace Casasoft.MgMenu
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
         }
 
         /// <summary>
@@ -145,6 +169,48 @@ namespace Casasoft.MgMenu
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+        }
+
+
+        /// <summary>
+        /// Sets the profile folder from route path  
+        /// </summary>
+        /// <param name="route"></param>
+        private void selectFolder(Route route)
+        {
+            Folder oldFolder = SelectedFolder;
+
+            string p = Directory.GetParent(Directory.GetParent(route.Path).FullName).FullName;
+            SelectedFolder = Folders.Where(i => i.Path == p).FirstOrDefault();
+
+            if(oldFolder == null || SelectedFolder.Path != oldFolder.Path)
+            {
+                Task load = new Task(() => loadFolderData());
+                load.Start();
+            }
+        }
+
+
+        /// <summary>
+        /// Loads activities and paths for current route
+        /// </summary>
+        private void loadRouteData()
+        {
+            Activities = Activity.GetActivities(SelectedFolder, SelectedRoute).OrderBy(l => l.Name).ToList();
+            selActivity.SetList(Activities);
+            Paths = Path.GetPaths(SelectedRoute, true);
+        }
+
+        /// <summary>
+        /// Loads consists and locos from current profile
+        /// </summary>
+        private void loadFolderData()
+        {
+            Consists = Consist.GetConsists(SelectedFolder);
+            Locos.Add(new Locomotive());
+            foreach (var loco in Consists.Where(c => c.Locomotive != null).Select(c => c.Locomotive).Distinct().OrderBy(l => l.ToString()))
+                Locos.Add(loco);
+
         }
 
         /// <summary>
@@ -166,10 +232,10 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelActivity;
                             selActivity.ReInit();
                             SelectedRoute = Routes[selRoute.Selected];
-                            SelectedFolder = Directory.GetParent(Directory.GetParent(SelectedRoute.Path).FullName).FullName;
-                            Folder f = Folders.Where(i => i.Path == SelectedFolder).FirstOrDefault();
-                            Activities = Activity.GetActivities(f, SelectedRoute);
-                            selActivity.SetList(Activities);
+                            selectFolder(SelectedRoute);
+                            selActivity.Clear();
+                            Task loadActivities = new Task(() => loadRouteData());
+                            loadActivities.Start();
                             break;
                         default:
                             break;

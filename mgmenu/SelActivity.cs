@@ -54,6 +54,16 @@ namespace Casasoft.MgMenu
         }
 
         /// <summary>
+        /// Resets panel data
+        /// </summary>
+        public void Clear()
+        {
+            Selected = 0;
+            activities.Clear();
+            maxItems = 0;
+        }
+
+        /// <summary>
         /// Assign data list
         /// </summary>
         /// <param name="Activities"></param>
@@ -97,6 +107,10 @@ namespace Casasoft.MgMenu
             return 0;
         }
 
+        /// <summary>
+        /// Panel drawing
+        /// </summary>
+        /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
@@ -116,23 +130,25 @@ namespace Casasoft.MgMenu
                 y += itemHeight;
             }
 
-            Activity current = activities[Selected];
-            y = boxesY + 5;
-            if (!string.IsNullOrWhiteSpace(current.Description))
+            if (maxItems > 0)
             {
-                sb.DrawString(font, this.WrapText(current.Description, textBox),
-                    new Vector2(textBox.Left + 5, y), Color.Black);
-                y += (int)font.MeasureString(current.Description).Height + 5;
-            }
+                Activity current = activities[Selected];
+                y = boxesY + 5;
+                if (!string.IsNullOrWhiteSpace(current.Description))
+                {
+                    sb.DrawString(font, this.WrapText(current.Description, textBox),
+                        new Vector2(textBox.Left + 5, y), Color.Black);
+                    y += (int)font.MeasureString(current.Description).Height + 5;
+                }
 
-            if (!string.IsNullOrWhiteSpace(current.Briefing))
-            {
-                sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
-                sb.DrawString(font, this.WrapText(current.Briefing, textBox),
-                    new Vector2(textBox.Left + 5, y + 25), Color.Black);
-                y += (int)font.MeasureString(current.Briefing).Height + 5;
+                if (!string.IsNullOrWhiteSpace(current.Briefing))
+                {
+                    sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
+                    sb.DrawString(font, this.WrapText(current.Briefing, textBox),
+                        new Vector2(textBox.Left + 5, y + 25), Color.Black);
+                    y += (int)font.MeasureString(current.Briefing).Height + 5;
+                }
             }
-
         }
 
     }
