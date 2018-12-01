@@ -17,26 +17,16 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using ORTS.Menu;
 using System.Collections.Generic;
 
 namespace Casasoft.MgMenu
 {
-    public class SelActivity : PanelBase
+    public class SelActivity : PanelVScroller
     {
         private List<Activity> activities;
-        private int maxItems;
-        private Rectangle textBox;
-        private Rectangle scroller;
-        protected int detailSizeX = 640;
-        protected int detailSizeY = 580;
-        protected int itemHeight = 40;
-        protected int boxesY = 100;
-
-        public int Selected { get; set; }
-
+ 
         /// <summary>
         /// Constructor
         /// </summary>
@@ -46,21 +36,16 @@ namespace Casasoft.MgMenu
             activities = new List<Activity>();
             maxItems = activities.Count;
 
-            scroller = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
-            textBox = new Rectangle(detailSizeX + 40, boxesY, detailSizeX, detailSizeY);
-            Selected = 0;
-
             Caption = "Choose an activity";
         }
 
         /// <summary>
         /// Resets panel data
         /// </summary>
-        public void Clear()
+        public override void Clear()
         {
-            Selected = 0;
+            base.Clear();
             activities.Clear();
-            maxItems = 0;
         }
 
         /// <summary>
@@ -74,81 +59,37 @@ namespace Casasoft.MgMenu
         }
 
         /// <summary>
-        /// Manages keyboard and controller input
+        /// Draws the activity detail
         /// </summary>
-        protected override int CheckInput()
+        /// <param name="sb"></param>
+        protected override void ScrollerItemDetail(SpriteBatch sb)
         {
-            if (GamePadPressed(Buttons.Back) || KeyboardPressed(Keys.Escape))
-                return -1;
+            Activity current = activities[Selected];
+            int y = boxesY + 5;
+            if (!string.IsNullOrWhiteSpace(current.Description))
+            {
+                sb.DrawString(font, this.WrapText(current.Description, textBox),
+                    new Vector2(textBox.Left + 5, y), Color.Black);
+                y += (int)font.MeasureString(current.Description).Height + 5;
+            }
 
-            if (GamePadPressed(Buttons.Start) || KeyboardPressed(Keys.Enter))
-                return 1;
-
-            if ((GamePadPressed(Buttons.LeftThumbstickUp) || GamePadPressed(Buttons.DPadUp) ||
-                KeyboardPressed(Keys.Up) ||
-                MouseScrollerUp()) &&
-                Selected > 0)
-                Selected--;
-
-            if ((GamePadPressed(Buttons.LeftThumbstickDown) || GamePadPressed(Buttons.DPadDown) ||
-                KeyboardPressed(Keys.Down) ||
-                MouseScrollerDown()) &&
-                Selected < maxItems - 1)
-                Selected++;
-
-            if (GamePadPressed(Buttons.LeftShoulder) || GamePadPressed(Buttons.LeftStick) ||
-                KeyboardPressed(Keys.Home))
-                Selected = 0;
-
-            if (GamePadPressed(Buttons.RightShoulder) || GamePadPressed(Buttons.RightStick) ||
-                KeyboardPressed(Keys.End))
-                Selected = maxItems - 1;
-
-            return 0;
+            if (!string.IsNullOrWhiteSpace(current.Briefing))
+            {
+                sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
+                sb.DrawString(font, this.WrapText(current.Briefing, textBox),
+                    new Vector2(textBox.Left + 5, y + 25), Color.Black);
+                y += (int)font.MeasureString(current.Briefing).Height + 5;
+            }
         }
 
         /// <summary>
-        /// Panel drawing
+        /// Returns activity name
         /// </summary>
-        /// <param name="sb"></param>
-        public override void Draw(SpriteBatch sb)
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        protected override string ScrollerItemText(int pos)
         {
-            base.Draw(sb);
-
-            sb.Draw(boxBackground, scroller, Color.White);
-            sb.Draw(boxBackground, textBox, Color.White);
-
-            int y = boxesY + 5;
-            for(int j = 0; j < maxItems; j++)
-            {
-                Activity item = activities[j];
-                string txt = string.IsNullOrWhiteSpace(item.Name) ? "???" : item.Name;
-                if (j == Selected)
-                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 40, y), Color.Blue);
-                else
-                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 5, y), Color.Black);
-                y += itemHeight;
-            }
-
-            if (maxItems > 0)
-            {
-                Activity current = activities[Selected];
-                y = boxesY + 5;
-                if (!string.IsNullOrWhiteSpace(current.Description))
-                {
-                    sb.DrawString(font, this.WrapText(current.Description, textBox),
-                        new Vector2(textBox.Left + 5, y), Color.Black);
-                    y += (int)font.MeasureString(current.Description).Height + 5;
-                }
-
-                if (!string.IsNullOrWhiteSpace(current.Briefing))
-                {
-                    sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
-                    sb.DrawString(font, this.WrapText(current.Briefing, textBox),
-                        new Vector2(textBox.Left + 5, y + 25), Color.Black);
-                    y += (int)font.MeasureString(current.Briefing).Height + 5;
-                }
-            }
+            return activities[pos].Name;
         }
 
     }
