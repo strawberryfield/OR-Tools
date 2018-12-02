@@ -45,7 +45,7 @@ namespace Casasoft.MgMenu
         public override void Clear()
         {
             base.Clear();
-            activities.Clear();
+            if(activities != null) activities.Clear();
         }
 
         /// <summary>

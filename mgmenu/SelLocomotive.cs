@@ -45,7 +45,7 @@ namespace Casasoft.MgMenu
         public override void Clear()
         {
             base.Clear();
-            locomotives.Clear();
+            if(locomotives != null) locomotives.Clear();
         }
 
         /// <summary>

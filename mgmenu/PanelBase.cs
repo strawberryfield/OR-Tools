@@ -29,11 +29,16 @@ namespace Casasoft.MgMenu
         protected BitmapFont subtitleFont;
         protected BitmapFont headerFont;
         protected Texture2D boxBackground;
-        
+
+        protected int maxItems;
+
         protected int screenX;
         protected int screenY;
+        protected Rectangle textBox;
+        protected Rectangle leftBox;
 
         public string Caption { get; set; }
+        public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
@@ -55,9 +60,20 @@ namespace Casasoft.MgMenu
             boxBackground.SetData<Color>(colorData);
 
             Caption = "Selector";
+            maxItems = 0;
 
             ReInit();
         }
+
+        /// <summary>
+        /// Resets panel data
+        /// </summary>
+        public virtual void Clear()
+        {
+            Selected = 0;
+            maxItems = 0;
+        }
+
 
         #region input check
         protected MouseState oldMouseState;
@@ -168,7 +184,7 @@ namespace Casasoft.MgMenu
 
             foreach (string word in wordArray)
             {
-                if (font.MeasureString(line + word).Width > TextBox.Width)
+                if (font.MeasureString(line + word).Width > TextBox.Width - 20)
                 {
                     returnString = returnString + line + '\n';
                     line = string.Empty;

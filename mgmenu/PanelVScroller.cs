@@ -24,15 +24,11 @@ namespace Casasoft.MgMenu
 {
     public class PanelVScroller : PanelBase
     {
-        protected int maxItems;
-        protected Rectangle textBox;
-        protected Rectangle scroller;
         protected int detailSizeX = 640;
         protected int detailSizeY = 580;
         protected int itemHeight = 40;
         protected int boxesY = 100;
-
-        public int Selected { get; set; }
+        protected int maxRows;
 
         /// <summary>
         /// Constructor
@@ -40,19 +36,10 @@ namespace Casasoft.MgMenu
         /// <param name="game"></param>
         public PanelVScroller(Game game) : base(game)
         {
-            scroller = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
-            textBox = new Rectangle(detailSizeX + 40, boxesY, detailSizeX, detailSizeY);
-            Selected = 0;
-
-        }
-
-        /// <summary>
-        /// Resets panel data
-        /// </summary>
-        public virtual void Clear()
-        {
-            Selected = 0;
-            maxItems = 0;
+            leftBox = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
+            textBox = new Rectangle(detailSizeX + 40, boxesY, screenX - detailSizeX - 60, detailSizeY);
+            maxRows = (detailSizeY-10) / itemHeight;
+            Clear();
         }
 
         /// <summary>
@@ -97,18 +84,20 @@ namespace Casasoft.MgMenu
         {
             base.Draw(sb);
 
-            sb.Draw(boxBackground, scroller, Color.White);
+            sb.Draw(boxBackground, leftBox, Color.White);
             sb.Draw(boxBackground, textBox, Color.White);
 
             int y = boxesY + 5;
             for (int j = 0; j < maxItems; j++)
             {
-                string txt = ScrollerItemText(j);
-                if (j == Selected)
-                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 40, y), Color.Blue);
-                else
-                    sb.DrawString(titleFont, txt, new Vector2(scroller.Left + 5, y), Color.Black);
-                y += itemHeight;
+                if (maxItems <= maxRows || (j >= Selected && j < Selected + maxRows)) {
+                    string txt = ScrollerItemText(j);
+                    if (j == Selected)
+                        sb.DrawString(titleFont, txt, new Vector2(leftBox.Left + 40, y), Color.Blue);
+                    else
+                        sb.DrawString(titleFont, txt, new Vector2(leftBox.Left + 5, y), Color.Black);
+                    y += itemHeight;
+                }
             }
 
             if (maxItems > 0)

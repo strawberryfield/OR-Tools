@@ -54,8 +54,10 @@ namespace Casasoft.MgMenu
 
         public Folder SelectedFolder { get; private set; }
         public Route SelectedRoute { get; private set; }
+        public Activity SelectedActivity { get; private set; }
         public Path SelectedPath { get; private set; }
         public Consist SelectedConsist { get; private set; }
+        public Locomotive SelectedLocomotive { get; private set; }
 
         private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime }
         private LoopStatus loopStatus;
@@ -63,6 +65,8 @@ namespace Casasoft.MgMenu
         // Panels
         SelRoute selRoute;
         SelActivity selActivity;
+        SelLocomotive selLocomotive;
+        SelConsist selConsist;
 
         /// <summary>
         /// Constructor
@@ -95,11 +99,15 @@ namespace Casasoft.MgMenu
 
             selRoute = new SelRoute(Routes, this);
             selActivity = new SelActivity(this);
+            selConsist = new SelConsist(this);
+            selLocomotive = new SelLocomotive(this);
 
             SelectedFolder = null;
             SelectedRoute = null;
+            SelectedActivity = null;
             SelectedPath = null;
             SelectedConsist = null;
+            SelectedLocomotive = null;
 
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -117,7 +125,7 @@ namespace Casasoft.MgMenu
             base.Initialize();
         }
 
-#region read OR data
+        #region read OR data
         /// <summary>
         /// Loads OR language settings
         /// </summary>
@@ -150,8 +158,9 @@ namespace Casasoft.MgMenu
                 Routes.AddRange(Route.GetRoutes(f, this));
             Routes = Routes.OrderBy(n => n.Name).ToList();
         }
-#endregion
+        #endregion
 
+        #region MG content mamagement
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -170,8 +179,9 @@ namespace Casasoft.MgMenu
         {
             // TODO: Unload any non ContentManager content here
         }
+        #endregion
 
-
+        #region panels data management
         /// <summary>
         /// Sets the profile folder from route path  
         /// </summary>
@@ -189,7 +199,6 @@ namespace Casasoft.MgMenu
                 load.Start();
             }
         }
-
 
         /// <summary>
         /// Loads activities and paths for current route
@@ -210,8 +219,9 @@ namespace Casasoft.MgMenu
             Locos.Add(new Locomotive());
             foreach (var loco in Consists.Where(c => c.Locomotive != null).Select(c => c.Locomotive).Distinct().OrderBy(l => l.ToString()))
                 Locos.Add(loco);
-
+            selLocomotive.SetList(Locos);
         }
+        #endregion
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -230,9 +240,9 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelActivity;
-                            selActivity.ReInit();
                             SelectedRoute = Routes[selRoute.Selected];
                             selectFolder(SelectedRoute);
+                            selActivity.ReInit();
                             selActivity.Clear();
                             Task loadActivities = new Task(() => loadRouteData());
                             loadActivities.Start();
@@ -249,12 +259,25 @@ namespace Casasoft.MgMenu
                             selRoute.ReInit();
                             break;
                         case 1:
+                            loopStatus = LoopStatus.SelLoco;
+                            SelectedActivity = Activities[selActivity.Selected];
+                            selLocomotive.ReInit();
+                            selLocomotive.Clear();
                             break;
                         default:
                             break;
                     }
                     break;
                 case LoopStatus.SelLoco:
+                    switch(selLocomotive.Update())
+                    {
+                        case -1:
+                            loopStatus = LoopStatus.SelActivity;
+                            selActivity.ReInit();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case LoopStatus.SelConsist:
                     break;
@@ -288,8 +311,10 @@ namespace Casasoft.MgMenu
                     selActivity.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelLoco:
+                    selLocomotive.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelConsist:
+                    selConsist.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelPath:
                     break;

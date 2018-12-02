@@ -45,7 +45,7 @@ namespace Casasoft.MgMenu
         public override void Clear()
         {
             base.Clear();
-            consists.Clear();
+            if(consists != null) consists.Clear();
         }
 
         /// <summary>

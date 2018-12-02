@@ -23,8 +23,6 @@ namespace Casasoft.MgMenu
 {
     public class PanelHScroller : PanelBase
     {
-        protected int maxItems;
-        protected Rectangle textBox;
         protected Texture2D noImage;
 
         protected int thumbSizeX = 120;
@@ -35,7 +33,6 @@ namespace Casasoft.MgMenu
         protected int detailSizeX = 640;
         protected int detailSizeY = 480;
 
-        public int Selected { get; set; }
 
         /// <summary>
         /// Constructor
@@ -43,7 +40,6 @@ namespace Casasoft.MgMenu
         /// <param name="spriteBatch"></param>
         public PanelHScroller(Game game) : base(game)
         {
-            maxItems = 0;
 
             thumbSizeX = (thumbSizeX * screenY) / 768;
             thumbSizeY = (thumbSizeY * screenY) / 768;
@@ -51,8 +47,10 @@ namespace Casasoft.MgMenu
             thumbY = (thumbY * screenY) / 768;
             thumbX = (screenX - thumbSizeX) / 2;
 
-            textBox = new Rectangle(detailSizeX + 40, 200, detailSizeX, detailSizeY);
+            textBox = new Rectangle(detailSizeX + 40, 200, screenX - detailSizeX - 60, detailSizeY);
             noImage = game.Content.Load<Texture2D>("no-image");
+
+            Clear();
         }
 
         /// <summary>
