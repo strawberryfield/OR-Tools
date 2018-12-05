@@ -215,6 +215,8 @@ namespace Casasoft.MgMenu
         /// </summary>
         private void loadFolderData()
         {
+            selConsist.Clear();
+            selLocomotive.Clear();
             Consists = Consist.GetConsists(SelectedFolder);
             Locos.Add(new Locomotive());
             foreach (var loco in Consists.Where(c => c.Locomotive != null).Select(c => c.Locomotive).Distinct().OrderBy(l => l.ToString()))
@@ -262,7 +264,6 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelLoco;
                             SelectedActivity = Activities[selActivity.Selected];
                             selLocomotive.ReInit();
-                            selLocomotive.Clear();
                             break;
                         default:
                             break;
@@ -275,11 +276,30 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelActivity;
                             selActivity.ReInit();
                             break;
+                        case 1:
+                            loopStatus = LoopStatus.SelConsist;
+                            SelectedLocomotive = Locos[selLocomotive.Selected];
+                            selConsist.ReInit();
+                            selConsist.Clear();
+                            List<Consist> lc = new List<Consist>();
+                            foreach (var consist in Consists.Where(c => SelectedLocomotive.Equals(c.Locomotive)).OrderBy(c => c.Name))
+                                lc.Add(consist);
+                            selConsist.SetList(lc);
+                            break;
                         default:
                             break;
                     }
                     break;
                 case LoopStatus.SelConsist:
+                    switch (selConsist.Update())
+                    {
+                        case -1:
+                            loopStatus = LoopStatus.SelLoco;
+                            selLocomotive.ReInit();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case LoopStatus.SelPath:
                     break;
