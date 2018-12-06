@@ -24,11 +24,18 @@ namespace Casasoft.MgMenu
 {
     public class PanelVScroller : PanelBase
     {
-        protected int detailSizeX = 640;
-        protected int detailSizeY = 580;
+        protected int detailSizeX;
+        protected int detailSizeY;
         protected int itemHeight = 40;
         protected int boxesY = 100;
         protected int maxRows;
+        protected int maxItemsRight;
+        protected int maxRowsRight;
+
+        protected enum Boxes { Left, Right }
+        protected Boxes currentBox;
+
+        public int SelectedRight { get; set; }
 
         /// <summary>
         /// Constructor
@@ -36,10 +43,23 @@ namespace Casasoft.MgMenu
         /// <param name="game"></param>
         public PanelVScroller(Game game) : base(game)
         {
+            detailSizeX = screenX / 2 - 30;
+            detailSizeY = screenY - boxesY * 2;
             leftBox = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
             textBox = new Rectangle(detailSizeX + 40, boxesY, screenX - detailSizeX - 60, detailSizeY);
             maxRows = (detailSizeY-10) / itemHeight;
             Clear();
+        }
+
+        /// <summary>
+        /// Reset the panel
+        /// </summary>
+        public override void Clear()
+        {
+            base.Clear();
+            currentBox = Boxes.Left;
+            SelectedRight = 0;
+            maxItemsRight = 0;
         }
 
         /// <summary>
@@ -53,25 +73,56 @@ namespace Casasoft.MgMenu
             if (GamePadPressed(Buttons.Start) || KeyboardPressed(Keys.Enter))
                 return 1;
 
-            if ((GamePadPressed(Buttons.LeftThumbstickUp) || GamePadPressed(Buttons.DPadUp) ||
-                KeyboardPressed(Keys.Up) ||
-                MouseScrollerUp()) &&
-                Selected > 0)
-                Selected--;
+            // Panel switching
+            if ((GamePadPressed(Buttons.LeftThumbstickRight) || GamePadPressed(Buttons.DPadRight) ||
+                KeyboardPressed(Keys.Right)) &&
+                currentBox == Boxes.Left)
+                currentBox = Boxes.Right;
 
-            if ((GamePadPressed(Buttons.LeftThumbstickDown) || GamePadPressed(Buttons.DPadDown) ||
-                KeyboardPressed(Keys.Down) ||
-                MouseScrollerDown()) &&
-                Selected < maxItems - 1)
-                Selected++;
+            if ((GamePadPressed(Buttons.LeftThumbstickLeft) || GamePadPressed(Buttons.DPadLeft) ||
+                KeyboardPressed(Keys.Left)) &&
+                currentBox == Boxes.Right)
+                currentBox = Boxes.Left;
+
+            if (KeyboardPressed(Keys.Tab))
+                currentBox = (currentBox == Boxes.Left ? Boxes.Right : Boxes.Left);
+
+            // Up Down scrolling
+            if (GamePadPressed(Buttons.LeftThumbstickUp) || GamePadPressed(Buttons.DPadUp) ||
+                KeyboardPressed(Keys.Up) || MouseScrollerUp())
+            {
+                if (currentBox == Boxes.Left && Selected > 0)
+                    Selected--;
+                if (currentBox == Boxes.Right && SelectedRight > 0)
+                    SelectedRight--;
+            }
+
+            if (GamePadPressed(Buttons.LeftThumbstickDown) || GamePadPressed(Buttons.DPadDown) ||
+                KeyboardPressed(Keys.Down) || MouseScrollerDown())
+            {
+                if (currentBox == Boxes.Left && Selected < maxItems - 1)
+                    Selected++;
+                if (currentBox == Boxes.Right && SelectedRight < maxItemsRight - 1)
+                    SelectedRight++;
+            }
 
             if (GamePadPressed(Buttons.LeftShoulder) || GamePadPressed(Buttons.LeftStick) ||
                 KeyboardPressed(Keys.Home))
-                Selected = 0;
+            {
+                if (currentBox == Boxes.Left)
+                    Selected = 0;
+                if (currentBox == Boxes.Right)
+                    SelectedRight = 0;
+            }
 
             if (GamePadPressed(Buttons.RightShoulder) || GamePadPressed(Buttons.RightStick) ||
                 KeyboardPressed(Keys.End))
-                Selected = maxItems - 1;
+            {
+                if (currentBox == Boxes.Left)
+                    Selected = maxItems - 1;
+                if (currentBox == Boxes.Right)
+                    SelectedRight = maxItemsRight - 1;
+            }
 
             return 0;
         }
@@ -84,8 +135,8 @@ namespace Casasoft.MgMenu
         {
             base.Draw(sb);
 
-            sb.Draw(boxBackground, leftBox, Color.White);
-            sb.Draw(boxBackground, textBox, Color.White);
+            sb.Draw(currentBox == Boxes.Left ? boxBackground : boxBackgroundInactive, leftBox, Color.White);
+            sb.Draw(currentBox == Boxes.Right ? boxBackground : boxBackgroundInactive, textBox, Color.White);
 
             int y = boxesY + 5;
             for (int j = 0; j < maxItems; j++)

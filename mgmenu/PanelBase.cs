@@ -29,6 +29,7 @@ namespace Casasoft.MgMenu
         protected BitmapFont subtitleFont;
         protected BitmapFont headerFont;
         protected Texture2D boxBackground;
+        protected Texture2D boxBackgroundInactive;
 
         protected int maxItems;
 
@@ -58,6 +59,11 @@ namespace Casasoft.MgMenu
             Color[] colorData = new Color[1];
             colorData[0] = Color.WhiteSmoke;
             boxBackground.SetData<Color>(colorData);
+
+            boxBackgroundInactive = new Texture2D(game.GraphicsDevice, 1, 1);
+            colorData = new Color[1];
+            colorData[0] = Color.LightGray;
+            boxBackgroundInactive.SetData<Color>(colorData);
 
             Caption = "Selector";
             maxItems = 0;
