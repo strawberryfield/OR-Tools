@@ -19,15 +19,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
+using System.Collections.Generic;
 
 namespace Casasoft.MgMenu
 {
     public class PanelBase
     {
-        protected BitmapFont font;
-        protected BitmapFont titleFont;
-        protected BitmapFont subtitleFont;
-        protected BitmapFont headerFont;
+        protected enum FontSizes { Normal, Subtitle, Title, Header }
+        protected Dictionary<FontSizes, BitmapFont> fonts;
+
         protected Texture2D boxBackground;
         protected Texture2D boxBackgroundInactive;
 
@@ -42,6 +42,32 @@ namespace Casasoft.MgMenu
         public int Selected { get; set; }
 
         /// <summary>
+        /// Defines a row of text for scrollers
+        /// </summary>
+        protected class TextRow
+        {
+            public string Text { get; set; }
+            public FontSizes FontSize { get; set; }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="text"></param>
+            /// <param name="size"></param>
+            public TextRow(string text, FontSizes size)
+            {
+                Text = text;
+                FontSize = size;
+            }
+
+            /// <summary>
+            /// Constructor with default text width
+            /// </summary>
+            /// <param name="text"></param>
+            public TextRow(string text) : this(text, FontSizes.Normal) { }
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="game"></param>
@@ -50,10 +76,13 @@ namespace Casasoft.MgMenu
             screenX = game.GraphicsDevice.DisplayMode.Width;
             screenY = game.GraphicsDevice.DisplayMode.Height;
 
-            font = game.Content.Load<BitmapFont>("NormalText");
-            titleFont = game.Content.Load<BitmapFont>("TitleText");
-            subtitleFont = game.Content.Load<BitmapFont>("SubtitleText");
-            headerFont = game.Content.Load<BitmapFont>("HeaderText");
+            fonts = new Dictionary<FontSizes, BitmapFont>
+            {
+                [FontSizes.Normal] = game.Content.Load<BitmapFont>("NormalText"),
+                [FontSizes.Title] = game.Content.Load<BitmapFont>("TitleText"),
+                [FontSizes.Subtitle] = game.Content.Load<BitmapFont>("SubtitleText"),
+                [FontSizes.Header] = game.Content.Load<BitmapFont>("HeaderText")
+            };
 
             boxBackground = new Texture2D(game.GraphicsDevice, 1, 1);
             Color[] colorData = new Color[1];
@@ -173,16 +202,30 @@ namespace Casasoft.MgMenu
         public virtual void Draw(SpriteBatch sb)
         {
             if (!string.IsNullOrWhiteSpace(Caption))
-                sb.DrawString(headerFont, Caption, new Vector2(20,-5), Color.WhiteSmoke);
+                sb.DrawString(fonts[FontSizes.Header], Caption, new Vector2(20,-5), Color.WhiteSmoke);
         }
 
+        /// <summary>
+        /// Draw a resized image
+        /// </summary>
+        /// <param name="sb">SpriteBatch to use for drawing</param>
+        /// <param name="img"></param>
+        /// <param name="area">Position and size of the image</param>
+        protected void DrawResized(SpriteBatch sb, Texture2D img, Rectangle area)
+        {
+            sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), Color.White);
+        }
+        #endregion
+
+        #region string wrap
         /// <summary>
         /// Wrap the text inside the box
         /// </summary>
         /// <param name="text"></param>
         /// <param name="TextBox"></param>
+        /// <param name="font"></param>
         /// <returns></returns>
-        protected string WrapText(string text, Rectangle TextBox)
+        protected string WrapText(string text, Rectangle TextBox, BitmapFont font)
         {
             string line = string.Empty;
             string returnString = string.Empty;
@@ -201,17 +244,43 @@ namespace Casasoft.MgMenu
         }
 
         /// <summary>
-        /// Draw a resized image
+        /// Returns wrapped text by size
         /// </summary>
-        /// <param name="sb">SpriteBatch to use for drawing</param>
-        /// <param name="img"></param>
-        /// <param name="area">Position and size of the image</param>
-        protected void DrawResized(SpriteBatch sb, Texture2D img, Rectangle area)
+        /// <param name="text"></param>
+        /// <param name="TextBox"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        protected string WrapText(string text, Rectangle TextBox, FontSizes size)
         {
-            sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), Color.White);
+            return WrapText(text, TextBox, fonts[size]);
+        }
+
+        /// <summary>
+        /// Returns wrapped text with Normal font
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="TextBox"></param>
+        /// <returns></returns>
+        protected string WrapText(string text, Rectangle TextBox)
+        {
+            return WrapText(text, TextBox, FontSizes.Normal);
         }
         #endregion
 
+        /// <summary>
+        /// Gets a list of prewrapped text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="size">Font size for line rendering</param>
+        /// <returns></returns>
+        protected List<TextRow> GetTextRows(string text, FontSizes size)
+        {
+            List<TextRow> ret = new List<TextRow>();
+            string[] lines = text.Split('\n');
+            foreach (var l in lines)
+                ret.Add(new TextRow(l, size));
+            return ret;
+        }
     }
 }
 

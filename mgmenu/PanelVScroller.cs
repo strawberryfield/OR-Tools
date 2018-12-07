@@ -144,9 +144,9 @@ namespace Casasoft.MgMenu
                 if (maxItems <= maxRows || (j >= Selected && j < Selected + maxRows)) {
                     string txt = ScrollerItemText(j);
                     if (j == Selected)
-                        sb.DrawString(titleFont, txt, new Vector2(leftBox.Left + 40, y), Color.Blue);
+                        sb.DrawString(fonts[FontSizes.Title], txt, new Vector2(leftBox.Left + 40, y), Color.Blue);
                     else
-                        sb.DrawString(titleFont, txt, new Vector2(leftBox.Left + 5, y), Color.Black);
+                        sb.DrawString(fonts[FontSizes.Title], txt, new Vector2(leftBox.Left + 5, y), Color.Black);
                     y += itemHeight;
                 }
             }

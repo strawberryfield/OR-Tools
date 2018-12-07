@@ -64,6 +64,8 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         protected override void ScrollerItemDetail(SpriteBatch sb)
         {
+            BitmapFont font = fonts[FontSizes.Normal];
+
             Consist current = consists[Selected];
             int y = boxesY + 5;
             if (!string.IsNullOrWhiteSpace(current.Name))
