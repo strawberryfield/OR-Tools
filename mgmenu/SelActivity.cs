@@ -64,25 +64,18 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         protected override void ScrollerItemDetail(SpriteBatch sb)
         {
-            BitmapFont font = fonts[FontSizes.Normal];
-            BitmapFont subtitleFont = fonts[FontSizes.Normal];
-
             Activity current = activities[Selected];
-            int y = boxesY + 5;
-            if (!string.IsNullOrWhiteSpace(current.Description))
-            {
-                sb.DrawString(font, this.WrapText(current.Description, textBox),
-                    new Vector2(textBox.Left + 5, y), Color.Black);
-                y += (int)font.MeasureString(current.Description).Height + 5;
-            }
 
+            TextBox detail = new TextBox(sb, fonts, textBox);
+            if (!string.IsNullOrWhiteSpace(current.Description))
+                detail.AddTextRowsWrapped(current.Description);
             if (!string.IsNullOrWhiteSpace(current.Briefing))
             {
-                sb.DrawString(subtitleFont, "Briefing", new Vector2(textBox.Left + 5, y), Color.Black);
-                sb.DrawString(font, this.WrapText(current.Briefing, textBox),
-                    new Vector2(textBox.Left + 5, y + 25), Color.Black);
-                y += (int)font.MeasureString(current.Briefing).Height + 5;
+                detail.AddTextRows("Briefing", FontSizes.Subtitle);
+                detail.AddTextRowsWrapped(current.Briefing);
             }
+
+            detail.Draw();
         }
 
         /// <summary>

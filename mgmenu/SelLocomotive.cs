@@ -64,16 +64,13 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         protected override void ScrollerItemDetail(SpriteBatch sb)
         {
-            BitmapFont font = fonts[FontSizes.Normal];
-
             Locomotive current = locomotives[Selected];
-            int y = boxesY + 5;
+
+            TextBox detail = new TextBox(sb, fonts, textBox);
             if (!string.IsNullOrWhiteSpace(current.Description))
-            {
-                sb.DrawString(font, this.WrapText(current.Description, textBox),
-                    new Vector2(textBox.Left + 5, y), Color.Black);
-                y += (int)font.MeasureString(current.Description).Height + 5;
-            }
+                detail.AddTextRowsWrapped(current.Description);
+
+            detail.Draw();
         }
 
         /// <summary>

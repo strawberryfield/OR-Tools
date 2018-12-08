@@ -86,6 +86,7 @@
     <Compile Include="SelConsist.cs" />
     <Compile Include="SelLocomotive.cs" />
     <Compile Include="SelRoute.cs" />
+    <Compile Include="TextBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GNU.Gettext, Version=1.1.5151.39896, Culture=neutral, processorArchitecture=MSIL">

@@ -25,7 +25,6 @@ namespace Casasoft.MgMenu
 {
     public class PanelBase
     {
-        protected enum FontSizes { Normal, Subtitle, Title, Header }
         protected Dictionary<FontSizes, BitmapFont> fonts;
 
         protected Texture2D boxBackground;
@@ -40,32 +39,6 @@ namespace Casasoft.MgMenu
 
         public string Caption { get; set; }
         public int Selected { get; set; }
-
-        /// <summary>
-        /// Defines a row of text for scrollers
-        /// </summary>
-        protected class TextRow
-        {
-            public string Text { get; set; }
-            public FontSizes FontSize { get; set; }
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            /// <param name="text"></param>
-            /// <param name="size"></param>
-            public TextRow(string text, FontSizes size)
-            {
-                Text = text;
-                FontSize = size;
-            }
-
-            /// <summary>
-            /// Constructor with default text width
-            /// </summary>
-            /// <param name="text"></param>
-            public TextRow(string text) : this(text, FontSizes.Normal) { }
-        }
 
         /// <summary>
         /// Constructor
@@ -217,70 +190,7 @@ namespace Casasoft.MgMenu
         }
         #endregion
 
-        #region string wrap
-        /// <summary>
-        /// Wrap the text inside the box
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="TextBox"></param>
-        /// <param name="font"></param>
-        /// <returns></returns>
-        protected string WrapText(string text, Rectangle TextBox, BitmapFont font)
-        {
-            string line = string.Empty;
-            string returnString = string.Empty;
-            string[] wordArray = text.Split(' ');
-
-            foreach (string word in wordArray)
-            {
-                if (font.MeasureString(line + word).Width > TextBox.Width - 20)
-                {
-                    returnString = returnString + line + '\n';
-                    line = string.Empty;
-                }
-                line = line + word + ' ';
-            }
-            return returnString + line;
-        }
-
-        /// <summary>
-        /// Returns wrapped text by size
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="TextBox"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        protected string WrapText(string text, Rectangle TextBox, FontSizes size)
-        {
-            return WrapText(text, TextBox, fonts[size]);
-        }
-
-        /// <summary>
-        /// Returns wrapped text with Normal font
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="TextBox"></param>
-        /// <returns></returns>
-        protected string WrapText(string text, Rectangle TextBox)
-        {
-            return WrapText(text, TextBox, FontSizes.Normal);
-        }
-        #endregion
-
-        /// <summary>
-        /// Gets a list of prewrapped text
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="size">Font size for line rendering</param>
-        /// <returns></returns>
-        protected List<TextRow> GetTextRows(string text, FontSizes size)
-        {
-            List<TextRow> ret = new List<TextRow>();
-            string[] lines = text.Split('\n');
-            foreach (var l in lines)
-                ret.Add(new TextRow(l, size));
-            return ret;
-        }
+ 
     }
 }
 

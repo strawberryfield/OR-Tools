@@ -47,9 +47,6 @@ namespace Casasoft.MgMenu
         {
             base.Draw(sb);
 
-            BitmapFont font = fonts[FontSizes.Normal];
-            BitmapFont titleFont = fonts[FontSizes.Title];
-
             int x = thumbX - Selected * thumbStep;
 
             foreach (var dir in routes)
@@ -66,26 +63,13 @@ namespace Casasoft.MgMenu
             DrawResized(sb, current.Texture == null ? noImage : current.Texture,
                 new Rectangle(20, 200, detailSizeX, detailSizeY));
 
-            /*
-                        if (!string.IsNullOrWhiteSpace(current.Name))
-                            sb.DrawString(titleFont, current.Name, new Vector2(detailSizeX + 50, 200), Color.Black);
-                        if (!string.IsNullOrWhiteSpace(current.Description))
-                            sb.DrawString(font, this.WrapText(current.Description, textBox),
-                                new Vector2(detailSizeX + 50, 250), Color.Black);
-            */
-
-            List<TextRow> detail = new List<TextRow>();
+            TextBox detail = new TextBox(sb, fonts, textBox);
             if (!string.IsNullOrWhiteSpace(current.Name))
                 detail.Add(new TextRow(current.Name, FontSizes.Title));
             if (!string.IsNullOrWhiteSpace(current.Description))
-                detail.AddRange(GetTextRows(WrapText(current.Description, textBox), FontSizes.Normal));
+                detail.AddTextRowsWrapped(current.Description);
 
-            int y = 200;
-            foreach(var row in detail)
-            {
-                sb.DrawString(fonts[row.FontSize], row.Text, new Vector2(detailSizeX + 50, y), Color.Black);
-                y += (int)fonts[row.FontSize].MeasureString(row.Text).Height;
-            }
+            detail.Draw();
         }
 
      }
