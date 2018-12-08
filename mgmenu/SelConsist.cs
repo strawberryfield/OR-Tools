@@ -67,8 +67,8 @@ namespace Casasoft.MgMenu
             Consist current = consists[Selected];
 
             TextBox detail = new TextBox(sb, fonts, textBox);
-            if (!string.IsNullOrWhiteSpace(current.Name))
-                detail.AddTextRows(current.Name, FontSizes.Subtitle);
+            foreach (var wag in current.Train.WagonList)
+                detail.AddTextRows(wag.Name, FontSizes.Subtitle);
 
             detail.Draw();
         }
