@@ -440,7 +440,7 @@ Vado a rispolverare il libro di "Geometria" dell'università... quello che non a
 
 ## Le rotazioni
 
-ccomi qua con il "Cavalieri D'Oro" (è il cognome dell'autore), libro che a suo tempo mi aveva sorpreso per due motivi: innanzitutto era scritto in "bella calligrafia" e non con i comuni caratteri tipografici; poi c'era il fatto che pur essendo un testo che si intitolava "Geometria" non aveva figure.
+Eccomi qua con il "Cavalieri D'Oro" (è il cognome dell'autore), libro che a suo tempo mi aveva sorpreso per due motivi: innanzitutto era scritto in "bella calligrafia" e non con i comuni caratteri tipografici; poi c'era il fatto che pur essendo un testo che si intitolava "Geometria" non aveva figure.
 
 Il professore, di fronte allo stupore di parecchi per la mancanza delle figure, ci fece una domanda: "come faccio a rappresentare uno spazio, che so, a 6 dimensioni in una figura?"
 
