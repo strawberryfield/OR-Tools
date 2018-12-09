@@ -437,3 +437,43 @@ Di li a poco mi restituisce un ponte, con una rampa in curva, dicendomi che con 
 
 Vado a rispolverare il libro di "Geometria" dell'università... quello che non aveva neanche una figura! 
 
+
+## Le rotazioni
+
+ccomi qua con il "Cavalieri D'Oro" (è il cognome dell'autore), libro che a suo tempo mi aveva sorpreso per due motivi: innanzitutto era scritto in "bella calligrafia" e non con i comuni caratteri tipografici; poi c'era il fatto che pur essendo un testo che si intitolava "Geometria" non aveva figure.
+
+Il professore, di fronte allo stupore di parecchi per la mancanza delle figure, ci fece una domanda: "come faccio a rappresentare uno spazio, che so, a 6 dimensioni in una figura?"
+
+Ci spiegò che in pratica avremmo studiato dell'algebra che avrebbe permesso le trasformazioni che nella geometria piana (a 2 dimensioni) si fanno con riga e compasso.
+Sono le regole matematiche che stanno dentro i motori di rendering (al tempo non erano cosa comune e non avremmo mai fatto menzione alla cosa).
+
+Per chi volesse approfondire la cosa ho trovato questa interessante dispensa dell'università di Pisa http://medialab.di.unipi.it/web/IUM/Fondamenti/cap8.htm che fa parte di un più completo trattato sulla grafica a computer (http://medialab.di.unipi.it/web/IUM/Fondamenti/)
+
+Non spaventatevi, non ho affatto intenzione di mettermi a spiegare certi argomenti, anche perchè non essendo fresco di studio (sono passati quasi 30 anni) potrei essere facilmente "messo in buca".
+
+Torniamo a noi, prendiamo i valori "standard" della matrix e disponiamoli così:
+
+```
+   1 0 0
+   0 1 0
+   0 0 1
+ ```  
+
+E' una matrice unitaria; moltiplicando un array con tre coordinate per questa matrice si ottiene di nuovo l'array di partenza, ma negli altri casi?
+
+Intanto chi volesse sapere cosa significa moltiplicare delle matrici (l'array è un caso particolare di matrice con 1 sola riga o colonna) può dare un'occhiata a questa voce di Wikipedia: http://it.wikipedia.org/wiki/Moltiplicazione_di_matrici.
+
+In generale con quella moltiplicazione si effettua una trasformazione che nel caso specifico sono delle rotazioni attorno ai 3 assi; anche qui per i dettagli c'è sempre Wikipedia: http://it.wikipedia.org/wiki/Rotazione_%28matematica%29
+
+Guido ha modellato alcuni componenti diritti e poi li ha ruotati per portarli al giusto orientamento: nel caso della locomotiva questi pezzi, pur ruotati, non uscivano dall'ingombro di altri pezzi e quindi il bounding box generale non cambiava; ma nel caso del ponte la lunga rampa in curva cambiava (e di parecchio) il bounding box.
+
+Lavorando con le matrici si possono fare anche altre trasformazioni esemplificate in questo documento: http://projects.ivl.disco.unimib.it/eig/02a_trasformazioni.pdf
+
+Moltiplicare delle matrici non è difficile, è solo pesante come elaborazione: per ogni punto e per ogni livello della gerarchia vanno eseguite 9 moltiplicazioni in virgola mobile che moltiplicate per alcune migliaia di punti... fanno un bel po'!
+Già avevo qualche problema di eccessiva lentezza con la E428 di Vittorio elaborando la quale il browser si lamentava che "uno script sta impiegando troppo tempo..."; figuriamoci se gli facevo fare anche tutti quei calcoli.
+
+Qualche trucchetto, come verificare subito se la matrice è unitaria o riorganizzando il parser precalcolando alcune cose, mi ha permesso di stare nei limiti anche con oggetti di 11000 poligoni.
+
+Così oggi questo programma è disponibile per tutti e si spiega perchè Shape File Manger crei gli .sd con il bounding box vuoto.
+
+Spero di non aver tediato nessuno (ma chi ve l'ha fatto fare di leggere fin qui? :smiley: ). 
