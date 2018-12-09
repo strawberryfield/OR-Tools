@@ -4,6 +4,7 @@
 
 Originariamente pubblicato su [TrainSimHobby](http://www.trainsimhobby.net/forum/viewtopic.php?t=10514)
 
+
 ## Introduzione
 
 Fosse Sandro intitolerebbe questo post "Indiana Jones e il Bounding Box"; in effetti la storia che vado a raccontare ha parecchio dell'avventuroso.
@@ -18,7 +19,6 @@ Ce n'è fin troppo per creare inutili e fastidiosi errori.
 Dò una rapida occhiata al contenuto del file .s che contiene il modello della stazioncina che stavo realizzando e quasi all'inizio trovo questa interessante sequenza 
 
 ```
-
       points ( 52
          point ( 6.5 0.103621 11.5 )
          point ( 6.5 11 11.5 )
@@ -72,8 +72,7 @@ Dò una rapida occhiata al contenuto del file .s che contiene il modello della s
          point ( 6.5 0.103621 11.45 )
          point ( -6.5 0.103621 11.45 )
          point ( -6.5 11 11.45 )
-      )
-   
+      )   
 ```
 
 Riconosco facilmente le coordinate dei punti che compongono il mio modello: se prendo i valori massimo e minimo su ogni coordinata ottengo il boundung box.
@@ -96,17 +95,22 @@ Si scoprirà in seguito che anche degli oggetti fatti da Vittorio non avrebbero 
 Così invece di fare "La Settimana Enigmistica" ho cercato di risolvere questo enigma.
 Ne è venuta fuori una interessante analisi della struttura dei file .s, che vi presenterò nei prossimi post, ed ho anche trovato degli interessanti documenti, che presenterò al momento oppurtuno, che mostreranno come si può "giocare" con gli oggetti modellati. 
 
+
 ## I primi commenti
 
-####da RobitailleFan » 30 ago 2012, 22:27
+#### da RobitailleFan » 30 ago 2012, 22:27
+
 Ottimo, mi interessa questo topic, c'è sempre qualcosa da imparare.
 
 P.S. 1 Io il tuo programma lo ho provato con costruzioni da G-Max, per l'appunto con il pivot point allo zero, e forse è per quel motivo che non ho avuto problemi. E, comunque, per creare una locomotiva a casse articolate ho dovuto editare manualmente il file .sd, mentre per quella tutta un pezzo non ho avuto alcun problema.
 
 P.S. 2 La E.428 che hai utilizzato è stata creata non con G-Max, ma con Train Sim Modeller: considerando che i due programmi non funzionano in modo eguale forse alla fine il problema sta in quelle differenze tipiche dei programmi.
 
-####da timetable57 » 31 ago 2012, 0:45
+
+#### da timetable57 » 31 ago 2012, 0:45
+
 Al punto 0,0,0, i pivot con Max, li metto solo all'oggetto MAIN, così consigliano alcuni autori.. Poi mi vien meglio con gli oggetti da trasformare per R3D. Mi vengono meglio le simmetrie.
+
 
 ## Le matrici e i vertici
 
@@ -119,7 +123,6 @@ Eravamo alla ricerca della posizione dei pivot dei vari componenti il modello.
 Scorrendo il file .s si trova una sezione che pare proprio fare al caso nostro; l'esempio viene da un file di Guido tratto dalla Ferrovia delle Dolomiti. 
 
 ```
-
       matrices ( 3
          matrix MAIN ( 1 0 0 0 1 0 0 0 1 0 0 0 )
          matrix ROOF ( 1 0 0 0 1 0 0 0 1 0 3.65301 0 )
@@ -135,7 +138,7 @@ Scorrendo il file arriviamo ad una riga dal nome inequivocabile
 
 ```
    hierarchy ( 3 -1 0 1 )
- ```
+```
  
  Cerchiamo di capire come funziona.
 Il primo parametro ci dice quante matrici abbiamo, in questo caso solo 3.
@@ -152,7 +155,6 @@ Una cosa che interessa molto alla macchina sono i vertici dei poligoni che conte
 Esaminiamo quindi l'elenco dei vertici 
 
 ```
-
       vertices ( 78
          vertex ( 00000000 0 19 ff969696 ff969696
             vertex_uvs ( 1 0 )
@@ -174,7 +176,7 @@ Esaminiamo quindi l'elenco dei vertici
 ```
 
 Della riga "vertex" a noi interessa il secondo parametro che è proprio il numero d'ordine del punto con le coordinate del vertice.
-Notare che un punto può essere utilizzato per più vertici se in comune a più poligoni (come nell'ultima riga dell'esempio.
+Notare che un punto può essere utilizzato per più vertici se in comune a più poligoni (come nell'ultima riga dell'esempio).
 
 Subito sotto all'elenco dei vertici troviamo questa tabella: 
 
@@ -242,6 +244,7 @@ Anche qui si fa riferimento a 10 matrici; controlliamo i vertex_sets
 ```
 
 Sono 11, uno in più rispetto alle matrici.
+
 L'ultima riga fa riferimento ad una ipotetica matrice 10 che non esiste!
 Ciò significa che quel numero non è il numero della matrice, come avevo ipotizzato, ma si riferisce ad altro.
 
@@ -264,15 +267,18 @@ Cercando nella zona delle matrici trovo un'altra tabella di 11 elementi
 ```
 
 L'anello di congiunzione sembra essere proprio il secondo valore di ogni riga; infatti i valori delle prime due righe sono uguali e fanno entrambi riferimento al main.
+
 Vale la pena di fare una prova leggendo questa tabella per ricavare il numero della matrice da quello del vertex_set.
 I risultati sono lusinghieri: anche la carrozza "Corbellini" adesso viene calcolata correttamente.
 
 Ma non è ancora ora di cantare vittoria, in tutto questo abbiamo trascurato due cose importanti non presenti in questo modello: i lod ed i subobject: vertici e vertex set sono proprio all'interno di queste sezioni.
+
 Oggetti senza LOD e SubObject non creano problemi, ma le mie stazioncine, che usano i subobject, non passano più... 
 
 ## Altri commenti
 
-####da leo_1982 » 6 set 2012, 14:01
+#### da leo_1982 » 6 set 2012, 14:01
+
 Ciao Roberto,
 
 una piccola domandina, perché ti fai tanto lavoro per creare la bounding Box di tutti gli oggetti che crei nella .sd?
@@ -292,7 +298,8 @@ Come sempre potete naturalmente mettere in discussione il mio sapere e saperne d
 Cari saluti dalla svizzera, 
 
 
-####da strawberryfield » 6 set 2012, 17:08
+#### da strawberryfield » 6 set 2012, 17:08
+
 Diciamo che la cosa che mi interessava di più era creare un file .eng per gli oggetti (tutti statici) del quale mi interessava solo il dato di lunghezza.
 Il tutto per poi convertire il file per Rail3D.
 
@@ -303,26 +310,33 @@ Che il bounding box sia perfettamente inutile in certi casi lo sapevo, ma come v
 Grazie comunque per le info sull'utilità del bonding box 
 
 
-####da timetable57 » 6 set 2012, 17:08
+#### da timetable57 » 6 set 2012, 17:08
+
 Ciao Leo, scusa ma non ho capito il tuo intervento.
+
 Se alcuni oggetti non necessitano di BB questo non vuol dire che non sia necessario crearlo per altri. Sennò cosa ci starebbe a fare?
 Io non ricordo esattamente con cosa modelli (Crafter/Canvas?). Questo programma genera automaticamente i file sd così come TSM e comprensivi di BB (non sempre affidabile.
+
 Se leggi tutto il topic vedrai che questo programmino è stato scritto da Roberto per chi usa G-Max/3D Studio Max che in questo forum pian piano stan diventando la maggioranza.
 Inoltre questo programmino , creando i BB, ma soprattutto gli .eng con le misure corrette, serve a chi come me e Roberto costruisce modelli complessi per Rail3D.
 
 
-####da RobitailleFan » 6 set 2012, 18:49
+#### da RobitailleFan » 6 set 2012, 18:49
+
 Attenzione: credo che Leo intenda dire che non è il file .sd che non serve, ma parte del suo contenuto. Per la precisione, qualsiasi oggetto in Train Simulator DEVE avere un file .sd, altrimenti TS si inca@@za. Se poi all'interno del file .sd non sono specificate le dimensioni dell'oggetto stesso e il tutto funziona ugualmente questo è un altro paio di maniche.
 Ovvio che per certi oggetti le dimensioni sono obbligatorie.
 
 
-####da timetable57 » 6 set 2012, 23:34
+#### da timetable57 » 6 set 2012, 23:34
+
 Certo Leo si è spiegato benissimo.
+
 Se non vado errato però il topic non verte tanto sulla creazione di un file .sd semplice. Per quello basta e avanza SFM.
 Il problema indicato da Roberto è invece proprio quello di estrapolare le misure effettive di un 3D che poi servono sia per i BB sia per poter lavorare su altri Sim
 
 
-####da leo_1982 » 8 set 2012, 22:23
+#### da leo_1982 » 8 set 2012, 22:23
+
 Salve a tutti,
 
 certo che il File .sd ci vuole, soltanto la Bounding Box può essere tralasciata...
@@ -330,7 +344,8 @@ certo che il File .sd ci vuole, soltanto la Bounding Box può essere tralasciata
 Per quanto riguarda il problema di Roberto: La matrice descrive nelle ultime 3 posizioni le coordinate rispettive alla sua "mamma", le cifre davanti (i 0 e 1) invece descrivono la gerarchia del Modello, se tutti tranne il main hanno le stesse cifre se non erro significa che sono tutti dei "child" diretti del main, però non ho mai analizzato la questione più di quel tanto... Con Modelli complessi (child di child) invece sarebbe neccessario analizzare anche questi casi perché li sarebbero le coordinate di più suboggetti da sommare in confronto con il main. 
 
 
-####da strawberryfield » 8 set 2012, 22:55
+#### da strawberryfield » 8 set 2012, 22:55
+
 **leo_1982 ha scritto:**
 
 *Per quanto riguarda il problema di Roberto: La matrice descrive nelle ultime 3 posizioni le coordinate rispettive alla sua "mamma", le cifre davanti (i 0 e 1) invece descrivono la gerarchia del Modello,*
