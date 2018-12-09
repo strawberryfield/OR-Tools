@@ -98,16 +98,54 @@ namespace Casasoft.MgMenu
         /// <summary>
         /// Draws the entire box
         /// </summary>
-        public void Draw()
+        public void Draw() 
         {
+            Draw(0);
+        }
+
+        /// <summary>
+        /// Draws the text starting at line 
+        /// </summary>
+        /// <param name="line">line to start from</param>
+        public void Draw(int line)
+        {
+            if (line < 0 || line > this.Count)
+                return;
+
+            // If the box can contain the whole text I draw all
+            if (Height() < box.Height - 10)
+                line = 0;
+
             int y = box.Top + 5;
-            foreach (var row in this)
+            for(int r = line; r < this.Count; r++)
             {
-                row.Draw(sb, fonts, new Vector2(box.Left + 10, y), Color.Black);
-                y += row.Height(fonts);
+                int h = this[r].Height(fonts);
+                if (y + h > box.Height - 5)
+                    break;
+
+                this[r].Draw(sb, fonts, new Vector2(box.Left + 10, y), Color.Black);
+                y += h;
             }
         }
 
+        /// <summary>
+        /// Total height of the text
+        /// </summary>
+        /// <returns></returns>
+        public int Height()
+        {
+            int ret = 0;
+            foreach (var row in this)
+                ret += row.Height(fonts);
+            return ret;
+        }
+
+        #region add
+        /// <summary>
+        /// Adds lines of text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="size"></param>
         public void AddTextRows(string text, FontSizes size)
         {
             string[] lines = text.Split('\n');
@@ -115,15 +153,25 @@ namespace Casasoft.MgMenu
                 this.Add(new TextRow(l, size));
         }
 
+        /// <summary>
+        /// Wraps and adds lines of text 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="size"></param>
         public void AddTextRowsWrapped(string text, FontSizes size)
         {
             AddTextRows(WrapText(text, size), size);
         }
 
+        /// <summary>
+        /// Wraps and adds lines of text  with normal font
+        /// </summary>
+        /// <param name="text"></param>
         public void AddTextRowsWrapped(string text)
         {
             AddTextRowsWrapped(text, FontSizes.Normal);
         }
+        #endregion
 
         #region string wrap
         /// <summary>

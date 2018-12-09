@@ -17,7 +17,7 @@
 
 using System;
 
-namespace Casasoft.MgMenu
+namespace ShapeViewer
 {
 #if WINDOWS || LINUX
     /// <summary>
@@ -31,7 +31,7 @@ namespace Casasoft.MgMenu
         [STAThread]
         static void Main()
         {
-            using (var game = new MgMenu())
+            using (var game = new ShapeViewer())
                 game.Run();
         }
     }
