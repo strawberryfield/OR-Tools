@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\Program\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -75,11 +75,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <Content Include="Samples\Shapes\TSF_MAR_FV_Pietracuta.s" />
+    <Content Include="Samples\Shapes\tsf_mar_fv_pietracuta_ASC.s" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
     <None Include="readme.md" />
+    <None Include="Samples\Shapes\TSF_MAR_FV_Pietracuta.sd" />
+    <None Include="Samples\Textures\scritta_pietracuta.ace" />
+    <None Include="Samples\Textures\TSF_MAR_neve.ace" />
+    <None Include="Samples\Textures\TSF_MAR_St_Pietracuta.ace" />
+    <None Include="Samples\Textures\TSF_MAR_St_Pietracuta_night.ace" />
+    <None Include="Samples\Textures\TSF_MAR_tetto_coppi.ace" />
     <None Include="sfiles.md" />
   </ItemGroup>
   <ItemGroup>

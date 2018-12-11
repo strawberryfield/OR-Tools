@@ -19,6 +19,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
+using System.Collections.Generic;
 
 namespace ShapeViewer
 {
@@ -43,7 +44,8 @@ namespace ShapeViewer
         //Geometric info
         VertexPositionColor[] triangleVertices;
         VertexBuffer vertexBuffer;
-
+        IndexBuffer indexBuffer;
+        List<int> indices;
 
         public ShapeViewer()
         {
@@ -65,7 +67,7 @@ namespace ShapeViewer
 
             //Setup Camera
             camTarget = new Vector3(0f, 0f, 0f);
-            camPosition = new Vector3(0f, 0f, -10f);
+            camPosition = new Vector3(30f, 30f, -40f);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                                MathHelper.ToRadians(45f),
                                GraphicsDevice.DisplayMode.AspectRatio,
@@ -98,7 +100,37 @@ namespace ShapeViewer
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            ShapeFile shape = new ShapeFile("F:\\Program Files (x86)\\Microsoft Games\\Train Simulator\\ROUTES\\tures\\SHAPES\\TSF_BCT_BoFrost.s", true);
+            ShapeFile shape = new ShapeFile("..\\ORTools\\ShapeViewer\\samples\\SHAPES\\TSF_MAR_FV_Pietracuta.s", true);
+
+            VertexPositionColor[] vertices = new VertexPositionColor[shape.shape.points.Count];
+            for(int j=0; j < shape.shape.points.Count; j++)
+            {
+                vertices[j] = new VertexPositionColor(
+                    new Vector3(shape.shape.points[j].X, shape.shape.points[j].Y, shape.shape.points[j].Z),
+                    Color.Yellow);
+            }
+            // Set up the vertex buffer
+            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 
+                shape.shape.points.Count, BufferUsage.WriteOnly);
+            vertexBuffer.SetData<VertexPositionColor>(vertices);
+
+            // vertex indexes
+            indices = new List<int>();
+            sub_objects subs = shape.shape.lod_controls[0].distance_levels[0].sub_objects;
+            foreach(var so in subs)
+            {
+                foreach(var prim in so.primitives)
+                {
+                    foreach(var vi in prim.indexed_trilist.vertex_idxs)
+                    {
+                        indices.Add(vi.a);
+                        indices.Add(vi.b);
+                        indices.Add(vi.c);
+                    }
+                }
+            }
+            indexBuffer = new IndexBuffer(graphics.GraphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Count, BufferUsage.WriteOnly);
+            indexBuffer.SetData(indices.ToArray());
         }
 
         /// <summary>
@@ -134,21 +166,19 @@ namespace ShapeViewer
             basicEffect.Projection = projectionMatrix;
             basicEffect.View = viewMatrix;
             basicEffect.World = worldMatrix;
+            basicEffect.VertexColorEnabled = true;
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            GraphicsDevice.Indices = indexBuffer;
 
-            //Turn off culling so we see both sides of our rendered triangle
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
 
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.
-                    Passes)
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.
-                                              TriangleList, 0, 3);
+                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, indices.Count);
             }
 
             base.Draw(gameTime);
