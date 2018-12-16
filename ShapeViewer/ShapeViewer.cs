@@ -19,7 +19,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
-using System.Collections.Generic;
 
 namespace ShapeViewer
 {
@@ -41,11 +40,10 @@ namespace ShapeViewer
         //BasicEffect for rendering
         BasicEffect basicEffect;
 
-        //Geometric info
-        VertexPositionColor[] triangleVertices;
-        VertexBuffer vertexBuffer;
-        IndexBuffer indexBuffer;
-        List<int> indices;
+        Viewer viewer;
+        SharedShape sh;
+
+        string examples = "..\\ORTools\\ShapeViewer\\samples\\";
 
         public ShapeViewer()
         {
@@ -81,9 +79,6 @@ namespace ShapeViewer
             basicEffect = new BasicEffect(GraphicsDevice);
             basicEffect.Alpha = 1f;
 
-            // Want to see the colors of the vertices, this needs to be on
-            basicEffect.VertexColorEnabled = true;
-
             //Lighting requires normal information which VertexPositionColor does not have
             //If you want to use lighting and VPC you need to create a custom def
             basicEffect.LightingEnabled = false;
@@ -98,39 +93,10 @@ namespace ShapeViewer
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            viewer = new Viewer();
+            viewer.GraphicsDevice = GraphicsDevice;
+            sh = new SharedShape(viewer, examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 
-            // TODO: use this.Content to load your game content here
-            ShapeFile shape = new ShapeFile("..\\ORTools\\ShapeViewer\\samples\\SHAPES\\TSF_MAR_FV_Pietracuta.s", true);
-
-            VertexPositionColor[] vertices = new VertexPositionColor[shape.shape.points.Count];
-            for(int j=0; j < shape.shape.points.Count; j++)
-            {
-                vertices[j] = new VertexPositionColor(
-                    new Vector3(shape.shape.points[j].X, shape.shape.points[j].Y, shape.shape.points[j].Z),
-                    Color.Yellow);
-            }
-            // Set up the vertex buffer
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 
-                shape.shape.points.Count, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
-
-            // vertex indexes
-            indices = new List<int>();
-            sub_objects subs = shape.shape.lod_controls[0].distance_levels[0].sub_objects;
-            foreach(var so in subs)
-            {
-                foreach(var prim in so.primitives)
-                {
-                    foreach(var vi in prim.indexed_trilist.vertex_idxs)
-                    {
-                        indices.Add(vi.a);
-                        indices.Add(vi.b);
-                        indices.Add(vi.c);
-                    }
-                }
-            }
-            indexBuffer = new IndexBuffer(graphics.GraphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Count, BufferUsage.WriteOnly);
-            indexBuffer.SetData(indices.ToArray());
         }
 
         /// <summary>
@@ -166,22 +132,32 @@ namespace ShapeViewer
             basicEffect.Projection = projectionMatrix;
             basicEffect.View = viewMatrix;
             basicEffect.World = worldMatrix;
-            basicEffect.VertexColorEnabled = true;
 
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            GraphicsDevice.Indices = indexBuffer;
-
+            Texture2D Texture = AceFile.Texture2DFromFile(GraphicsDevice, examples + "TEXTURES\\TSF_MAR_St_Pietracuta.ace");
+            basicEffect.Texture = Texture;
+            basicEffect.TextureEnabled = true;
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
 
+            SharedShape.SubObject[] subs = sh.LodControls[0].DistanceLevels[0].SubObjects;
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, indices.Count);
+                foreach (var so  in subs)
+                {
+                    foreach (var pr in so.ShapePrimitives)
+                    {
+                        pr.Draw(GraphicsDevice);
+                    }
+                }
             }
+
+
 
             base.Draw(gameTime);
         }
     }
+
+
 }
