@@ -19,6 +19,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
+using Orts.Viewer3D;
+using Orts.Viewer3D.Common;
+using ORTS.Settings;
+using System;
+using System.Linq;
 
 namespace ShapeViewer
 {
@@ -93,8 +98,16 @@ namespace ShapeViewer
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            viewer = new Viewer();
-            viewer.GraphicsDevice = GraphicsDevice;
+           
+            Simulator sim = new Simulator();
+            sim.RoutePath = examples;
+            sim.Season = SeasonType.Summer;
+            sim.WeatherType = WeatherType.Clear;
+            var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
+            sim.Settings = new UserSettings(options);
+
+            viewer = new Viewer(GraphicsDevice, sim);
+
             sh = new SharedShape(viewer, examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 
         }
@@ -133,25 +146,27 @@ namespace ShapeViewer
             basicEffect.View = viewMatrix;
             basicEffect.World = worldMatrix;
 
-            Texture2D Texture = AceFile.Texture2DFromFile(GraphicsDevice, examples + "TEXTURES\\TSF_MAR_St_Pietracuta.ace");
-            basicEffect.Texture = Texture;
+            //Texture2D Texture = AceFile.Texture2DFromFile(GraphicsDevice, examples + "TEXTURES\\TSF_MAR_St_Pietracuta.ace");
+            //basicEffect.Texture = Texture;
             basicEffect.TextureEnabled = true;
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
 
             SharedShape.SubObject[] subs = sh.LodControls[0].DistanceLevels[0].SubObjects;
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                foreach (var so  in subs)
+            foreach (var so in subs)
+            {              
+                foreach (var pr in so.ShapePrimitives)
                 {
-                    foreach (var pr in so.ShapePrimitives)
-                    {
-                        pr.Draw(GraphicsDevice);
-                    }
+                    Texture2D texture = AceFile.Texture2DFromFile(GraphicsDevice, ((SceneryMaterial)pr.Material).TexturePath);
+                    basicEffect.Texture = texture;
+
+                    foreach (var pass in basicEffect.CurrentTechnique.Passes)
+                        pass.Apply();
+                    pr.Draw(GraphicsDevice);
                 }
             }
+            
 
 
 

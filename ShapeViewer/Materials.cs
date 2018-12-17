@@ -20,7 +20,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Orts.Viewer3D.Common;
-using Orts.Viewer3D.Popups;
 using ORTS.Common;
 using System;
 using System.Collections.Generic;
@@ -181,7 +180,7 @@ namespace Orts.Viewer3D
         [CallOnThread("Updater")]
         public string GetStatus()
         {
-            return Viewer.Catalog.GetPluralStringFmt("{0:F0} texture", "{0:F0} textures", Textures.Keys.Count);
+            return string.Format("{0:F0} texture", "{0:F0} textures", Textures.Keys.Count);
         }
     }
 
@@ -196,7 +195,7 @@ namespace Orts.Viewer3D
         public readonly LightGlowShader LightGlowShader;
         public readonly ParticleEmitterShader ParticleEmitterShader;
         public readonly PopupWindowShader PopupWindowShader;
-        public readonly PrecipitationShader PrecipitationShader;
+//        public readonly PrecipitationShader PrecipitationShader;
         public readonly SceneryShader SceneryShader;
         public readonly ShadowMapShader ShadowMapShader;
         public readonly SkyShader SkyShader;
@@ -211,12 +210,12 @@ namespace Orts.Viewer3D
         {
             Viewer = viewer;
             // TODO: Move to Loader process.
-            LightConeShader = new LightConeShader(viewer.RenderProcess.GraphicsDevice);
-            LightGlowShader = new LightGlowShader(viewer.RenderProcess.GraphicsDevice);
-            ParticleEmitterShader = new ParticleEmitterShader(viewer.RenderProcess.GraphicsDevice);
-            PopupWindowShader = new PopupWindowShader(viewer, viewer.RenderProcess.GraphicsDevice);
-            PrecipitationShader = new PrecipitationShader(viewer.RenderProcess.GraphicsDevice);
-            SceneryShader = new SceneryShader(viewer.RenderProcess.GraphicsDevice);
+            LightConeShader = new LightConeShader(viewer.GraphicsDevice);
+            LightGlowShader = new LightGlowShader(viewer.GraphicsDevice);
+            ParticleEmitterShader = new ParticleEmitterShader(viewer.GraphicsDevice);
+            PopupWindowShader = new PopupWindowShader(viewer, viewer.GraphicsDevice);
+//            PrecipitationShader = new PrecipitationShader(viewer.RenderProcess.GraphicsDevice);
+            SceneryShader = new SceneryShader(viewer.GraphicsDevice);
             var microtexPath = viewer.Simulator.RoutePath + @"\TERRTEX\microtex.ace";
             if (File.Exists(microtexPath))
             {
@@ -233,12 +232,12 @@ namespace Orts.Viewer3D
                     Trace.WriteLine(new FileLoadException(microtexPath, error));
                 }
             }
-            ShadowMapShader = new ShadowMapShader(viewer.RenderProcess.GraphicsDevice);
-            SkyShader = new SkyShader(viewer.RenderProcess.GraphicsDevice);
-            DebugShader = new DebugShader(viewer.RenderProcess.GraphicsDevice);
+            ShadowMapShader = new ShadowMapShader(viewer.GraphicsDevice);
+            SkyShader = new SkyShader(viewer.GraphicsDevice);
+            DebugShader = new DebugShader(viewer.GraphicsDevice);
 
             // TODO: This should happen on the loader thread.
-            MissingTexture = SharedTextureManager.Get(viewer.RenderProcess.GraphicsDevice, Path.Combine(viewer.ContentPath, "blank.bmp"));
+            MissingTexture = SharedTextureManager.Get(viewer.GraphicsDevice, Path.Combine(viewer.ContentPath, "blank.bmp"));
 
             // Managing default snow textures
             var defaultSnowTexturePath = viewer.Simulator.RoutePath + @"\TERRTEX\SNOW\ORTSDefaultSnow.ace";
@@ -278,72 +277,72 @@ namespace Orts.Viewer3D
             {
                 switch (materialName)
                 {
-                    case "Debug":
-                        Materials[materialKey] = new HUDGraphMaterial(Viewer);
-                        break;
-                    case "DebugNormals":
-                        Materials[materialKey] = new DebugNormalMaterial(Viewer);
-                        break;
-                    case "Forest":
-                        Materials[materialKey] = new ForestMaterial(Viewer, textureName);
-                        break;
-                    case "Label3D":
-                        Materials[materialKey] = new Label3DMaterial(Viewer);
-                        break;
-                    case "LightCone":
-                        Materials[materialKey] = new LightConeMaterial(Viewer);
-                        break;
-                    case "LightGlow":
-                        Materials[materialKey] = new LightGlowMaterial(Viewer);
-                        break;
-                    case "PopupWindow":
-                        Materials[materialKey] = new PopupWindowMaterial(Viewer);
-                        break;
-                    case "ParticleEmitter":
-                        Materials[materialKey] = new ParticleEmitterMaterial(Viewer, textureName);
-                        break;
-                    case "Precipitation":
-                        Materials[materialKey] = new PrecipitationMaterial(Viewer);
-                        break;
+                    //case "Debug":
+                    //    Materials[materialKey] = new HUDGraphMaterial(Viewer);
+                    //    break;
+                    //case "DebugNormals":
+                    //    Materials[materialKey] = new DebugNormalMaterial(Viewer);
+                    //    break;
+                    //case "Forest":
+                    //    Materials[materialKey] = new ForestMaterial(Viewer, textureName);
+                    //    break;
+                    //case "Label3D":
+                    //    Materials[materialKey] = new Label3DMaterial(Viewer);
+                    //    break;
+                    //case "LightCone":
+                    //    Materials[materialKey] = new LightConeMaterial(Viewer);
+                    //    break;
+                    //case "LightGlow":
+                    //    Materials[materialKey] = new LightGlowMaterial(Viewer);
+                    //    break;
+                    //case "PopupWindow":
+                    //    Materials[materialKey] = new PopupWindowMaterial(Viewer);
+                    //    break;
+                    //case "ParticleEmitter":
+                    //    Materials[materialKey] = new ParticleEmitterMaterial(Viewer, textureName);
+                    //    break;
+                    //case "Precipitation":
+                    //    Materials[materialKey] = new PrecipitationMaterial(Viewer);
+                    //    break;
                     case "Scenery":
                         Materials[materialKey] = new SceneryMaterial(Viewer, textureName, (SceneryMaterialOptions)options, mipMapBias);
                         break;
                     case "ShadowMap":
                         Materials[materialKey] = new ShadowMapMaterial(Viewer);
                         break;
-                    case "SignalLight":
-                        Materials[materialKey] = new SignalLightMaterial(Viewer, textureName);
-                        break;
-                    case "SignalLightGlow":
-                        Materials[materialKey] = new SignalLightGlowMaterial(Viewer);
-                        break;
-                    case "Sky":
-                        Materials[materialKey] = new SkyMaterial(Viewer);
-                        break;
-                    case "MSTSSky":
-                        Materials[materialKey] = new MSTSSkyMaterial(Viewer);
-                        break;
-                    case "SpriteBatch":
-                        Materials[materialKey] = new SpriteBatchMaterial(Viewer);
-                        break;
-                    case "CabSpriteBatch":
-                        Materials[materialKey] = new CabSpriteBatchMaterial(Viewer, cabShader);
-                        break;
-                    case "Terrain":
-                        Materials[materialKey] = new TerrainMaterial(Viewer, textureName, SharedMaterialManager.MissingTexture);
-                        break;
-                    case "TerrainShared":
-                        Materials[materialKey] = new TerrainSharedMaterial(Viewer, textureName);
-                        break;
-                    case "TerrainSharedDistantMountain":
-                        Materials[materialKey] = new TerrainSharedDistantMountain(Viewer, textureName);
-                        break;
-                    case "Transfer":
-                        Materials[materialKey] = new TransferMaterial(Viewer, textureName);
-                        break;
-                    case "Water":
-                        Materials[materialKey] = new WaterMaterial(Viewer, textureName);
-                        break;
+                    //case "SignalLight":
+                    //    Materials[materialKey] = new SignalLightMaterial(Viewer, textureName);
+                    //    break;
+                    //case "SignalLightGlow":
+                    //    Materials[materialKey] = new SignalLightGlowMaterial(Viewer);
+                    //    break;
+                    //case "Sky":
+                    //    Materials[materialKey] = new SkyMaterial(Viewer);
+                    //    break;
+                    //case "MSTSSky":
+                    //    Materials[materialKey] = new MSTSSkyMaterial(Viewer);
+                    //    break;
+                    //case "SpriteBatch":
+                    //    Materials[materialKey] = new SpriteBatchMaterial(Viewer);
+                    //    break;
+                    //case "CabSpriteBatch":
+                    //    Materials[materialKey] = new CabSpriteBatchMaterial(Viewer, cabShader);
+                    //    break;
+                    //case "Terrain":
+                    //    Materials[materialKey] = new TerrainMaterial(Viewer, textureName, SharedMaterialManager.MissingTexture);
+                    //    break;
+                    //case "TerrainShared":
+                    //    Materials[materialKey] = new TerrainSharedMaterial(Viewer, textureName);
+                    //    break;
+                    //case "TerrainSharedDistantMountain":
+                    //    Materials[materialKey] = new TerrainSharedDistantMountain(Viewer, textureName);
+                    //    break;
+                    //case "Transfer":
+                    //    Materials[materialKey] = new TransferMaterial(Viewer, textureName);
+                    //    break;
+                    //case "Water":
+                    //    Materials[materialKey] = new WaterMaterial(Viewer, textureName);
+                    //    break;
                     default:
                         Trace.TraceInformation("Skipped unknown material type {0}", materialName);
                         Materials[materialKey] = new YellowMaterial(Viewer);
@@ -362,16 +361,16 @@ namespace Orts.Viewer3D
                 {
                     var material = materialPair.Value as SceneryMaterial;
                     if (material.LoadNightTexture()) count++;
-                     if (count >= 20)
-                     {
-                         count = 0;
-                         // retest if there is enough free memory left;
-                         var remainingMemorySpace = Viewer.LoadMemoryThreshold - Viewer.HUDWindow.GetWorkingSetSize();
-                         if (remainingMemorySpace < 0)
-                         { 
-                             return false; // too bad, no more space, other night textures won't be loaded
-                         }
-                     }
+                     //if (count >= 20)
+                     //{
+                     //    count = 0;
+                     //    // retest if there is enough free memory left;
+                     //    var remainingMemorySpace = Viewer.LoadMemoryThreshold - Viewer.HUDWindow.GetWorkingSetSize();
+                     //    if (remainingMemorySpace < 0)
+                     //    { 
+                     //        return false; // too bad, no more space, other night textures won't be loaded
+                     //    }
+                     //}
                 }
             }
             return true;
@@ -386,16 +385,16 @@ namespace Orts.Viewer3D
                {
                    var material = materialPair.Value as SceneryMaterial;
                    if (material.LoadDayTexture()) count++;
-                   if (count >= 20)
-                   {
-                       count = 0;
-                       // retest if there is enough free memory left;
-                       var remainingMemorySpace = Viewer.LoadMemoryThreshold - Viewer.HUDWindow.GetWorkingSetSize();
-                       if (remainingMemorySpace < 0)
-                       {
-                           return false; // too bad, no more space, other night textures won't be loaded
-                       }
-                   }
+                   //if (count >= 20)
+                   //{
+                   //    count = 0;
+                   //    // retest if there is enough free memory left;
+                   //    var remainingMemorySpace = Viewer.LoadMemoryThreshold - Viewer.HUDWindow.GetWorkingSetSize();
+                   //    if (remainingMemorySpace < 0)
+                   //    {
+                   //        return false; // too bad, no more space, other night textures won't be loaded
+                   //    }
+                   //}
                }
            }
            return true;
@@ -422,23 +421,23 @@ namespace Orts.Viewer3D
 
         public void LoadPrep()
         {
-            if (Viewer.Settings.UseMSTSEnv == false)
-            {
-                Viewer.World.Sky.LoadPrep();
-                sunDirection = Viewer.World.Sky.solarDirection;
-            }
-            else
-            {
-                Viewer.World.MSTSSky.LoadPrep();
-                sunDirection = Viewer.World.MSTSSky.mstsskysolarDirection;
-            }
+            //if (Viewer.Settings.UseMSTSEnv == false)
+            //{
+            //    Viewer.World.Sky.LoadPrep();
+            //    sunDirection = Viewer.World.Sky.solarDirection;
+            //}
+            //else
+            //{
+            //    Viewer.World.MSTSSky.LoadPrep();
+            //    sunDirection = Viewer.World.MSTSSky.mstsskysolarDirection;
+            //}
         }
 
 
         [CallOnThread("Updater")]
         public string GetStatus()
         {
-            return Viewer.Catalog.GetPluralStringFmt("{0:F0} material", "{0:F0} materials", Materials.Keys.Count);
+            return string.Format("{0:F0} material", "{0:F0} materials", Materials.Keys.Count);
         }
 
         public static Color FogColor = new Color(110, 110, 110, 255);
@@ -451,81 +450,81 @@ namespace Orts.Viewer3D
         float distance = 1000;
         internal void UpdateShaders()
         {
-            if(Viewer.Settings.UseMSTSEnv == false)
-                sunDirection = Viewer.World.Sky.solarDirection;
-            else
-                sunDirection = Viewer.World.MSTSSky.mstsskysolarDirection;
+            //if(Viewer.Settings.UseMSTSEnv == false)
+            //    sunDirection = Viewer.World.Sky.solarDirection;
+            //else
+            //    sunDirection = Viewer.World.MSTSSky.mstsskysolarDirection;
 
-            SceneryShader.SetLightVector_ZFar(sunDirection, Viewer.Settings.ViewingDistance);
+            //SceneryShader.SetLightVector_ZFar(sunDirection, Viewer.Settings.ViewingDistance);
             
-            // Headlight illumination
-            if (Viewer.PlayerLocomotiveViewer != null
-                && Viewer.PlayerLocomotiveViewer.lightDrawer != null
-                && Viewer.PlayerLocomotiveViewer.lightDrawer.HasLightCone)
-            {
-                var lightDrawer = Viewer.PlayerLocomotiveViewer.lightDrawer;
-                var lightState = lightDrawer.IsLightConeActive;
-                if (lightState != lastLightState)
-                {
-                    if (lightDrawer.LightConeFadeIn > 0)
-                    {
-                        fadeStartTimer = Viewer.Simulator.GameTime;
-                        fadeDuration = lightDrawer.LightConeFadeIn;
-                    }
-                    else if (lightDrawer.LightConeFadeOut > 0)
-                    {
-                        fadeStartTimer = Viewer.Simulator.GameTime;
-                        fadeDuration = -lightDrawer.LightConeFadeOut;
-                    }
-                    lastLightState = lightState;
-                }
-                else if (!lastLightState && fadeDuration < 0 && Viewer.Simulator.GameTime > fadeStartTimer - fadeDuration)
-                {
-                    fadeDuration = 0;
-                }
-                if (!lightState && fadeDuration == 0)
-                    // This occurs when switching locos and needs to be handled or we get lingering light.
-                    SceneryShader.SetHeadlightOff();
-                else
-                {
-                    if (sunDirection.Y <= -0.05)
-                    {
-                        clampValue = 1; // at nighttime max headlight
-                        distance = lightDrawer.LightConeDistance; // and max distance
-                    }
-                    else if (sunDirection.Y >= 0.15)
-                    {
-                        clampValue = 0.5f; // at daytime min headlight
-                        distance = lightDrawer.LightConeDistance*0.1f; // and min distance
+            //// Headlight illumination
+            //if (Viewer.PlayerLocomotiveViewer != null
+            //    && Viewer.PlayerLocomotiveViewer.lightDrawer != null
+            //    && Viewer.PlayerLocomotiveViewer.lightDrawer.HasLightCone)
+            //{
+            //    var lightDrawer = Viewer.PlayerLocomotiveViewer.lightDrawer;
+            //    var lightState = lightDrawer.IsLightConeActive;
+            //    if (lightState != lastLightState)
+            //    {
+            //        if (lightDrawer.LightConeFadeIn > 0)
+            //        {
+            //            fadeStartTimer = Viewer.Simulator.GameTime;
+            //            fadeDuration = lightDrawer.LightConeFadeIn;
+            //        }
+            //        else if (lightDrawer.LightConeFadeOut > 0)
+            //        {
+            //            fadeStartTimer = Viewer.Simulator.GameTime;
+            //            fadeDuration = -lightDrawer.LightConeFadeOut;
+            //        }
+            //        lastLightState = lightState;
+            //    }
+            //    else if (!lastLightState && fadeDuration < 0 && Viewer.Simulator.GameTime > fadeStartTimer - fadeDuration)
+            //    {
+            //        fadeDuration = 0;
+            //    }
+            //    if (!lightState && fadeDuration == 0)
+            //        // This occurs when switching locos and needs to be handled or we get lingering light.
+            //        SceneryShader.SetHeadlightOff();
+            //    else
+            //    {
+            //        if (sunDirection.Y <= -0.05)
+            //        {
+            //            clampValue = 1; // at nighttime max headlight
+            //            distance = lightDrawer.LightConeDistance; // and max distance
+            //        }
+            //        else if (sunDirection.Y >= 0.15)
+            //        {
+            //            clampValue = 0.5f; // at daytime min headlight
+            //            distance = lightDrawer.LightConeDistance*0.1f; // and min distance
 
-                    }
-                    else
-                    {
-                        clampValue = 1 - 2.5f * (sunDirection.Y + 0.05f); // in the meantime interpolate
-                        distance = lightDrawer.LightConeDistance*(1-4.5f*(sunDirection.Y + 0.05f)); //ditto
-                    }
-                    SceneryShader.SetHeadlight(ref lightDrawer.LightConePosition, ref lightDrawer.LightConeDirection, distance, lightDrawer.LightConeMinDotProduct, (float)(Viewer.Simulator.GameTime - fadeStartTimer), fadeDuration, clampValue, ref lightDrawer.LightConeColor);
-                }
-            }
-            else
-            {
-                SceneryShader.SetHeadlightOff();
-            }
-            // End headlight illumination
-            if (Viewer.Settings.UseMSTSEnv == false)
-            {
-                SceneryShader.Overcast = Viewer.Simulator.Weather.OvercastFactor;
-                SceneryShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
-                ParticleEmitterShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
-                SceneryShader.ViewerPos = Viewer.Camera.XnaLocation(Viewer.Camera.CameraWorldLocation);
-            }
-            else
-            {
-                SceneryShader.Overcast = Viewer.World.MSTSSky.mstsskyovercastFactor;
-                SceneryShader.SetFog(Viewer.World.MSTSSky.mstsskyfogDistance, ref SharedMaterialManager.FogColor);
-                ParticleEmitterShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
-                SceneryShader.ViewerPos = Viewer.Camera.XnaLocation(Viewer.Camera.CameraWorldLocation);
-            }
+            //        }
+            //        else
+            //        {
+            //            clampValue = 1 - 2.5f * (sunDirection.Y + 0.05f); // in the meantime interpolate
+            //            distance = lightDrawer.LightConeDistance*(1-4.5f*(sunDirection.Y + 0.05f)); //ditto
+            //        }
+            //        SceneryShader.SetHeadlight(ref lightDrawer.LightConePosition, ref lightDrawer.LightConeDirection, distance, lightDrawer.LightConeMinDotProduct, (float)(Viewer.Simulator.GameTime - fadeStartTimer), fadeDuration, clampValue, ref lightDrawer.LightConeColor);
+            //    }
+            //}
+            //else
+            //{
+            //    SceneryShader.SetHeadlightOff();
+            //}
+            //// End headlight illumination
+            //if (Viewer.Settings.UseMSTSEnv == false)
+            //{
+            //    SceneryShader.Overcast = Viewer.Simulator.Weather.OvercastFactor;
+            //    SceneryShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
+            //    ParticleEmitterShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
+            //    SceneryShader.ViewerPos = Viewer.Camera.XnaLocation(Viewer.Camera.CameraWorldLocation);
+            //}
+            //else
+            //{
+            //    SceneryShader.Overcast = Viewer.World.MSTSSky.mstsskyovercastFactor;
+            //    SceneryShader.SetFog(Viewer.World.MSTSSky.mstsskyfogDistance, ref SharedMaterialManager.FogColor);
+            //    ParticleEmitterShader.SetFog(Viewer.Simulator.Weather.FogDistance, ref SharedMaterialManager.FogColor);
+            //    SceneryShader.ViewerPos = Viewer.Camera.XnaLocation(Viewer.Camera.CameraWorldLocation);
+            //}
         }
     }
 
@@ -610,7 +609,7 @@ namespace Orts.Viewer3D
         public SpriteBatchMaterial(Viewer viewer)
             : base(viewer, null)
         {
-            SpriteBatch = new SpriteBatch(Viewer.RenderProcess.GraphicsDevice);
+            SpriteBatch = new SpriteBatch(Viewer.GraphicsDevice);
         }
 
         public override void SetState(GraphicsDevice graphicsDevice, Material previousMaterial)
@@ -635,7 +634,7 @@ namespace Orts.Viewer3D
         public CabSpriteBatchMaterial(Viewer viewer, CabShader cabShader)
             : base(viewer, null)
         {
-            SpriteBatch = new SpriteBatch(Viewer.RenderProcess.GraphicsDevice);
+            SpriteBatch = new SpriteBatch(Viewer.GraphicsDevice);
             CabShader = cabShader;
         }
 
@@ -697,7 +696,7 @@ namespace Orts.Viewer3D
         readonly SceneryMaterialOptions Options;
         readonly float MipMapBias;
         protected Texture2D Texture;
-        private readonly string TexturePath;
+        public readonly string TexturePath;
         protected Texture2D NightTexture;
         byte AceAlphaBits;   // the number of bits in the ace file's alpha channel 
         IEnumerator<EffectPass> ShaderPassesDarkShade;
@@ -729,22 +728,22 @@ namespace Orts.Viewer3D
                     NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
                Texture = Viewer.TextureManager.Get(texturePath, true);
             }
-            else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadNightTextures)
-            {
-                viewer.NightTexturesNotLoaded = true;
-                Texture = Viewer.TextureManager.Get(texturePath, true);
-            }
+            //else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadNightTextures)
+            //{
+            //    viewer.NightTexturesNotLoaded = true;
+            //    Texture = Viewer.TextureManager.Get(texturePath, true);
+            //}
 
-            else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadDayTextures)
-            {
-                var nightTexturePath = Helpers.GetNightTextureFile(Viewer.Simulator, texturePath);
-                if (!String.IsNullOrEmpty(nightTexturePath))
-                    NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
-                if (NightTexture != SharedMaterialManager.MissingTexture)
-                {
-                    viewer.DayTexturesNotLoaded = true;
-                }
-            }
+            //else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadDayTextures)
+            //{
+            //    var nightTexturePath = Helpers.GetNightTextureFile(Viewer.Simulator, texturePath);
+            //    if (!String.IsNullOrEmpty(nightTexturePath))
+            //        NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
+            //    if (NightTexture != SharedMaterialManager.MissingTexture)
+            //    {
+            //        viewer.DayTexturesNotLoaded = true;
+            //    }
+            //}
             else Texture = Viewer.TextureManager.Get(texturePath, true);
 
             // Record the number of bits in the alpha channel of the original ace file
@@ -889,7 +888,7 @@ namespace Orts.Viewer3D
             graphicsDevice.SamplerStates[0] = GetShadowTextureAddressMode();
 
             if (NightTexture != null && NightTexture != SharedMaterialManager.MissingTexture && (((Options & SceneryMaterialOptions.UndergroundTexture) != 0 &&
-                (Viewer.MaterialManager.sunDirection.Y < -0.085f || Viewer.Camera.IsUnderground)) || Viewer.MaterialManager.sunDirection.Y < 0.0f - ((float)KeyLengthRemainder()) / 5000f))
+                (Viewer.MaterialManager.sunDirection.Y < -0.085f )) || Viewer.MaterialManager.sunDirection.Y < 0.0f - ((float)KeyLengthRemainder()) / 5000f))
             {
                 shader.ImageTexture = NightTexture;
                 shader.ImageTextureIsNight = true;
@@ -954,7 +953,7 @@ namespace Orts.Viewer3D
         {
             var timeOffset = ((float)KeyLengthRemainder()) / 5000f; // TODO for later use for pseudorandom texture switch time
             if (NightTexture != null && NightTexture != SharedMaterialManager.MissingTexture && (((Options & SceneryMaterialOptions.UndergroundTexture) != 0 &&
-                (Viewer.MaterialManager.sunDirection.Y < -0.085f || Viewer.Camera.IsUnderground)) || Viewer.MaterialManager.sunDirection.Y < 0.0f - ((float)KeyLengthRemainder()) / 5000f))
+                (Viewer.MaterialManager.sunDirection.Y < -0.085f )) || Viewer.MaterialManager.sunDirection.Y < 0.0f - ((float)KeyLengthRemainder()) / 5000f))
                 return NightTexture;
 
             return Texture;
@@ -1020,7 +1019,7 @@ namespace Orts.Viewer3D
             : base(viewer, null)
         {
             var shadowMapResolution = Viewer.Settings.ShadowMapResolution;
-            BlurVertexBuffer = new VertexBuffer(Viewer.RenderProcess.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
+            BlurVertexBuffer = new VertexBuffer(Viewer.GraphicsDevice, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
             BlurVertexBuffer.SetData(new[] {
 				new VertexPositionTexture(new Vector3(-1, +1, 0), new Vector2(0, 0)),
 				new VertexPositionTexture(new Vector3(-1, -1, 0), new Vector2(0, shadowMapResolution)),
@@ -1161,7 +1160,7 @@ namespace Orts.Viewer3D
         {
             if (basicEffect == null)
             {
-                basicEffect = new BasicEffect(Viewer.RenderProcess.GraphicsDevice);
+                basicEffect = new BasicEffect(Viewer.GraphicsDevice);
                 basicEffect.Alpha = 1.0f;
                 basicEffect.DiffuseColor = new Vector3(197.0f / 255.0f, 203.0f / 255.0f, 37.0f / 255.0f);
                 basicEffect.SpecularColor = new Vector3(0.25f, 0.25f, 0.25f);
@@ -1213,7 +1212,7 @@ namespace Orts.Viewer3D
         {
             if (basicEffect == null)
             {
-                basicEffect = new BasicEffect(Viewer.RenderProcess.GraphicsDevice);
+                basicEffect = new BasicEffect(Viewer.GraphicsDevice);
                 basicEffect.Alpha = a;
                 basicEffect.DiffuseColor = new Vector3(r , g , b );
                 basicEffect.SpecularColor = new Vector3(0.25f, 0.25f, 0.25f);
@@ -1256,6 +1255,7 @@ namespace Orts.Viewer3D
         }
     }
 
+    /*
     public class Label3DMaterial : SpriteBatchMaterial
     {
         public readonly Texture2D Texture;
@@ -1273,7 +1273,7 @@ namespace Orts.Viewer3D
 
         public override void SetState(GraphicsDevice graphicsDevice, Material previousMaterial)
         {
-            var scaling = (float)graphicsDevice.PresentationParameters.BackBufferHeight / Viewer.RenderProcess.GraphicsDeviceManager.PreferredBackBufferHeight;
+            var scaling = (float)graphicsDevice.PresentationParameters.BackBufferHeight / Viewer.GraphicsDeviceManager.PreferredBackBufferHeight;
             Vector3 screenScaling = new Vector3(scaling);
             SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null, Matrix.CreateScale(scaling));
             SpriteBatch.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -1307,6 +1307,7 @@ namespace Orts.Viewer3D
             return new Point(textBox.X + 5, textBox.Y + 2);
         }
     }
+    */
 
     public class DebugNormalMaterial : Material
     {

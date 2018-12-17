@@ -10,32 +10,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Orts.Viewer3D.Common.Helpers;
+using Orts.Viewer3D;
 
 namespace ShapeViewer
 {
-    [Flags]
-    public enum ShapeFlags
-    {
-        None = 0,
-        // Shape casts a shadow (scenery objects according to RE setting, and all train objects).
-        ShadowCaster = 1,
-        // Shape needs automatic z-bias to keep it out of trouble.
-        AutoZBias = 2,
-        // Shape is an interior and must be rendered in a separate group.
-        Interior = 4,
-        // NOTE: Use powers of 2 for values!
-    }
 
-    public class Viewer
-    {
-        public GraphicsDevice GraphicsDevice;
-    }
-
-
+/*
     public class Material {
         public Viewer Viewer;
     }
-
+*/
     public abstract class RenderPrimitive
     {
         protected static VertexBuffer DummyVertexBuffer;
@@ -547,21 +531,20 @@ namespace ShapeViewer
                     if ((textureFlags & Helpers.TextureFlags.Underground) != 0)
                         options |= SceneryMaterialOptions.UndergroundTexture;
 
-                    Material material = new Material();
-                    material.Viewer = sharedShape.Viewer;
+                    Material material;
 
                     if (primitiveState.tex_idxs.Length != 0)
                     {
                         var texture = sFile.shape.textures[primitiveState.tex_idxs[0]];
                         var imageName = sFile.shape.images[texture.iImage];
-                        //if (string.IsNullOrEmpty(sharedShape.ReferencePath))
-                        //    material = sharedShape.Viewer.MaterialManager.Load("Scenery", Helpers.GetRouteTextureFile(sharedShape.Viewer.Simulator, textureFlags, imageName), (int)options, texture.MipMapLODBias);
-                        //else
-                        //    material = sharedShape.Viewer.MaterialManager.Load("Scenery", Helpers.GetTextureFile(sharedShape.Viewer.Simulator, textureFlags, sharedShape.ReferencePath, imageName), (int)options, texture.MipMapLODBias);
+                        if (string.IsNullOrEmpty(sharedShape.ReferencePath))
+                            material = sharedShape.Viewer.MaterialManager.Load("Scenery", Helpers.GetRouteTextureFile(sharedShape.Viewer.Simulator, textureFlags, imageName), (int)options, texture.MipMapLODBias);
+                        else
+                            material = sharedShape.Viewer.MaterialManager.Load("Scenery", Helpers.GetTextureFile(sharedShape.Viewer.Simulator, textureFlags, sharedShape.ReferencePath, imageName), (int)options, texture.MipMapLODBias);
                     }
                     else
                     {
-                        //                        material = sharedShape.Viewer.MaterialManager.Load("Scenery", null, (int)options);
+                        material = sharedShape.Viewer.MaterialManager.Load("Scenery", null, (int)options);
                     }
 
 #if DEBUG_SHAPE_HIERARCHY
