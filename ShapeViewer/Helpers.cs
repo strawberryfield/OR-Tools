@@ -49,6 +49,8 @@ namespace Orts.Viewer3D.Common
 
         public bool DontLoadNightTextures = false;
         public bool DontLoadDayTextures = false;
+        public bool NightTexturesNotLoaded = false;
+        public bool DayTexturesNotLoaded = false;
 
         public Viewer(GraphicsDevice GraphicsDevice, Simulator sim)
         {

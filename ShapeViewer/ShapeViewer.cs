@@ -152,6 +152,7 @@ namespace ShapeViewer
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             SharedShape.SubObject[] subs = sh.LodControls[0].DistanceLevels[0].SubObjects;
             foreach (var so in subs)
@@ -163,6 +164,7 @@ namespace ShapeViewer
 
                     foreach (var pass in basicEffect.CurrentTechnique.Passes)
                         pass.Apply();
+                    //                  pr.Material.Render(GraphicsDevice);
                     pr.Draw(GraphicsDevice);
                 }
             }

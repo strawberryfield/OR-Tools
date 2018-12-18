@@ -728,22 +728,22 @@ namespace Orts.Viewer3D
                     NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
                Texture = Viewer.TextureManager.Get(texturePath, true);
             }
-            //else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadNightTextures)
-            //{
-            //    viewer.NightTexturesNotLoaded = true;
-            //    Texture = Viewer.TextureManager.Get(texturePath, true);
-            //}
+            else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadNightTextures)
+            {
+                viewer.NightTexturesNotLoaded = true;
+                Texture = Viewer.TextureManager.Get(texturePath, true);
+            }
 
-            //else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadDayTextures)
-            //{
-            //    var nightTexturePath = Helpers.GetNightTextureFile(Viewer.Simulator, texturePath);
-            //    if (!String.IsNullOrEmpty(nightTexturePath))
-            //        NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
-            //    if (NightTexture != SharedMaterialManager.MissingTexture)
-            //    {
-            //        viewer.DayTexturesNotLoaded = true;
-            //    }
-            //}
+            else if ((Options & SceneryMaterialOptions.NightTexture) != 0 && viewer.DontLoadDayTextures)
+            {
+                var nightTexturePath = Helpers.GetNightTextureFile(Viewer.Simulator, texturePath);
+                if (!String.IsNullOrEmpty(nightTexturePath))
+                    NightTexture = Viewer.TextureManager.Get(nightTexturePath.ToLower());
+                if (NightTexture != SharedMaterialManager.MissingTexture)
+                {
+                    viewer.DayTexturesNotLoaded = true;
+                }
+            }
             else Texture = Viewer.TextureManager.Get(texturePath, true);
 
             // Record the number of bits in the alpha channel of the original ace file
