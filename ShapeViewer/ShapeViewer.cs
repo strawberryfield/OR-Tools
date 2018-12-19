@@ -33,27 +33,15 @@ namespace ShapeViewer
     public class ShapeViewer : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
-        //Camera
-        Vector3 camTarget;
-        Vector3 camPosition;
-        Matrix projectionMatrix;
-        Matrix viewMatrix;
-        Matrix worldMatrix;
-
-        //BasicEffect for rendering
-        BasicEffect basicEffect;
-
-        Viewer viewer;
-        SharedShape sh;
+        ShapeViewerLib sv;
 
         string examples = "..\\ORTools\\ShapeViewer\\samples\\";
 
         public ShapeViewer()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            //Content.RootDirectory = "Content";
+            sv = new ShapeViewerLib(this);
         }
 
         /// <summary>
@@ -68,25 +56,8 @@ namespace ShapeViewer
 
             base.Initialize();
 
-            //Setup Camera
-            camTarget = new Vector3(0f, 0f, 0f);
-            camPosition = new Vector3(30f, 30f, -40f);
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-                               MathHelper.ToRadians(45f),
-                               GraphicsDevice.DisplayMode.AspectRatio,
-                1f, 1000f);
-            viewMatrix = Matrix.CreateLookAt(camPosition, camTarget,
-                         new Vector3(0f, 1f, 0f));// Y up
-            worldMatrix = Matrix.CreateWorld(camTarget, Vector3.
-                          Forward, Vector3.Up);
-
-            //BasicEffect
-            basicEffect = new BasicEffect(GraphicsDevice);
-            basicEffect.Alpha = 1f;
-
-            //Lighting requires normal information which VertexPositionColor does not have
-            //If you want to use lighting and VPC you need to create a custom def
-            basicEffect.LightingEnabled = false;
+            sv.CameraSetup();
+            sv.BasicEffectSetup();
 
         }
 
@@ -96,19 +67,7 @@ namespace ShapeViewer
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-           
-            Simulator sim = new Simulator();
-            sim.RoutePath = examples;
-            sim.Season = SeasonType.Summer;
-            sim.WeatherType = WeatherType.Clear;
-            var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
-            sim.Settings = new UserSettings(options);
-
-            viewer = new Viewer(GraphicsDevice, sim);
-
-            sh = new SharedShape(viewer, examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
+            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 
         }
 
@@ -133,10 +92,10 @@ namespace ShapeViewer
 
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
-                camPosition.Z -= 0.1f;
+                sv.camPosition.Z -= 0.1f;
 
             if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
-                camPosition.Z += 0.1f;
+                sv.camPosition.Z += 0.1f;
 
             base.Update(gameTime);
         }
@@ -149,39 +108,8 @@ namespace ShapeViewer
         {
             GraphicsDevice.Clear(Color.WhiteSmoke);
 
-            viewMatrix = Matrix.CreateLookAt(camPosition, camTarget,
-             new Vector3(0f, 1f, 0f));// Y up
-
-            basicEffect.Projection = projectionMatrix;
-            basicEffect.View = viewMatrix;
-            basicEffect.World = worldMatrix;
-
-            //Texture2D Texture = AceFile.Texture2DFromFile(GraphicsDevice, examples + "TEXTURES\\TSF_MAR_St_Pietracuta.ace");
-            //basicEffect.Texture = Texture;
-            basicEffect.TextureEnabled = true;
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-
-            SharedShape.SubObject[] subs = sh.LodControls[0].DistanceLevels[0].SubObjects;
-            foreach (var so in subs)
-            {              
-                foreach (var pr in so.ShapePrimitives)
-                {
-                    Texture2D texture = AceFile.Texture2DFromFile(GraphicsDevice, ((SceneryMaterial)pr.Material).TexturePath);
-                    basicEffect.Texture = texture;
-
-                    foreach (var pass in basicEffect.CurrentTechnique.Passes)
-                        pass.Apply();
-                    //                  pr.Material.Render(GraphicsDevice);
-                    pr.Draw(GraphicsDevice);
-                }
-            }
+            sv.Draw();
             
-
-
-
             base.Draw(gameTime);
         }
     }
