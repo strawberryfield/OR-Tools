@@ -17,9 +17,9 @@
 
 // This file is the responsibility of the 3D & Environment Team. 
 
+using Casasoft.ShapeViewerLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Orts.Viewer3D.Common;
 using ORTS.Common;
 using System;
 using System.Collections.Generic;

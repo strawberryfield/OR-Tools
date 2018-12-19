@@ -28,7 +28,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using ORTS.Common;
 using System;
 using System.IO;
-using Orts.Viewer3D.Common;
+using Casasoft.ShapeViewerLib;
 
 namespace Orts.Viewer3D
 {

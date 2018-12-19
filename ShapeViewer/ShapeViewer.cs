@@ -20,7 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
 using Orts.Viewer3D;
-using Orts.Viewer3D.Common;
+using Casasoft.ShapeViewerLib;
 using ORTS.Settings;
 using System;
 using System.Linq;
@@ -132,6 +132,11 @@ namespace ShapeViewer
                 Exit();
 
             // TODO: Add your update logic here
+            if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
+                camPosition.Z -= 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
+                camPosition.Z += 0.1f;
 
             base.Update(gameTime);
         }
@@ -142,6 +147,11 @@ namespace ShapeViewer
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.Clear(Color.WhiteSmoke);
+
+            viewMatrix = Matrix.CreateLookAt(camPosition, camTarget,
+             new Vector3(0f, 1f, 0f));// Y up
+
             basicEffect.Projection = projectionMatrix;
             basicEffect.View = viewMatrix;
             basicEffect.World = worldMatrix;

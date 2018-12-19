@@ -1,7 +1,25 @@
-﻿using Microsoft.Xna.Framework;
+﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+//
+// Original work is COPYRIGHT 2011, 2012, 2013 by the Open Rails project.
+// 
+// This file is part of OR Tools.
+// 
+// OR Tools is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// OR Tools is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Orts.Formats.Msts;
-using Orts.Viewer3D.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,10 +27,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Orts.Viewer3D.Common.Helpers;
 using Orts.Viewer3D;
 
-namespace ShapeViewer
+namespace Casasoft.ShapeViewerLib
 {
 
 /*
@@ -20,32 +37,6 @@ namespace ShapeViewer
         public Viewer Viewer;
     }
 */
-    public abstract class RenderPrimitive
-    {
-        protected static VertexBuffer DummyVertexBuffer;
-        protected static readonly VertexDeclaration DummyVertexDeclaration = new VertexDeclaration(ShapeInstanceData.SizeInBytes, ShapeInstanceData.VertexElements);
-        protected static readonly Matrix[] DummyVertexData = new Matrix[] { Matrix.Identity };
-
-        /// <summary>
-        /// This is an adjustment for the depth buffer calculation which may be used to reduce the chance of co-planar primitives from fighting each other.
-        /// </summary>
-        // TODO: Does this actually make any real difference?
-        public float ZBias;
-
-        /// <summary>
-        /// This is a sorting adjustment for primitives with similar/the same world location. Primitives with higher SortIndex values are rendered after others. Has no effect on non-blended primitives.
-        /// </summary>
-        public float SortIndex;
-
-        /// <summary>
-        /// This is when the object actually renders itself onto the screen.
-        /// Do not reference any volatile data.
-        /// Executes in the RenderProcess thread
-        /// </summary>
-        /// <param name="graphicsDevice"></param>
-        public abstract void Draw(GraphicsDevice graphicsDevice);
-    }
-
 
     public class ShapePrimitive : RenderPrimitive
     {
@@ -164,21 +155,6 @@ namespace ShapeViewer
 
     }
 
-    struct ShapeInstanceData
-    {
-#pragma warning disable 0649
-        public Matrix World;
-#pragma warning restore 0649
-
-        public static readonly VertexElement[] VertexElements = {
-            new VertexElement(sizeof(float) * 0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
-            new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
-            new VertexElement(sizeof(float) * 8, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3),
-            new VertexElement(sizeof(float) * 12, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 4),
-        };
-
-        public static int SizeInBytes = sizeof(float) * 16;
-    }
 
     public class ShapePrimitiveInstances : RenderPrimitive
     {
