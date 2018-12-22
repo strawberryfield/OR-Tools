@@ -15,15 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
+using Casasoft.ShapeViewerLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
-using Orts.Viewer3D;
-using Casasoft.ShapeViewerLib;
-using ORTS.Settings;
-using System;
-using System.Linq;
 
 namespace ShapeViewer
 {
@@ -61,9 +57,6 @@ namespace ShapeViewer
             base.Initialize();
 
             sv.CameraSetup();
-            sv.camPosition = new Vector3((float)(cameraDistance * Math.Sin(cameraAngle)),
-    cameraHeight, -cameraDistance * (float)Math.Cos(cameraAngle));
-
             sv.BasicEffectSetup();
             sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
 
@@ -98,44 +91,7 @@ namespace ShapeViewer
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            bool recalcXZ = false;
-
-            // TODO: Add your update logic here
-            if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
-                sv.camPosition.Y -= 0.1f;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
-                sv.camPosition.Y += 0.1f;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                cameraDistance += 0.1f;
-                recalcXZ = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                cameraDistance -= 0.1f;
-                recalcXZ = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                cameraAngle += 0.01f;
-                recalcXZ = true;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                cameraAngle -= 0.01f;
-                recalcXZ = true;
-            }
-
-            if(recalcXZ)
-            {
-                sv.camPosition = new Vector3((float)(cameraDistance * Math.Sin(cameraAngle)), 
-                    sv.camPosition.Y, (float)(-cameraDistance * Math.Cos(cameraAngle)));
-            }
+            sv.Update();
 
             base.Update(gameTime);
         }

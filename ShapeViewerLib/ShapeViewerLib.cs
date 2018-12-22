@@ -1,23 +1,42 @@
-﻿using Microsoft.Xna.Framework;
+﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+// 
+// This file is part of OR Tools.
+// 
+// OR Tools is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// OR Tools is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
-using Orts.Viewer3D;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using ORTS.Settings;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace Casasoft.ShapeViewerLib
 {
     public class ShapeViewerLib
     {
         //Camera
-        public Vector3 camTarget;
-        public Vector3 camPosition;
-        public Matrix projectionMatrix;
-        public Matrix worldMatrix;
+        public float cameraHeight { get; set; }
+        public float cameraDistance { get; set; }
+        public float cameraAngle { get; set; }
+
+protected Vector3 camTarget;
+        protected Vector3 camPosition;
+        protected Matrix projectionMatrix;
+        protected Matrix worldMatrix;
 
         //BasicEffect for rendering
         BasicEffect basicEffect;
@@ -45,13 +64,21 @@ namespace Casasoft.ShapeViewerLib
         public void CameraSetup()
         {
             camTarget = new Vector3(0f, 0f, 0f);
-            camPosition = new Vector3(0f, 12f, -40f);
+            cameraDistance = 30f;
+            cameraHeight = 2f;
+            cameraAngle = 0f;
+            camPosition = GetCameraPosition();
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                                MathHelper.ToRadians(45f),
-                               Game.GraphicsDevice.DisplayMode.AspectRatio,
-                1f, 1000f);
+                               Game.GraphicsDevice.DisplayMode.AspectRatio, 1f, 1000f);
             worldMatrix = Matrix.CreateWorld(camTarget, Vector3.
                           Forward, Vector3.Up);
+        }
+
+        public Vector3 GetCameraPosition()
+        {
+            return new Vector3((float)(cameraDistance * Math.Sin(cameraAngle)),
+                            cameraHeight, -cameraDistance * (float)Math.Cos(cameraAngle));
         }
 
         public void BasicEffectSetup()
@@ -103,6 +130,54 @@ namespace Casasoft.ShapeViewerLib
             viewer = new Viewer(Game.GraphicsDevice, sim);
 
             Shape = new SharedShape(viewer, filename);
+        }
+
+        public void Update()
+        {
+            bool recalcXZ = false;
+
+            // TODO: Add your update logic here
+            if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
+            {
+                cameraHeight -= 0.1f;
+                camPosition.Y = cameraHeight;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
+            {
+                cameraHeight += 0.1f;
+                camPosition.Y = cameraHeight;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                cameraDistance += 0.1f;
+                recalcXZ = true;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                cameraDistance -= 0.1f;
+                recalcXZ = true;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                cameraAngle += 0.01f;
+                recalcXZ = true;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                cameraAngle -= 0.01f;
+                recalcXZ = true;
+            }
+
+            if (recalcXZ)
+            {
+                camPosition = GetCameraPosition();
+            }
+
         }
 
         public void Draw(int lod, int distanceLevel)
