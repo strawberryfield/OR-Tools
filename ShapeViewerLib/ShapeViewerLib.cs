@@ -126,9 +126,7 @@ namespace Casasoft.ShapeViewerLib
             {
                 foreach (var pr in so.ShapePrimitives)
                 {
-                    Texture2D texture = AceFile.Texture2DFromFile(Game.GraphicsDevice, ((SceneryMaterial)pr.Material).TexturePath);
-                    basicEffect.Texture = texture;
-
+                    basicEffect.Texture = pr.Material.GetShadowTexture();
                     foreach (var pass in basicEffect.CurrentTechnique.Passes)
                         pass.Apply();
 
