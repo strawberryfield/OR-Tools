@@ -53,6 +53,7 @@
     <Compile Include="PanelBase.cs" />
     <Compile Include="PanelHScroller.cs" />
     <Compile Include="PanelVScroller.cs" />
+    <Compile Include="PanelVScrollerDouble.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextBox.cs" />
   </ItemGroup>

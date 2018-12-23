@@ -17,23 +17,20 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.BitmapFonts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Casasoft.Panels2D
 {
-    public class FileBrowser : PanelVScroller
+    public class FileBrowser : PanelVScrollerDouble
     {
         public string CurrentPath;
         public string CurrentFile;
 
         protected DriveInfo[] drives;
+        protected string[] files;
+        protected string[] dirs;
+        protected bool isTopLevel;
 
         /// <summary>
         /// Constructor
@@ -46,6 +43,8 @@ namespace Casasoft.Panels2D
 
             drives = DriveInfo.GetDrives();
             maxItems = drives.Length;
+            isTopLevel = true;
+            OnSelectedChanged();
 
             Caption = "File browser";
         }
@@ -61,24 +60,65 @@ namespace Casasoft.Panels2D
         }
 
         /// <summary>
-        /// Draws the file list
+        /// Directory selection
         /// </summary>
-        /// <param name="sb"></param>
-        protected override void ScrollerItemDetail(SpriteBatch sb)
+        /// <returns></returns>
+        protected override int EnterPressed()
         {
-            TextBox detail = new TextBox(sb, fonts, textBox);
-            CurrentPath = drives[Selected].Name;
+            try
+            {
+                string[] d = Directory.GetDirectories(CurrentPath);
+                if(d.Length > 0)
+                {
+                    isTopLevel = false;
+                    dirs = d;
+                    maxItems = dirs.Length;
+                    Selected = 0;
+                    OnSelectedChanged();
+                }
+
+            }
+            catch (Exception)
+            {
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// File selection
+        /// </summary>
+        /// <returns></returns>
+        protected override int EnterPressedOnRight()
+        {
+            if (maxItemsRight > 0)
+            {
+                CurrentFile = files[Selected];
+                return 1;
+            }
+            else
+                return 0;
+        }
+
+        protected override void OnSelectedChanged()
+        {
+            if (isTopLevel)
+                CurrentPath = drives[Selected].Name;
+            else
+                CurrentPath = dirs[Selected];
 
             try
             {
-                foreach (var f in Directory.GetFiles(CurrentPath))
-                {
-                    detail.AddTextRows(f, FontSizes.Subtitle);
-                }
+                files = Directory.GetFiles(CurrentPath);
+                maxItemsRight = files.Length;
             }
-            catch (Exception)  { }
+            catch(Exception)
+            {
+                maxItemsRight = 0;
+            }
+            for (int j = 0; j < maxItemsRight; j++)
+                files[j] = Path.GetFileName(files[j]);
 
-            detail.Draw();
+            SelectedRight = 0;
         }
 
         /// <summary>
@@ -88,7 +128,17 @@ namespace Casasoft.Panels2D
         /// <returns></returns>
         protected override string ScrollerItemText(int pos)
         {
-            return drives[pos].Name;
+            return isTopLevel ? drives[pos].Name : dirs[pos];
+        }
+
+        /// <summary>
+        /// File name
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        protected override string RightScrollerItemText(int pos)
+        {
+            return files[pos];
         }
     }
 }

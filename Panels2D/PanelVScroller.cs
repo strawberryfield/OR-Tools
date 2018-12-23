@@ -63,15 +63,51 @@ namespace Casasoft.Panels2D
         }
 
         /// <summary>
+        /// Called when Enter is pressed
+        /// </summary>
+        /// <returns></returns>
+        protected virtual int EnterPressed()
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Called when enter key is pressed with right panel active
+        /// </summary>
+        /// <returns></returns>
+        protected virtual int EnterPressedOnRight()
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// Called on left panel selection changed
+        /// </summary>
+        protected virtual void OnSelectedChanged() { }
+
+        /// <summary>
+        /// Called on right panel selection changed
+        /// </summary>
+        protected virtual void OnSelectedRightChanged() { }
+
+        /// <summary>
         /// Manages keyboard and controller input
         /// </summary>
         protected override int CheckInput()
         {
+            int oldSelected = Selected;
+            int oldSelectedRight = SelectedRight;
+
             if (GamePadPressed(Buttons.Back) || KeyboardPressed(Keys.Escape))
                 return -1;
 
             if (GamePadPressed(Buttons.Start) || KeyboardPressed(Keys.Enter))
-                return 1;
+            {
+                if (currentBox == Boxes.Left)
+                    return EnterPressed();
+                else
+                    return EnterPressedOnRight();
+            }
 
             // Panel switching
             if ((GamePadPressed(Buttons.LeftThumbstickRight) || GamePadPressed(Buttons.DPadRight) ||
@@ -124,6 +160,8 @@ namespace Casasoft.Panels2D
                     SelectedRight = maxItemsRight - 1;
             }
 
+            if (Selected != oldSelected) OnSelectedChanged();
+            if (SelectedRight != oldSelectedRight) OnSelectedRightChanged();
             return 0;
         }
 
