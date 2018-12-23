@@ -15,28 +15,39 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-using Casasoft.Panels2D;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ORTS.Menu;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.BitmapFonts;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
 
-namespace Casasoft.MgMenu
+namespace Casasoft.Panels2D
 {
-    public class SelConsist : PanelVScroller
+    class FileBrowser : PanelVScroller
     {
-        private List<Consist> consists;
+        public string CurrentPath;
+        public string CurrentFile;
+
+        protected DriveInfo[] drives;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="game"></param>
-        public SelConsist(Game game) : base(game)
+        public FileBrowser(Game game) : base(game)
         {
-            consists = new List<Consist>();
-            maxItems = consists.Count;
+            CurrentPath = string.Empty;
+            CurrentFile = string.Empty;
 
-            Caption = "Choose a train";
+            drives = DriveInfo.GetDrives();
+            maxItems = drives.Length;
+
+            Caption = "File browser";
         }
 
         /// <summary>
@@ -45,43 +56,35 @@ namespace Casasoft.MgMenu
         public override void Clear()
         {
             base.Clear();
-            if(consists != null) consists.Clear();
+            CurrentPath = string.Empty;
+            CurrentFile = string.Empty;
         }
 
         /// <summary>
-        /// Assign data list
-        /// </summary>
-        /// <param name="Consists"></param>
-        public void SetList(List<Consist> Consists)
-        {
-            consists = Consists;
-            maxItems = consists.Count;
-        }
-
-        /// <summary>
-        /// Draws the consist detail
+        /// Draws the file list
         /// </summary>
         /// <param name="sb"></param>
         protected override void ScrollerItemDetail(SpriteBatch sb)
         {
-            Consist current = consists[Selected];
-
             TextBox detail = new TextBox(sb, fonts, textBox);
-            foreach (var wag in current.Train.WagonList)
-                detail.AddTextRows(wag.Name, FontSizes.Subtitle);
+            CurrentPath = drives[Selected].Name;
+
+            foreach (var f in Directory.GetFiles(CurrentPath))
+            {
+                detail.AddTextRows(f, FontSizes.Subtitle);
+            }
 
             detail.Draw();
         }
 
         /// <summary>
-        /// Returns consist name
+        /// Directory name
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
         protected override string ScrollerItemText(int pos)
         {
-            return consists[pos].Name;
+            return drives[pos].Name;
         }
-
     }
 }

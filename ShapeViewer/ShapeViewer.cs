@@ -15,11 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
+#define WINDOWED
+
 using Casasoft.ShapeViewerLib;
+using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
+using ORTS.Settings;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 
 namespace ShapeViewer
 {
@@ -28,8 +36,15 @@ namespace ShapeViewer
     /// </summary>
     public class ShapeViewer : Game
     {
-        GraphicsDeviceManager graphics;
-        ShapeViewerLib sv;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private ShapeViewerLib sv;
+
+        private UserSettings Settings;
+        private GettextResourceManager catalog = new GettextResourceManager("Menu");
+
+        private enum LoopStatus { SelShape, ShowShape }
+        private LoopStatus loopStatus;
 
         float cameraHeight = 2;
         float cameraDistance = 20;
@@ -37,10 +52,18 @@ namespace ShapeViewer
 
         string examples = "..\\ORTools\\ShapeViewer\\samples\\";
         string floorTexturePath = "Content\\TSF_BCT_margherite.ace";
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ShapeViewer()
         {
             graphics = new GraphicsDeviceManager(this);
             //Content.RootDirectory = "Content";
+
+            this.IsFixedTimeStep = true;
+            this.graphics.SynchronizeWithVerticalRetrace = true;
+
             sv = new ShapeViewerLib(this);
         }
 
@@ -52,24 +75,59 @@ namespace ShapeViewer
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
+
+            var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
+            Settings = new UserSettings(options);
+            LoadLanguage();
 
             sv.CameraSetup();
             sv.BasicEffectSetup();
             sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
 
+#if WINDOWED
+            graphics.PreferredBackBufferWidth = 1366;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.IsFullScreen = false;
+#else
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            graphics.IsFullScreen = true;
+#endif
+            graphics.ApplyChanges();
+
+            loopStatus = LoopStatus.SelShape;
+
+            base.Initialize();
         }
 
+        #region read OR data
+        /// <summary>
+        /// Loads OR language settings
+        /// </summary>
+        private void LoadLanguage()
+        {
+            if (Settings.Language.Length > 0)
+            {
+                try
+                {
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(Settings.Language);
+                }
+                catch { }
+            }
+        }
+        #endregion
+
+        #region MG content mamagement
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
         {
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
-
         }
 
         /// <summary>
@@ -80,6 +138,8 @@ namespace ShapeViewer
         {
             // TODO: Unload any non ContentManager content here
         }
+        #endregion
+
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,

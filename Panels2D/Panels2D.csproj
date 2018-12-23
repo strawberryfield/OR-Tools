@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileBrowser.cs" />
     <Compile Include="PanelBase.cs" />
     <Compile Include="PanelHScroller.cs" />
     <Compile Include="PanelVScroller.cs" />
