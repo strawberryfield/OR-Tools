@@ -22,8 +22,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OR Menu")]
-[assembly: AssemblyProduct("OR Tools - Toolset for Open Rails")]
+[assembly: AssemblyTitle("Casasoft OR Menu")]
+[assembly: AssemblyProduct("Casasoft OR Tools - Toolset for Open Rails")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("Monogame based replacement for Open Rails menu.exe")]
 [assembly: AssemblyCompany("Casasoft - Roberto Ceccarelli")]

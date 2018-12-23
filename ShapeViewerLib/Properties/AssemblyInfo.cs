@@ -1,16 +1,33 @@
-﻿using System.Reflection;
+﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+// 
+// This file is part of OR Tools.
+// 
+// OR Tools is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// OR Tools is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("ShapeViewerLib")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Shape Viewer Library")]
+[assembly: AssemblyDescription("Shape Viewer Common Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ShapeViewerLib")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("Roberto Ceccarelli - Casasoft")]
+[assembly: AssemblyProduct("Casasoft OR Tools - Toolset for Open Rails")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Roberto Ceccarelli - Casasoft")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
