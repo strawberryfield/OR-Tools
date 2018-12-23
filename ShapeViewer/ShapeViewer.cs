@@ -17,6 +17,7 @@
 
 #define WINDOWED
 
+using Casasoft.Panels2D;
 using Casasoft.ShapeViewerLib;
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
@@ -46,9 +47,7 @@ namespace ShapeViewer
         private enum LoopStatus { SelShape, ShowShape }
         private LoopStatus loopStatus;
 
-        float cameraHeight = 2;
-        float cameraDistance = 20;
-        float cameraAngle = 0;
+        private FileBrowser fileBrowser;
 
         string examples = "..\\ORTools\\ShapeViewer\\samples\\";
         string floorTexturePath = "Content\\TSF_BCT_margherite.ace";
@@ -80,6 +79,8 @@ namespace ShapeViewer
             var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
             Settings = new UserSettings(options);
             LoadLanguage();
+
+            fileBrowser = new FileBrowser(this);
 
             sv.CameraSetup();
             sv.BasicEffectSetup();
@@ -151,7 +152,27 @@ namespace ShapeViewer
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            sv.Update();
+            switch (loopStatus)
+            {
+                case LoopStatus.SelShape:
+                    switch (fileBrowser.Update())
+                    {
+                        case -1:
+                            Exit();
+                            break;
+                        case 1:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case LoopStatus.ShowShape:
+                    sv.Update();
+                    break;
+                default:
+                    break;
+            }
+            
 
             base.Update(gameTime);
         }
@@ -162,10 +183,22 @@ namespace ShapeViewer
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.WhiteSmoke);
-
-            sv.Draw();
-            
+            switch (loopStatus)
+            {
+                case LoopStatus.SelShape:
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                    spriteBatch.Begin();
+                    fileBrowser.Draw(spriteBatch);
+                    spriteBatch.End();
+                    break;
+                case LoopStatus.ShowShape:
+                    GraphicsDevice.Clear(Color.WhiteSmoke);
+                    sv.Draw();
+                    break;
+                default:
+                    break;
+            }
+                     
             base.Draw(gameTime);
         }
     }

@@ -63,10 +63,10 @@ namespace Casasoft.MgMenu
         private LoopStatus loopStatus;
 
         // Panels
-        SelRoute selRoute;
-        SelActivity selActivity;
-        SelLocomotive selLocomotive;
-        SelConsist selConsist;
+        private SelRoute selRoute;
+        private SelActivity selActivity;
+        private SelLocomotive selLocomotive;
+        private SelConsist selConsist;
 
         /// <summary>
         /// Constructor

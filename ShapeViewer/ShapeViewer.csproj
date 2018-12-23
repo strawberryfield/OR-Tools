@@ -114,6 +114,10 @@
       <Project>{67f84996-8769-4fd8-819b-464af269037b}</Project>
       <Name>ORTS.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Panels2D\Panels2D.csproj">
+      <Project>{37a668e6-1f53-4224-85b4-d2ac175ab562}</Project>
+      <Name>Panels2D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShapeViewerLib\ShapeViewerLib.csproj">
       <Project>{2fb2e5d4-2f7f-4710-974e-0c196ab43bf3}</Project>
       <Name>ShapeViewerLib</Name>

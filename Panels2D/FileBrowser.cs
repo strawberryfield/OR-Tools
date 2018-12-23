@@ -28,7 +28,7 @@ using System.IO;
 
 namespace Casasoft.Panels2D
 {
-    class FileBrowser : PanelVScroller
+    public class FileBrowser : PanelVScroller
     {
         public string CurrentPath;
         public string CurrentFile;
@@ -69,10 +69,14 @@ namespace Casasoft.Panels2D
             TextBox detail = new TextBox(sb, fonts, textBox);
             CurrentPath = drives[Selected].Name;
 
-            foreach (var f in Directory.GetFiles(CurrentPath))
+            try
             {
-                detail.AddTextRows(f, FontSizes.Subtitle);
+                foreach (var f in Directory.GetFiles(CurrentPath))
+                {
+                    detail.AddTextRows(f, FontSizes.Subtitle);
+                }
             }
+            catch (Exception)  { }
 
             detail.Draw();
         }
