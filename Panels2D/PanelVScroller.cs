@@ -20,7 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 
-namespace Casasoft.MgMenu
+namespace Casasoft.Panels2D
 {
     public class PanelVScroller : PanelBase
     {

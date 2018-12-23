@@ -20,6 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
 using ORTS.Menu;
 using System.Collections.Generic;
+using Casasoft.Panels2D;
 
 namespace Casasoft.MgMenu
 {

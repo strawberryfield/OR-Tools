@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShapeViewer", "ShapeViewer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShapeViewerLib", "ShapeViewerLib\ShapeViewerLib.csproj", "{2FB2E5D4-2F7F-4710-974E-0C196AB43BF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panels2D", "Panels2D\Panels2D.csproj", "{37A668E6-1F53-4224-85B4-D2AC175AB562}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +188,18 @@ Global
 		{2FB2E5D4-2F7F-4710-974E-0C196AB43BF3}.ReleaseConf|Any CPU.Build.0 = Release|Any CPU
 		{2FB2E5D4-2F7F-4710-974E-0C196AB43BF3}.ReleaseConf|x86.ActiveCfg = Release|Any CPU
 		{2FB2E5D4-2F7F-4710-974E-0C196AB43BF3}.ReleaseConf|x86.Build.0 = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Debug|x86.Build.0 = Debug|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Release|x86.ActiveCfg = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.Release|x86.Build.0 = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.ReleaseConf|Any CPU.ActiveCfg = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.ReleaseConf|Any CPU.Build.0 = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.ReleaseConf|x86.ActiveCfg = Release|Any CPU
+		{37A668E6-1F53-4224-85B4-D2AC175AB562}.ReleaseConf|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

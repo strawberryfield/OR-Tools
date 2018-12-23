@@ -19,7 +19,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Casasoft.MgMenu
+namespace Casasoft.Panels2D
 {
     public class PanelHScroller : PanelBase
     {

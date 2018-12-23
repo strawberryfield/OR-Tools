@@ -20,7 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
 using System.Collections.Generic;
 
-namespace Casasoft.MgMenu
+namespace Casasoft.Panels2D
 {
     public enum FontSizes { Normal, Subtitle, Title, Header }
 

@@ -21,7 +21,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
 using System.Collections.Generic;
 
-namespace Casasoft.MgMenu
+namespace Casasoft.Panels2D
 {
     public class PanelBase
     {
