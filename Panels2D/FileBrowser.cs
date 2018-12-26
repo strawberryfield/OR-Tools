@@ -17,7 +17,9 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.BitmapFonts;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Casasoft.Panels2D
@@ -26,10 +28,11 @@ namespace Casasoft.Panels2D
     {
         public string CurrentPath;
         public string CurrentFile;
+        protected string ActiveDir;
 
         protected DriveInfo[] drives;
         protected string[] files;
-        protected string[] dirs;
+        protected List<string> dirs;
         protected bool isTopLevel;
 
         /// <summary>
@@ -40,11 +43,19 @@ namespace Casasoft.Panels2D
         {
             CurrentPath = string.Empty;
             CurrentFile = string.Empty;
+            ActiveDir = string.Empty;
 
+            dirs = new List<string>();
             drives = DriveInfo.GetDrives();
             maxItems = drives.Length;
             isTopLevel = true;
             OnSelectedChanged();
+
+            detailSizeY = screenY - boxesY * 2 - 20;
+            boxesY += 20;
+            leftBox = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
+            textBox = new Rectangle(detailSizeX + 40, boxesY, screenX - detailSizeX - 60, detailSizeY);
+            maxRows = (detailSizeY - 10) / itemHeight;
 
             Caption = "File browser";
         }
@@ -65,22 +76,37 @@ namespace Casasoft.Panels2D
         /// <returns></returns>
         protected override int EnterPressed()
         {
-            try
-            {
-                string[] d = Directory.GetDirectories(CurrentPath);
-                if(d.Length > 0)
-                {
-                    isTopLevel = false;
-                    dirs = d;
-                    maxItems = dirs.Length;
-                    Selected = 0;
-                    OnSelectedChanged();
-                }
+            ActiveDir = CurrentPath;
+            isTopLevel = false;
+            if (ActiveDir == string.Empty)
+                isTopLevel = true;
 
-            }
-            catch (Exception)
+            if(!isTopLevel)
             {
+                string[] dirarray = { };
+                try
+                {
+                    dirarray = Directory.GetDirectories(CurrentPath);
+                }
+                catch (Exception)
+                {
+                } 
+                
+                dirs.Clear();
+                dirs.Add(CurrentPath);
+                string parent = Path.GetDirectoryName(CurrentPath);
+                if (string.IsNullOrWhiteSpace(parent)) parent = string.Empty;
+                dirs.Add(parent);
+                dirs.AddRange(dirarray);
+                maxItems = dirs.Count;
             }
+            else
+            {
+                maxItems = drives.Length;
+            }
+
+            Selected = 0;
+            OnSelectedChanged();
             return 0;
         }
 
@@ -99,6 +125,9 @@ namespace Casasoft.Panels2D
                 return 0;
         }
 
+        /// <summary>
+        /// Called when the dir changes
+        /// </summary>
         protected override void OnSelectedChanged()
         {
             if (isTopLevel)
@@ -115,8 +144,6 @@ namespace Casasoft.Panels2D
             {
                 maxItemsRight = 0;
             }
-            for (int j = 0; j < maxItemsRight; j++)
-                files[j] = Path.GetFileName(files[j]);
 
             SelectedRight = 0;
         }
@@ -128,7 +155,22 @@ namespace Casasoft.Panels2D
         /// <returns></returns>
         protected override string ScrollerItemText(int pos)
         {
-            return isTopLevel ? drives[pos].Name : dirs[pos];
+            if(isTopLevel)
+            {
+                return drives[pos].Name;
+            }
+            else
+            {
+                switch (pos)
+                {
+                    case 0:
+                        return ".";
+                    case 1:
+                        return "..";
+                    default:
+                        return Path.GetFileName(dirs[pos]);
+                }
+            }           
         }
 
         /// <summary>
@@ -138,7 +180,21 @@ namespace Casasoft.Panels2D
         /// <returns></returns>
         protected override string RightScrollerItemText(int pos)
         {
-            return files[pos];
+            return Path.GetFileName(files[pos]);
+        }
+
+        /// <summary>
+        /// Draws the current path
+        /// </summary>
+        /// <param name="sb"></param>
+        public override void Draw(SpriteBatch sb)
+        {
+            base.Draw(sb);
+
+            if (!string.IsNullOrWhiteSpace(ActiveDir))
+            {
+                sb.DrawString(fonts[FontSizes.Subtitle], ActiveDir, new Vector2(leftBox.Left, boxesY - 35), Color.WhiteSmoke);
+            }
         }
     }
 }
