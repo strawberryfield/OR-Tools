@@ -33,23 +33,12 @@ namespace Casasoft.ShapeViewerLib
         public float cameraDistance { get; set; }
         public float cameraAngle { get; set; }
 
-protected Vector3 camTarget;
+        protected Vector3 camTarget;
         protected Vector3 camPosition;
         protected Matrix projectionMatrix;
-        protected Matrix worldMatrix;
 
-        //BasicEffect for rendering
-        BasicEffect basicEffect;
-        Viewer viewer;
-        Game Game;
-        public Simulator sim;
+        protected Game Game;
         protected RenderFrame frame;
-
-        // Floor
-        VertexPositionNormalTexture[] floorVerts;
-        public Texture2D floorTexture;
-
-        public SharedShape Shape { get; set; }
 
         /// <summary>
         /// Constructor
@@ -60,9 +49,11 @@ protected Vector3 camTarget;
             Game = game;
             Game.Content.RootDirectory = "Content";
             frame = new RenderFrame(Game);
-            DefineFloor(50, 10);
         }
 
+        /// <summary>
+        /// Camera init
+        /// </summary>
         public void CameraSetup()
         {
             camTarget = new Vector3(0f, 0f, 0f);
@@ -73,66 +64,26 @@ protected Vector3 camTarget;
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
                                MathHelper.ToRadians(45f),
                                Game.GraphicsDevice.DisplayMode.AspectRatio, 1f, 1000f);
-            worldMatrix = Matrix.CreateWorld(camTarget, Vector3.
-                          Forward, Vector3.Up);
         }
 
+        /// <summary>
+        /// Returns a Vector3 camera position from polar coords
+        /// </summary>
+        /// <returns></returns>
         public Vector3 GetCameraPosition()
         {
             return new Vector3((float)(cameraDistance * Math.Sin(cameraAngle)),
                             cameraHeight, -cameraDistance * (float)Math.Cos(cameraAngle));
         }
 
+        /// <summary>
+        /// Sets the texture of the floor
+        /// </summary>
+        /// <param name="texture"></param>
         public void SetFloorTexture(Texture2D texture)
         {
             frame.SetFloorTexture(texture);
         }
-
-        public void BasicEffectSetup()
-        {
-            //BasicEffect
-            basicEffect = new BasicEffect(Game.GraphicsDevice);
-            basicEffect.Alpha = 1f;
-
-            //Lighting requires normal information which VertexPositionColor does not have
-            //If you want to use lighting and VPC you need to create a custom def
-            basicEffect.LightingEnabled = false;
-
-            basicEffect.TextureEnabled = true;
-            Game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            Game.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-
-            Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-        }
-
-        public void DefineFloor(int size, int rep)
-        {
-            floorVerts = new VertexPositionNormalTexture[6];
-            floorVerts[2].Position = new Vector3(-size, 0, -size);
-            floorVerts[1].Position = new Vector3(-size, 0, size);
-            floorVerts[0].Position = new Vector3(size, 0, -size);
-
-            floorVerts[4].Position = floorVerts[1].Position;
-            floorVerts[3].Position = new Vector3(size, 0, size);
-            floorVerts[5].Position = floorVerts[0].Position;
-
-            floorVerts[2].TextureCoordinate = new Vector2(0, 0);
-            floorVerts[1].TextureCoordinate = new Vector2(0, rep);
-            floorVerts[0].TextureCoordinate = new Vector2(rep, 0);
-
-            floorVerts[4].TextureCoordinate = floorVerts[1].TextureCoordinate;
-            floorVerts[3].TextureCoordinate = new Vector2(rep, rep);
-            floorVerts[5].TextureCoordinate = floorVerts[0].TextureCoordinate;
-
-            // Reset normals
-            for (int j = 0; j < floorVerts.Length; j++) floorVerts[j].Normal = Vector3.Up;
-
-            //Vector3 v1 = floorVerts[1].Position - floorVerts[0].Position;
-            //Vector3 v2 = floorVerts[0].Position - floorVerts[2].Position;
-            //Vector3 n = Vector3.Cross(v1, v2);
-            //n.Normalize();
-        }
-
 
         /// <summary>
         /// Clears the renderframe
@@ -148,19 +99,23 @@ protected Vector3 camTarget;
         /// <param name="filename"></param>
         public void LoadShape(string filename)
         {
-            sim = new Simulator();
+            Simulator sim = new Simulator();
             sim.RoutePath = Path.Combine(Path.GetDirectoryName(filename), "..");
             sim.Season = SeasonType.Summer;
             sim.WeatherType = WeatherType.Clear;
             var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
             sim.Settings = new UserSettings(options);
 
-            viewer = new Viewer(Game.GraphicsDevice, sim);
+            Viewer viewer = new Viewer(Game.GraphicsDevice, sim);
 
-            Shape = new SharedShape(viewer, filename);
+            SharedShape Shape = new SharedShape(viewer, filename);
             Shape.PrepareFrame(frame, ShapeFlags.AutoZBias);
         }
 
+        /// <summary>
+        /// Handles user input
+        /// </summary>
+        /// <returns></returns>
         public int Update()
         {
             bool recalcXZ = false;
@@ -215,43 +170,18 @@ protected Vector3 camTarget;
 
         }
 
-        public void Draw(int lod, int distanceLevel)
+        /// <summary>
+        /// Draws the scene
+        /// </summary>
+        public void Draw()
         {
             Matrix viewMatrix = Matrix.CreateLookAt(camPosition, camTarget, Vector3.UnitY);
-
-            //basicEffect.Projection = projectionMatrix;
-            //basicEffect.View = viewMatrix;
-            //basicEffect.World = worldMatrix;
 
             frame.XNACameraProjection = projectionMatrix;
             frame.XNACameraView = viewMatrix;
 
-            //// Draws the Floor
-            //basicEffect.Texture = floorTexture;
-            //foreach (var pass in basicEffect.CurrentTechnique.Passes)
-            //    pass.Apply();
-
-            //Game.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, floorVerts, 0, 2);
-
-            // Draws the shape
-            //SharedShape.SubObject[] subs = Shape.LodControls[lod].DistanceLevels[distanceLevel].SubObjects;
-            //foreach (var so in subs)
-            //{
-            //    foreach (var pr in so.ShapePrimitives)
-            //    {
-            //        basicEffect.Texture = pr.Material.GetShadowTexture();
-            //        foreach (var pass in basicEffect.CurrentTechnique.Passes)
-            //            pass.Apply();
-
-            //        pr.Draw(Game.GraphicsDevice);
-            //    }
-            //}
             frame.Draw(Game.GraphicsDevice);
         }
 
-        public void Draw()
-        {
-            Draw(0, 0);
-        }
     }
 }

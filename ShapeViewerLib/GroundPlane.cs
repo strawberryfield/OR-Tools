@@ -82,6 +82,10 @@ namespace Casasoft.ShapeViewerLib
             //n.Normalize();
         }
 
+        /// <summary>
+        /// Draws the floor
+        /// </summary>
+        /// <param name="frame"></param>
         public void Draw(RenderFrame frame)
         {
             // Draws the Floor

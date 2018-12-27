@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-#define WINDOWED
+//#define WINDOWED
 
 using Casasoft.Panels2D;
 using Casasoft.ShapeViewerLib;
@@ -86,10 +86,7 @@ namespace ShapeViewer
             fileBrowser = new FileBrowser(this, startDir, "*.s");
 
             sv.CameraSetup();
-            //            sv.BasicEffectSetup();
-            //            sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
             sv.SetFloorTexture(AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath));
- //           sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
@@ -161,9 +158,7 @@ namespace ShapeViewer
                         case 1:
                             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                             sv.Clear();
-                            //                            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
                             sv.LoadShape(fileBrowser.CurrentFile);
-                            sv.BasicEffectSetup();
                             loopStatus = LoopStatus.ShowShape;
                             break;
                         default:
