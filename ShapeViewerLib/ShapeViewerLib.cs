@@ -45,7 +45,7 @@ protected Vector3 camTarget;
         public Simulator sim;
 
         // Floor
-        VertexPositionTexture[] floorVerts;
+        VertexPositionNormalTexture[] floorVerts;
         public Texture2D floorTexture;
 
         public SharedShape Shape { get; set; }
@@ -92,31 +92,41 @@ protected Vector3 camTarget;
             basicEffect.LightingEnabled = false;
 
             basicEffect.TextureEnabled = true;
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            Game.GraphicsDevice.RasterizerState = rasterizerState;
+            Game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            Game.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
         }
 
-        private void DefineFloor(int size, int rep)
+        public void DefineFloor(int size, int rep)
         {
-            floorVerts = new VertexPositionTexture[6];
-            floorVerts[0].Position = new Vector3(-size, 0, -size);
+            floorVerts = new VertexPositionNormalTexture[6];
+            floorVerts[2].Position = new Vector3(-size, 0, -size);
             floorVerts[1].Position = new Vector3(-size, 0, size);
-            floorVerts[2].Position = new Vector3(size, 0, -size);
+            floorVerts[0].Position = new Vector3(size, 0, -size);
 
-            floorVerts[3].Position = floorVerts[1].Position;
-            floorVerts[4].Position = new Vector3(size, 0, size);
-            floorVerts[5].Position = floorVerts[2].Position;
+            floorVerts[4].Position = floorVerts[1].Position;
+            floorVerts[3].Position = new Vector3(size, 0, size);
+            floorVerts[5].Position = floorVerts[0].Position;
 
-            floorVerts[0].TextureCoordinate = new Vector2(0, 0);
+            floorVerts[2].TextureCoordinate = new Vector2(0, 0);
             floorVerts[1].TextureCoordinate = new Vector2(0, rep);
-            floorVerts[2].TextureCoordinate = new Vector2(rep, 0);
+            floorVerts[0].TextureCoordinate = new Vector2(rep, 0);
 
-            floorVerts[3].TextureCoordinate = floorVerts[1].TextureCoordinate;
-            floorVerts[4].TextureCoordinate = new Vector2(rep, rep);
-            floorVerts[5].TextureCoordinate = floorVerts[2].TextureCoordinate;
-        }
+            floorVerts[4].TextureCoordinate = floorVerts[1].TextureCoordinate;
+            floorVerts[3].TextureCoordinate = new Vector2(rep, rep);
+            floorVerts[5].TextureCoordinate = floorVerts[0].TextureCoordinate;
+
+            // Reset normals
+            for (int j = 0; j < floorVerts.Length; j++) floorVerts[j].Normal = Vector3.Up;
+
+            //Vector3 v1 = floorVerts[1].Position - floorVerts[0].Position;
+            //Vector3 v2 = floorVerts[0].Position - floorVerts[2].Position;
+            //Vector3 n = Vector3.Cross(v1, v2);
+            //n.Normalize();
+        }  
+        
+
 
         public void LoadShape(string filename)
         {
@@ -132,9 +142,12 @@ protected Vector3 camTarget;
             Shape = new SharedShape(viewer, filename);
         }
 
-        public void Update()
+        public int Update()
         {
             bool recalcXZ = false;
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                return -1;
 
             // TODO: Add your update logic here
             if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
@@ -177,6 +190,7 @@ protected Vector3 camTarget;
             {
                 camPosition = GetCameraPosition();
             }
+            return 0;
 
         }
 

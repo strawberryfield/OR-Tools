@@ -29,6 +29,7 @@ namespace Casasoft.Panels2D
         public string CurrentPath;
         public string CurrentFile;
         protected string ActiveDir;
+        protected string StartDir;
 
         protected DriveInfo[] drives;
         protected string[] files;
@@ -39,11 +40,19 @@ namespace Casasoft.Panels2D
         /// Constructor
         /// </summary>
         /// <param name="game"></param>
-        public FileBrowser(Game game) : base(game)
+        public FileBrowser(Game game) : this(game, string.Empty) { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="startDir"></param>
+        public FileBrowser(Game game, string startDir) : base(game)
         {
             CurrentPath = string.Empty;
             CurrentFile = string.Empty;
             ActiveDir = string.Empty;
+            StartDir = startDir;
 
             dirs = new List<string>();
             drives = DriveInfo.GetDrives();
@@ -118,7 +127,7 @@ namespace Casasoft.Panels2D
         {
             if (maxItemsRight > 0)
             {
-                CurrentFile = files[Selected];
+                CurrentFile = files[SelectedRight];
                 return 1;
             }
             else

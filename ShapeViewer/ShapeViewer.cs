@@ -58,12 +58,11 @@ namespace ShapeViewer
         public ShapeViewer()
         {
             graphics = new GraphicsDeviceManager(this);
-            //Content.RootDirectory = "Content";
+            Content.RootDirectory = "Content";
 
             this.IsFixedTimeStep = true;
             this.graphics.SynchronizeWithVerticalRetrace = true;
 
-            sv = new ShapeViewerLib(this);
         }
 
         /// <summary>
@@ -74,6 +73,8 @@ namespace ShapeViewer
         /// </summary>
         protected override void Initialize()
         {
+            sv = new ShapeViewerLib(this);
+
             base.Initialize();
 
             var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
@@ -83,9 +84,9 @@ namespace ShapeViewer
             fileBrowser = new FileBrowser(this);
 
             sv.CameraSetup();
-            sv.BasicEffectSetup();
+//            sv.BasicEffectSetup();
             sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
-
+ //           sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
@@ -98,8 +99,6 @@ namespace ShapeViewer
             graphics.ApplyChanges();
 
             loopStatus = LoopStatus.SelShape;
-
-            base.Initialize();
         }
 
         #region read OR data
@@ -128,7 +127,7 @@ namespace ShapeViewer
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
+//            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
         }
 
         /// <summary>
@@ -149,9 +148,6 @@ namespace ShapeViewer
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             switch (loopStatus)
             {
                 case LoopStatus.SelShape:
@@ -161,13 +157,25 @@ namespace ShapeViewer
                             Exit();
                             break;
                         case 1:
+                            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                            //                            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
+                            sv.LoadShape(fileBrowser.CurrentFile);
+                            sv.BasicEffectSetup();
+                            loopStatus = LoopStatus.ShowShape;
                             break;
                         default:
                             break;
                     }
                     break;
                 case LoopStatus.ShowShape:
-                    sv.Update();
+                    switch (sv.Update())
+                    {
+                        case -1:
+                            loopStatus = LoopStatus.SelShape;
+                            break;
+                        default:
+                            break;
+                    }                  
                     break;
                 default:
                     break;

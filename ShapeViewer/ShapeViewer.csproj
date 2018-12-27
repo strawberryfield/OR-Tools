@@ -87,6 +87,7 @@
     <Content Include="Samples\Shapes\tsf_mar_fv_pietracuta_ASC.s" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="app.manifest" />
     <None Include="readme.md" />
     <None Include="Samples\Shapes\TSF_MAR_FV_Pietracuta.sd" />
