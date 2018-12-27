@@ -22,14 +22,13 @@ using Casasoft.ShapeViewerLib;
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
 using ORTS.Settings;
 using System;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using System.Configuration;
 
 namespace ShapeViewer
 {
