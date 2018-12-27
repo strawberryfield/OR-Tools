@@ -29,6 +29,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Configuration;
 
 namespace ShapeViewer
 {
@@ -81,7 +82,8 @@ namespace ShapeViewer
             Settings = new UserSettings(options);
             LoadLanguage();
 
-            fileBrowser = new FileBrowser(this);
+            string startDir = ConfigurationManager.AppSettings["StartDir"];
+            fileBrowser = new FileBrowser(this, startDir, "*.s");
 
             sv.CameraSetup();
 //            sv.BasicEffectSetup();

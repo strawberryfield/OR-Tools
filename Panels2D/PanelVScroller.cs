@@ -160,6 +160,36 @@ namespace Casasoft.Panels2D
                     SelectedRight = maxItemsRight - 1;
             }
 
+            if(KeyboardPressed(Keys.PageDown))
+            {
+                if (currentBox == Boxes.Left)
+                {
+                    Selected += (maxRows - 1);
+                    if (Selected > maxItems - 1) Selected = maxItems - 1;
+                }
+                if (currentBox == Boxes.Right)
+                {
+                    SelectedRight += (maxRowsRight - 1);
+                    if (SelectedRight > maxItemsRight - 1) SelectedRight = maxItemsRight - 1;
+                }
+
+            }
+
+            if (KeyboardPressed(Keys.PageUp))
+            {
+                if (currentBox == Boxes.Left)
+                {
+                    Selected -= (maxRows - 1);
+                    if (Selected < 0) Selected = 0;
+                }
+                if (currentBox == Boxes.Right)
+                {
+                    SelectedRight -= (maxRowsRight - 1);
+                    if (SelectedRight < 0) SelectedRight = 0;
+                }
+
+            }
+
             if (Selected != oldSelected) OnSelectedChanged();
             if (SelectedRight != oldSelectedRight) OnSelectedRightChanged();
             return 0;

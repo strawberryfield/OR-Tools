@@ -30,6 +30,7 @@ namespace Casasoft.Panels2D
         public string CurrentFile;
         protected string ActiveDir;
         protected string StartDir;
+        protected string Filter;
 
         protected DriveInfo[] drives;
         protected string[] files;
@@ -47,24 +48,43 @@ namespace Casasoft.Panels2D
         /// </summary>
         /// <param name="game"></param>
         /// <param name="startDir"></param>
-        public FileBrowser(Game game, string startDir) : base(game)
+        public FileBrowser(Game game, string startDir) : this(game, startDir, "*") { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="startDir"></param>
+        /// <param name="filter">Files listing filter</param>
+        public FileBrowser(Game game, string startDir, string filter) : base(game)
         {
             CurrentPath = string.Empty;
             CurrentFile = string.Empty;
             ActiveDir = string.Empty;
             StartDir = startDir;
+            Filter = string.IsNullOrWhiteSpace(filter) ? "*" : filter;
 
             dirs = new List<string>();
             drives = DriveInfo.GetDrives();
-            maxItems = drives.Length;
-            isTopLevel = true;
-            OnSelectedChanged();
+            if (string.IsNullOrWhiteSpace(StartDir))
+            {
+                maxItems = drives.Length;
+                isTopLevel = true;
+                OnSelectedChanged();
+            }
+            else
+            {
+                CurrentPath = StartDir;
+                isTopLevel = false;
+                EnterPressed();
+            }
 
             detailSizeY = screenY - boxesY * 2 - 20;
             boxesY += 20;
             leftBox = new Rectangle(20, boxesY, detailSizeX, detailSizeY);
             textBox = new Rectangle(detailSizeX + 40, boxesY, screenX - detailSizeX - 60, detailSizeY);
             maxRows = (detailSizeY - 10) / itemHeight;
+            maxRowsRight = maxRows;
 
             Caption = "File browser";
         }
@@ -144,9 +164,17 @@ namespace Casasoft.Panels2D
             else
                 CurrentPath = dirs[Selected];
 
+            FilesList();
+        }
+
+        /// <summary>
+        /// Updates the right panel list
+        /// </summary>
+        protected void FilesList()
+        { 
             try
             {
-                files = Directory.GetFiles(CurrentPath);
+                files = Directory.GetFiles(CurrentPath, Filter);
                 maxItemsRight = files.Length;
             }
             catch(Exception)
