@@ -31,12 +31,66 @@ using Orts.Viewer3D;
 
 namespace Casasoft.ShapeViewerLib
 {
+    public class SharedShapeManager
+    {
+        readonly Viewer Viewer;
 
-/*
-    public class Material {
-        public Viewer Viewer;
+        Dictionary<string, SharedShape> Shapes = new Dictionary<string, SharedShape>();
+        Dictionary<string, bool> ShapeMarks;
+        SharedShape EmptyShape;
+
+        internal SharedShapeManager(Viewer viewer)
+        {
+            Viewer = viewer;
+            EmptyShape = new SharedShape(Viewer);
+        }
+
+        public SharedShape Get(string path)
+        {
+            if (path == null || path == EmptyShape.FilePath)
+                return EmptyShape;
+
+            path = path.ToLowerInvariant();
+            if (!Shapes.ContainsKey(path))
+            {
+                try
+                {
+                    Shapes.Add(path, new SharedShape(Viewer, path));
+                }
+                catch (Exception error)
+                {
+                    Trace.WriteLine(new FileLoadException(path, error));
+                    Shapes.Add(path, EmptyShape);
+                }
+            }
+            return Shapes[path];
+        }
+
+        public void Mark()
+        {
+            ShapeMarks = new Dictionary<string, bool>(Shapes.Count);
+            foreach (var path in Shapes.Keys)
+                ShapeMarks.Add(path, false);
+        }
+
+        public void Mark(SharedShape shape)
+        {
+            if (Shapes.ContainsValue(shape))
+                ShapeMarks[Shapes.First(kvp => kvp.Value == shape).Key] = true;
+        }
+
+        public void Sweep()
+        {
+            foreach (var path in ShapeMarks.Where(kvp => !kvp.Value).Select(kvp => kvp.Key))
+                Shapes.Remove(path);
+        }
+
+        public string GetStatus()
+        {
+            return string.Format("{0:F0} shape", "{0:F0} shapes", Shapes.Keys.Count);
+        }
     }
-*/
+
 
     public class ShapePrimitive : RenderPrimitive
     {
@@ -56,30 +110,30 @@ namespace Casasoft.ShapeViewerLib
         {
         }
 
-        
-                public ShapePrimitive(Material material, SharedShape.VertexBufferSet vertexBufferSet, IndexBuffer indexBuffer, int minVertexIndex, int numVerticies, int primitiveCount, int[] hierarchy, int hierarchyIndex)
-                {
-                    Material = material;
-                    VertexBuffer = vertexBufferSet.Buffer;
-                    IndexBuffer = indexBuffer;
-                    MinVertexIndex = minVertexIndex;
-                    NumVerticies = numVerticies;
-                    PrimitiveCount = primitiveCount;
-                    Hierarchy = hierarchy;
-                    HierarchyIndex = hierarchyIndex;
 
-                    DummyVertexBuffer = new VertexBuffer(material.Viewer.GraphicsDevice, DummyVertexDeclaration, 1, BufferUsage.WriteOnly);
-                    DummyVertexBuffer.SetData(DummyVertexData);
-                    VertexBufferBindings = new[] { new VertexBufferBinding(VertexBuffer), new VertexBufferBinding(DummyVertexBuffer) };
-                }
+        public ShapePrimitive(Material material, SharedShape.VertexBufferSet vertexBufferSet, IndexBuffer indexBuffer, int minVertexIndex, int numVerticies, int primitiveCount, int[] hierarchy, int hierarchyIndex)
+        {
+            Material = material;
+            VertexBuffer = vertexBufferSet.Buffer;
+            IndexBuffer = indexBuffer;
+            MinVertexIndex = minVertexIndex;
+            NumVerticies = numVerticies;
+            PrimitiveCount = primitiveCount;
+            Hierarchy = hierarchy;
+            HierarchyIndex = hierarchyIndex;
 
-                public ShapePrimitive(Material material, SharedShape.VertexBufferSet vertexBufferSet, List<ushort> indexData, GraphicsDevice graphicsDevice, int[] hierarchy, int hierarchyIndex)
-                    : this(material, vertexBufferSet, null, indexData.Min(), indexData.Max() - indexData.Min() + 1, indexData.Count / 3, hierarchy, hierarchyIndex)
-                {
-                    IndexBuffer = new IndexBuffer(graphicsDevice, typeof(short), indexData.Count, BufferUsage.WriteOnly);
-                    IndexBuffer.SetData(indexData.ToArray());
-                }
-        
+            DummyVertexBuffer = new VertexBuffer(material.Viewer.GraphicsDevice, DummyVertexDeclaration, 1, BufferUsage.WriteOnly);
+            DummyVertexBuffer.SetData(DummyVertexData);
+            VertexBufferBindings = new[] { new VertexBufferBinding(VertexBuffer), new VertexBufferBinding(DummyVertexBuffer) };
+        }
+
+        public ShapePrimitive(Material material, SharedShape.VertexBufferSet vertexBufferSet, List<ushort> indexData, GraphicsDevice graphicsDevice, int[] hierarchy, int hierarchyIndex)
+            : this(material, vertexBufferSet, null, indexData.Min(), indexData.Max() - indexData.Min() + 1, indexData.Count / 3, hierarchy, hierarchyIndex)
+        {
+            IndexBuffer = new IndexBuffer(graphicsDevice, typeof(short), indexData.Count, BufferUsage.WriteOnly);
+            IndexBuffer.SetData(indexData.ToArray());
+        }
+
 
         public class VertexBufferSet
         {
@@ -724,100 +778,100 @@ namespace Casasoft.ShapeViewerLib
 
             return XNAMatrix;
         }
-        /*
-                public void PrepareFrame(RenderFrame frame, WorldPosition location, ShapeFlags flags)
+
+        public void PrepareFrame(RenderFrame frame, ShapeFlags flags)
+        {
+            PrepareFrame(frame, Matrices, null, flags);
+        }
+
+        public void PrepareFrame(RenderFrame frame, Matrix[] animatedXNAMatrices, ShapeFlags flags)
+        {
+            PrepareFrame(frame, animatedXNAMatrices, null, flags);
+        }
+
+        public void PrepareFrame(RenderFrame frame, Matrix[] animatedXNAMatrices, bool[] subObjVisible, ShapeFlags flags)
+        {
+            var lodBias = ((float)Viewer.Settings.LODBias / 100 + 1);
+
+            // Locate relative to the camera
+            //var dTileX = location.TileX - Viewer.Camera.TileX;
+            //var dTileZ = location.TileZ - Viewer.Camera.TileZ;
+            //var mstsLocation = location.Location;
+            //mstsLocation.X += dTileX * 2048;
+            //mstsLocation.Z += dTileZ * 2048;
+            //var xnaDTileTranslation = location.XNAMatrix;
+            //xnaDTileTranslation.M41 += dTileX * 2048;
+            //xnaDTileTranslation.M43 -= dTileZ * 2048;
+
+            foreach (var lodControl in LodControls)
+            {
+                // Start with the furthest away distance, then look for a nearer one in range of the camera.
+                var displayDetailLevel = lodControl.DistanceLevels.Length - 1;
+
+                // If this LOD group is not in the FOV, skip the whole LOD group.
+                // TODO: This might imair some shadows.
+                //if (!Viewer.Camera.InFov(mstsLocation, lodControl.DistanceLevels[displayDetailLevel].ViewSphereRadius))
+                //    continue;
+
+                // We choose the distance level (LOD) to display first:
+                //   - LODBias = 100 means we always use the highest detail.
+                //   - LODBias < 100 means we operate as normal (using the highest detail in-range of the camera) but
+                //     scaling it by LODBias.
+                //
+                // However, for the viewing distance (and view sphere), we use a slightly different calculation:
+                //   - LODBias = 100 means we always use the *lowest* detail viewing distance.
+                //   - LODBias < 100 means we operate as normal (see above).
+                //
+                // The reason for this disparity is that LODBias = 100 is special, because it means "always use
+                // highest detail", but this by itself is not useful unless we keep using the normal (LODBias-scaled)
+                // viewing distance - right down to the lowest detail viewing distance. Otherwise, we'll scale the
+                // highest detail viewing distance up by 100% and then the object will just disappear!
+
+                //if (Viewer.Settings.LODBias == 100)
+                // Maximum detail!
+                displayDetailLevel = 0;
+                //else if (Viewer.Settings.LODBias > -100)
+                //    // Not minimum detail, so find the correct level (with scaling by LODBias)
+                //    while ((displayDetailLevel > 0) && Viewer.Camera.InRange(mstsLocation, lodControl.DistanceLevels[displayDetailLevel - 1].ViewSphereRadius, lodControl.DistanceLevels[displayDetailLevel - 1].ViewingDistance * lodBias))
+                //        displayDetailLevel--;
+
+                var displayDetail = lodControl.DistanceLevels[displayDetailLevel];
+                var distanceDetail = Viewer.Settings.LODBias == 100
+                    ? lodControl.DistanceLevels[lodControl.DistanceLevels.Length - 1]
+                    : displayDetail;
+
+                // If set, extend the lowest LOD to the maximum viewing distance.
+                if (Viewer.Settings.LODViewingExtention && displayDetailLevel == lodControl.DistanceLevels.Length - 1)
+                    distanceDetail.ViewingDistance = float.MaxValue;
+
+                for (var i = 0; i < displayDetail.SubObjects.Length; i++)
                 {
-                    PrepareFrame(frame, location, Matrices, null, flags);
-                }
+                    var subObject = displayDetail.SubObjects[i];
 
-                public void PrepareFrame(RenderFrame frame, WorldPosition location, Matrix[] animatedXNAMatrices, ShapeFlags flags)
-                {
-                    PrepareFrame(frame, location, animatedXNAMatrices, null, flags);
-                }
+                    // The 1st subobject (note that index 0 is the main object itself) is hidden during the day if HasNightSubObj is true.
+                    if ((subObjVisible != null && !subObjVisible[i]) || (i == 1 && HasNightSubObj && Viewer.MaterialManager.sunDirection.Y >= 0))
+                        continue;
 
-                public void PrepareFrame(RenderFrame frame, WorldPosition location, Matrix[] animatedXNAMatrices, bool[] subObjVisible, ShapeFlags flags)
-                {
-                    var lodBias = ((float)Viewer.Settings.LODBias / 100 + 1);
-
-                    // Locate relative to the camera
-                    var dTileX = location.TileX - Viewer.Camera.TileX;
-                    var dTileZ = location.TileZ - Viewer.Camera.TileZ;
-                    var mstsLocation = location.Location;
-                    mstsLocation.X += dTileX * 2048;
-                    mstsLocation.Z += dTileZ * 2048;
-                    var xnaDTileTranslation = location.XNAMatrix;
-                    xnaDTileTranslation.M41 += dTileX * 2048;
-                    xnaDTileTranslation.M43 -= dTileZ * 2048;
-
-                    foreach (var lodControl in LodControls)
+                    foreach (var shapePrimitive in subObject.ShapePrimitives)
                     {
-                        // Start with the furthest away distance, then look for a nearer one in range of the camera.
-                        var displayDetailLevel = lodControl.DistanceLevels.Length - 1;
-
-                        // If this LOD group is not in the FOV, skip the whole LOD group.
-                        // TODO: This might imair some shadows.
-                        if (!Viewer.Camera.InFov(mstsLocation, lodControl.DistanceLevels[displayDetailLevel].ViewSphereRadius))
-                            continue;
-
-                        // We choose the distance level (LOD) to display first:
-                        //   - LODBias = 100 means we always use the highest detail.
-                        //   - LODBias < 100 means we operate as normal (using the highest detail in-range of the camera) but
-                        //     scaling it by LODBias.
-                        //
-                        // However, for the viewing distance (and view sphere), we use a slightly different calculation:
-                        //   - LODBias = 100 means we always use the *lowest* detail viewing distance.
-                        //   - LODBias < 100 means we operate as normal (see above).
-                        //
-                        // The reason for this disparity is that LODBias = 100 is special, because it means "always use
-                        // highest detail", but this by itself is not useful unless we keep using the normal (LODBias-scaled)
-                        // viewing distance - right down to the lowest detail viewing distance. Otherwise, we'll scale the
-                        // highest detail viewing distance up by 100% and then the object will just disappear!
-
-                        if (Viewer.Settings.LODBias == 100)
-                            // Maximum detail!
-                            displayDetailLevel = 0;
-                        else if (Viewer.Settings.LODBias > -100)
-                            // Not minimum detail, so find the correct level (with scaling by LODBias)
-                            while ((displayDetailLevel > 0) && Viewer.Camera.InRange(mstsLocation, lodControl.DistanceLevels[displayDetailLevel - 1].ViewSphereRadius, lodControl.DistanceLevels[displayDetailLevel - 1].ViewingDistance * lodBias))
-                                displayDetailLevel--;
-
-                        var displayDetail = lodControl.DistanceLevels[displayDetailLevel];
-                        var distanceDetail = Viewer.Settings.LODBias == 100
-                            ? lodControl.DistanceLevels[lodControl.DistanceLevels.Length - 1]
-                            : displayDetail;
-
-                        // If set, extend the lowest LOD to the maximum viewing distance.
-                        if (Viewer.Settings.LODViewingExtention && displayDetailLevel == lodControl.DistanceLevels.Length - 1)
-                            distanceDetail.ViewingDistance = float.MaxValue;
-
-                        for (var i = 0; i < displayDetail.SubObjects.Length; i++)
+                        var xnaMatrix = Matrix.Identity;
+                        var hi = shapePrimitive.HierarchyIndex;
+                        while (hi >= 0 && hi < shapePrimitive.Hierarchy.Length && shapePrimitive.Hierarchy[hi] != -1)
                         {
-                            var subObject = displayDetail.SubObjects[i];
-
-                            // The 1st subobject (note that index 0 is the main object itself) is hidden during the day if HasNightSubObj is true.
-                            if ((subObjVisible != null && !subObjVisible[i]) || (i == 1 && HasNightSubObj && Viewer.MaterialManager.sunDirection.Y >= 0))
-                                continue;
-
-                            foreach (var shapePrimitive in subObject.ShapePrimitives)
-                            {
-                                var xnaMatrix = Matrix.Identity;
-                                var hi = shapePrimitive.HierarchyIndex;
-                                while (hi >= 0 && hi < shapePrimitive.Hierarchy.Length && shapePrimitive.Hierarchy[hi] != -1)
-                                {
-                                    Matrix.Multiply(ref xnaMatrix, ref animatedXNAMatrices[hi], out xnaMatrix);
-                                    hi = shapePrimitive.Hierarchy[hi];
-                                }
-                                Matrix.Multiply(ref xnaMatrix, ref xnaDTileTranslation, out xnaMatrix);
-
-                                // TODO make shadows depend on shape overrides
-
-                                var interior = (flags & ShapeFlags.Interior) != 0;
-                                frame.AddAutoPrimitive(mstsLocation, distanceDetail.ViewSphereRadius, distanceDetail.ViewingDistance * lodBias, shapePrimitive.Material, shapePrimitive, interior ? RenderPrimitiveGroup.Interior : RenderPrimitiveGroup.World, ref xnaMatrix, flags);
-                            }
+                            Matrix.Multiply(ref xnaMatrix, ref animatedXNAMatrices[hi], out xnaMatrix);
+                            hi = shapePrimitive.Hierarchy[hi];
                         }
+                        //                                Matrix.Multiply(ref xnaMatrix, ref xnaDTileTranslation, out xnaMatrix);
+
+                        // TODO make shadows depend on shape overrides
+
+                        var interior = (flags & ShapeFlags.Interior) != 0;
+                        frame.AddAutoPrimitive(Vector3.Zero, distanceDetail.ViewSphereRadius, distanceDetail.ViewingDistance * lodBias, shapePrimitive.Material, shapePrimitive, interior ? RenderPrimitiveGroup.Interior : RenderPrimitiveGroup.World, ref xnaMatrix, flags);
                     }
                 }
-        */
+            }
+        }
+
         public Matrix GetMatrixProduct(int iNode)
         {
             int[] h = LodControls[0].DistanceLevels[0].SubObjects[0].ShapePrimitives[0].Hierarchy;

@@ -86,8 +86,9 @@ namespace ShapeViewer
             fileBrowser = new FileBrowser(this, startDir, "*.s");
 
             sv.CameraSetup();
-//            sv.BasicEffectSetup();
-            sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
+            //            sv.BasicEffectSetup();
+            //            sv.floorTexture = AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath);
+            sv.SetFloorTexture(AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath));
  //           sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -159,6 +160,7 @@ namespace ShapeViewer
                             break;
                         case 1:
                             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                            sv.Clear();
                             //                            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
                             sv.LoadShape(fileBrowser.CurrentFile);
                             sv.BasicEffectSetup();

@@ -49,6 +49,7 @@ namespace Casasoft.ShapeViewerLib
 
         public SharedTextureManager TextureManager { get; private set; }
         public SharedMaterialManager MaterialManager { get; private set; }
+        public SharedShapeManager ShapeManager { get; private set; }
         public Simulator Simulator;
 
         public bool DontLoadNightTextures = false;
@@ -63,6 +64,7 @@ namespace Casasoft.ShapeViewerLib
             this.Settings = sim.Settings;
             TextureManager = new SharedTextureManager(this, GraphicsDevice);
             MaterialManager = new SharedMaterialManager(this);
+            ShapeManager = new SharedShapeManager(this);
         }
     }
 
@@ -97,6 +99,7 @@ namespace Casasoft.ShapeViewerLib
         // This value must be last.
         Sentinel
     }
+
     public enum RenderPrimitiveGroup
     {
         Cab,
