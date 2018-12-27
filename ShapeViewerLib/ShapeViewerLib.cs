@@ -145,42 +145,44 @@ protected Vector3 camTarget;
         public int Update()
         {
             bool recalcXZ = false;
+            GamePadState gps = GamePad.GetState(PlayerIndex.One);
+            KeyboardState kbs = Keyboard.GetState();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (gps.IsButtonDown(Buttons.Back) || kbs.IsKeyDown(Keys.Escape))
                 return -1;
 
             // TODO: Add your update logic here
-            if (Keyboard.GetState().IsKeyDown(Keys.PageDown))
+            if (kbs.IsKeyDown(Keys.PageDown) || gps.IsButtonDown(Buttons.RightThumbstickDown) )
             {
                 cameraHeight -= 0.1f;
                 camPosition.Y = cameraHeight;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.PageUp))
+            if (kbs.IsKeyDown(Keys.PageUp) || gps.IsButtonDown(Buttons.RightThumbstickUp))
             {
                 cameraHeight += 0.1f;
                 camPosition.Y = cameraHeight;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            if (kbs.IsKeyDown(Keys.Down) || gps.IsButtonDown(Buttons.LeftThumbstickDown))
             {
                 cameraDistance += 0.1f;
                 recalcXZ = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            if (kbs.IsKeyDown(Keys.Up) || gps.IsButtonDown(Buttons.LeftThumbstickUp))
             {
                 cameraDistance -= 0.1f;
                 recalcXZ = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            if (kbs.IsKeyDown(Keys.Left) || gps.IsButtonDown(Buttons.LeftThumbstickLeft))
             {
                 cameraAngle += 0.01f;
                 recalcXZ = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (kbs.IsKeyDown(Keys.Right) || gps.IsButtonDown(Buttons.LeftThumbstickRight))
             {
                 cameraAngle -= 0.01f;
                 recalcXZ = true;

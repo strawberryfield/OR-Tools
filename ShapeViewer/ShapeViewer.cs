@@ -129,7 +129,6 @@ namespace ShapeViewer
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-//            sv.LoadShape(examples + "SHAPES\\TSF_MAR_FV_Pietracuta.s");
         }
 
         /// <summary>
@@ -173,6 +172,7 @@ namespace ShapeViewer
                     switch (sv.Update())
                     {
                         case -1:
+                            fileBrowser.ReInit();
                             loopStatus = LoopStatus.SelShape;
                             break;
                         default:
