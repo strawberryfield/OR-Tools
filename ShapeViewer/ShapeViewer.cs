@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-//#define WINDOWED
+#define WINDOWED
 
 using Casasoft.Panels2D;
 using Casasoft.ShapeViewerLib;

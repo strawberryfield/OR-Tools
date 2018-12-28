@@ -108,7 +108,19 @@ namespace Casasoft.ShapeViewerLib
 
             Viewer viewer = new Viewer(Game.GraphicsDevice, sim);
 
-            SharedShape Shape = new SharedShape(viewer, filename);
+            string dir = Path.GetDirectoryName(filename);
+            string dirTextures = Path.Combine(dir, "..\\TEXTURES");
+            string fileref = filename + '\0';
+            if (Directory.Exists(dirTextures))
+            {
+                fileref += dirTextures;
+            }
+            else
+            {
+                fileref += dir;
+            }
+
+            SharedShape Shape = new SharedShape(viewer, fileref);
             Shape.PrepareFrame(frame, ShapeFlags.AutoZBias);
         }
 
