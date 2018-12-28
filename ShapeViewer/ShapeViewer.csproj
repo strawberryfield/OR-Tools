@@ -90,7 +90,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="readme.md" />
+    <None Include="README.md" />
     <None Include="Samples\Shapes\TSF_MAR_FV_Pietracuta.sd" />
     <None Include="Samples\Textures\scritta_pietracuta.ace" />
     <None Include="Samples\Textures\TSF_MAR_neve.ace" />
