@@ -31,17 +31,6 @@ using Orts.Simulation;
 
 namespace Casasoft.ShapeViewerLib
 {
-    //public class Simulator {
-    //    public UserSettings Settings;
-
-    //    public string BasePath;     // ie c:\program files\microsoft games\train simulator
-    //    public string RoutePath;    // ie c:\program files\microsoft games\train simulator\routes\usa1  - may be different on different pc's
-
-    //    public SeasonType Season;
-    //    public WeatherType WeatherType;
-
-    //}
-
     public class Viewer
     {
         public GraphicsDevice GraphicsDevice;
@@ -252,7 +241,6 @@ namespace Casasoft.ShapeViewerLib
             Underground = 0x40000000,
         }
 
-        /*
         [Flags]
         public enum SceneryMaterialOptions
         {
@@ -288,7 +276,6 @@ namespace Casasoft.ShapeViewerLib
             // Texture to be shown in tunnels and underground (used for 3D cab night textures)
             UndergroundTexture = 0x40000000,
         }
-*/
 
         public static string GetForestTextureFile(Simulator simulator, string textureName)
         {
@@ -434,6 +421,6 @@ namespace Casasoft.ShapeViewerLib
 
             return options;
         } // end EncodeMaterialOptions
-        */
+    */    
     } // end class Helpers
 }

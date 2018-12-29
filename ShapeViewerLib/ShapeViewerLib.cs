@@ -54,7 +54,6 @@ namespace Casasoft.ShapeViewerLib
             Game.Content.RootDirectory = "Content";
             frame = new RenderFrame(Game);
             var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
-            //            sim.Settings = new UserSettings(options);
 
             sim = new Simulator(new UserSettings(options), Path.GetFullPath(@".\Content\DummyRoute\Activities\DummyActivity.act"), false);
             sim.Season = SeasonType.Summer;
