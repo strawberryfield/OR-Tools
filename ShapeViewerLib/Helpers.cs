@@ -26,20 +26,21 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Orts.Simulation;
 
 
 namespace Casasoft.ShapeViewerLib
 {
-    public class Simulator {
-        public UserSettings Settings;
+    //public class Simulator {
+    //    public UserSettings Settings;
 
-        public string BasePath;     // ie c:\program files\microsoft games\train simulator
-        public string RoutePath;    // ie c:\program files\microsoft games\train simulator\routes\usa1  - may be different on different pc's
+    //    public string BasePath;     // ie c:\program files\microsoft games\train simulator
+    //    public string RoutePath;    // ie c:\program files\microsoft games\train simulator\routes\usa1  - may be different on different pc's
 
-        public SeasonType Season;
-        public WeatherType WeatherType;
+    //    public SeasonType Season;
+    //    public WeatherType WeatherType;
 
-    }
+    //}
 
     public class Viewer
     {

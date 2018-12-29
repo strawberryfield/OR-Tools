@@ -70,6 +70,10 @@
       <Project>{67f84996-8769-4fd8-819b-464af269037b}</Project>
       <Name>ORTS.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orts.Simulation\Orts.Simulation.csproj">
+      <Project>{333c4378-d82e-4b47-b561-6ba923b8fdfd}</Project>
+      <Name>Orts.Simulation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\blank.bmp">
@@ -203,6 +207,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\DummyRoute\DummyRoute.trk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\TSF_BCT_margherite.ace">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

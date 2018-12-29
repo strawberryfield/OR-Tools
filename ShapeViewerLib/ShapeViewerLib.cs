@@ -20,9 +20,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Orts.Formats.Msts;
 using ORTS.Settings;
+using Orts.Simulation.RollingStocks;
 using System;
 using System.IO;
 using System.Linq;
+using Orts.Simulation;
 
 namespace Casasoft.ShapeViewerLib
 {
@@ -39,6 +41,8 @@ namespace Casasoft.ShapeViewerLib
 
         protected Game Game;
         protected RenderFrame frame;
+        protected Simulator sim;
+        protected Viewer viewer;
 
         /// <summary>
         /// Constructor
@@ -49,6 +53,13 @@ namespace Casasoft.ShapeViewerLib
             Game = game;
             Game.Content.RootDirectory = "Content";
             frame = new RenderFrame(Game);
+            var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
+            //            sim.Settings = new UserSettings(options);
+
+            sim = new Simulator(new UserSettings(options), Path.GetFullPath(@".\Content\DummyRoute\Activities\DummyActivity.act"), false);
+            sim.Season = SeasonType.Summer;
+            sim.WeatherType = WeatherType.Clear;
+            viewer = new Viewer(Game.GraphicsDevice, sim);
         }
 
         /// <summary>
@@ -94,19 +105,35 @@ namespace Casasoft.ShapeViewerLib
         }
 
         /// <summary>
+        /// Loads en entire object
+        /// </summary>
+        /// <param name="filename"></param>
+        public void LoadItem(string filename)
+        {
+            string ext = Path.GetExtension(filename).ToLower();
+            if (ext == ".s")
+            {
+                LoadShape(filename);
+            }
+            else if (ext == ".wag" || ext == ".eng")
+            {
+                MSTSWagon wag = new MSTSWagon(sim, filename);
+                wag.Load();
+                string wagDir = Path.GetDirectoryName(filename);
+                if(!string.IsNullOrWhiteSpace(wag.MainShapeFileName))
+                    LoadShape(Path.Combine(wagDir, wag.MainShapeFileName));
+                if (!string.IsNullOrWhiteSpace(wag.FreightShapeFileName))
+                    LoadShape(Path.Combine(wagDir, wag.FreightShapeFileName));
+            }
+        }
+
+        /// <summary>
         /// Loads a shape
         /// </summary>
         /// <param name="filename"></param>
         public void LoadShape(string filename)
         {
-            Simulator sim = new Simulator();
             sim.RoutePath = Path.Combine(Path.GetDirectoryName(filename), "..");
-            sim.Season = SeasonType.Summer;
-            sim.WeatherType = WeatherType.Clear;
-            var options = Environment.GetCommandLineArgs().Where(a => (a.StartsWith("-") || a.StartsWith("/"))).Select(a => a.Substring(1));
-            sim.Settings = new UserSettings(options);
-
-            Viewer viewer = new Viewer(Game.GraphicsDevice, sim);
 
             string dir = Path.GetDirectoryName(filename);
             string dirTextures = Path.Combine(dir, "..\\TEXTURES");
@@ -122,6 +149,24 @@ namespace Casasoft.ShapeViewerLib
 
             SharedShape Shape = new SharedShape(viewer, fileref);
             Shape.PrepareFrame(frame, ShapeFlags.AutoZBias);
+        }
+
+        /// <summary>
+        /// Changes the season
+        /// </summary>
+        /// <param name="season"></param>
+        public void SetSeason(SeasonType season)
+        {
+            sim.Season = season;
+        }
+
+        /// <summary>
+        /// Changes the wheather
+        /// </summary>
+        /// <param name="weather"></param>
+        public void SetWeather(WeatherType weather)
+        {
+            sim.WeatherType = weather;
         }
 
         /// <summary>
@@ -173,6 +218,9 @@ namespace Casasoft.ShapeViewerLib
                 cameraAngle -= 0.01f;
                 recalcXZ = true;
             }
+
+            //if (kbs.IsKeyDown(Keys.W)) sim.Season = SeasonType.Winter;
+            //if (kbs.IsKeyDown(Keys.S)) sim.Season = SeasonType.Summer;
 
             if (recalcXZ)
             {

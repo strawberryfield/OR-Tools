@@ -30,7 +30,7 @@ namespace Casasoft.Panels2D
         public string CurrentFile;
         protected string ActiveDir;
         protected string StartDir;
-        protected string Filter;
+        protected string[] Filters;
 
         protected DriveInfo[] drives;
         protected string[] files;
@@ -62,7 +62,14 @@ namespace Casasoft.Panels2D
             CurrentFile = string.Empty;
             ActiveDir = string.Empty;
             StartDir = startDir;
-            Filter = string.IsNullOrWhiteSpace(filter) ? "*" : filter;
+            if(string.IsNullOrWhiteSpace(filter))
+            {
+                Filters = new string[] { "*" };
+            }
+            else
+            {
+                Filters = filter.Split('|');
+            }
 
             dirs = new List<string>();
             drives = DriveInfo.GetDrives();
@@ -174,7 +181,11 @@ namespace Casasoft.Panels2D
         { 
             try
             {
-                files = Directory.GetFiles(CurrentPath, Filter);
+                List<string> fl = new List<string>();
+                foreach (var filter in Filters)
+                    fl.AddRange(Directory.EnumerateFiles(CurrentPath, filter));
+                fl.Sort();
+                files = fl.ToArray();
                 maxItemsRight = files.Length;
             }
             catch(Exception)

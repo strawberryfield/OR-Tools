@@ -49,7 +49,7 @@ namespace ShapeViewer
 
         private FileBrowser fileBrowser;
 
-        string examples = "..\\ORTools\\ShapeViewer\\samples\\";
+        //string examples = "..\\ORTools\\ShapeViewer\\samples\\";
         string floorTexturePath = "Content\\TSF_BCT_margherite.ace";
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace ShapeViewer
             LoadLanguage();
 
             string startDir = ConfigurationManager.AppSettings["StartDir"];
-            fileBrowser = new FileBrowser(this, startDir, "*.s");
+            fileBrowser = new FileBrowser(this, startDir, "*.s|*.eng|*.wag");
 
             sv.CameraSetup();
             sv.SetFloorTexture(AceFile.Texture2DFromFile(GraphicsDevice, floorTexturePath));
@@ -157,7 +157,7 @@ namespace ShapeViewer
                         case 1:
                             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                             sv.Clear();
-                            sv.LoadShape(fileBrowser.CurrentFile);
+                            sv.LoadItem(fileBrowser.CurrentFile);
                             loopStatus = LoopStatus.ShowShape;
                             break;
                         default:
