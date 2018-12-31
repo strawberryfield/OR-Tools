@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2018,2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("Monogame based replacement for Open Rails menu.exe")]
 [assembly: AssemblyCompany("Casasoft - Roberto Ceccarelli")]
-[assembly: AssemblyCopyright("Copyright ©  2018 Roberto Ceccarelli - Casasoft")]
+[assembly: AssemblyCopyright("Copyright ©  2018,2019 Roberto Ceccarelli - Casasoft")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

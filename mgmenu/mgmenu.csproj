@@ -82,6 +82,7 @@
     <Compile Include="SelActivity.cs" />
     <Compile Include="SelConsist.cs" />
     <Compile Include="SelLocomotive.cs" />
+    <Compile Include="SelPath.cs" />
     <Compile Include="SelRoute.cs" />
   </ItemGroup>
   <ItemGroup>

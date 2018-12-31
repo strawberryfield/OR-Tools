@@ -46,6 +46,7 @@
     <Compile Include="DDSLib.cs" />
     <Compile Include="GroundPlane.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="LODs.cs" />
     <Compile Include="Materials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderFrame.cs" />
@@ -208,6 +209,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\DummyRoute\DummyRoute.trk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\DummyRoute\TERRTEX\microtex.ace">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\TSF_BCT_margherite.ace">

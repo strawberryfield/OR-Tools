@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2018,2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -67,6 +67,7 @@ namespace Casasoft.MgMenu
         private SelActivity selActivity;
         private SelLocomotive selLocomotive;
         private SelConsist selConsist;
+        private SelPath selPath;
 
         /// <summary>
         /// Constructor
@@ -101,6 +102,7 @@ namespace Casasoft.MgMenu
             selActivity = new SelActivity(this);
             selConsist = new SelConsist(this);
             selLocomotive = new SelLocomotive(this);
+            selPath = new SelPath(this);
 
             SelectedFolder = null;
             SelectedRoute = null;
@@ -208,6 +210,7 @@ namespace Casasoft.MgMenu
             Activities = Activity.GetActivities(SelectedFolder, SelectedRoute).OrderBy(l => l.Name).ToList();
             selActivity.SetList(Activities);
             Paths = Path.GetPaths(SelectedRoute, true);
+            selPath.SetList(Paths);
         }
 
         /// <summary>
@@ -297,11 +300,27 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelLoco;
                             selLocomotive.ReInit();
                             break;
+                        case 1:
+                            loopStatus = LoopStatus.SelPath;
+                            SelectedConsist = Consists[selConsist.Selected];
+                            selPath.ReInit();
+                            break;
                         default:
                             break;
                     }
                     break;
                 case LoopStatus.SelPath:
+                    switch (selPath.Update())
+                    {
+                        case -1:
+                            loopStatus = LoopStatus.SelConsist;
+                            selConsist.ReInit();
+                            break;
+                        case 1:
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case LoopStatus.SelTime:
                     break;
@@ -337,6 +356,7 @@ namespace Casasoft.MgMenu
                     selConsist.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelPath:
+                    selPath.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelTime:
                     break;

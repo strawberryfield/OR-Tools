@@ -386,7 +386,7 @@ namespace Casasoft.ShapeViewerLib
             { "OptSpecular25", SceneryMaterialOptions.None | SceneryMaterialOptions.Specular25 },
             { "OptSpecular0", SceneryMaterialOptions.None | SceneryMaterialOptions.None },
         };
-/*
+
         /// <summary>
         /// Encodes material options code from parameterized options.
         /// Material options encoding is documented in SharedShape.SubObject() (Shapes.cs)
@@ -421,6 +421,6 @@ namespace Casasoft.ShapeViewerLib
 
             return options;
         } // end EncodeMaterialOptions
-    */    
+        
     } // end class Helpers
 }
