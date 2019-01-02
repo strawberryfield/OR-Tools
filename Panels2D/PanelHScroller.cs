@@ -21,7 +21,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Casasoft.Panels2D
 {
-    public class PanelHScroller : PanelBase
+    public class PanelHScroller : PanelScroller
     {
         protected Texture2D noImage;
 

@@ -20,6 +20,7 @@
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Orts.Formats.Msts;
 using ORTS.Menu;
 using ORTS.Settings;
 using System;
@@ -58,8 +59,10 @@ namespace Casasoft.MgMenu
         public Path SelectedPath { get; private set; }
         public Consist SelectedConsist { get; private set; }
         public Locomotive SelectedLocomotive { get; private set; }
+        public SeasonType SelectedSeason { get; private set; }
+        public WeatherType SelectedWeather { get; private set; }
 
-        private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime }
+        private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime, SelSeason, SelWeather }
         private LoopStatus loopStatus;
 
         // Panels
@@ -68,6 +71,8 @@ namespace Casasoft.MgMenu
         private SelLocomotive selLocomotive;
         private SelConsist selConsist;
         private SelPath selPath;
+        private SelSeason selSeason;
+        private SelWeather selWeather;
 
         /// <summary>
         /// Constructor
@@ -103,6 +108,8 @@ namespace Casasoft.MgMenu
             selConsist = new SelConsist(this);
             selLocomotive = new SelLocomotive(this);
             selPath = new SelPath(this);
+            selSeason = new SelSeason(this);
+            selWeather = new SelWeather(this);
 
             SelectedFolder = null;
             SelectedRoute = null;
@@ -123,6 +130,7 @@ namespace Casasoft.MgMenu
             graphics.ApplyChanges();
 
             loopStatus = LoopStatus.SelRoute;
+//            loopStatus = LoopStatus.SelWeather;
 
             base.Initialize();
         }
@@ -324,6 +332,26 @@ namespace Casasoft.MgMenu
                     break;
                 case LoopStatus.SelTime:
                     break;
+                case LoopStatus.SelSeason:
+                    switch (selSeason.Update())
+                    {
+                        case -1:
+                            Exit();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case LoopStatus.SelWeather:
+                    switch (selWeather.Update())
+                    {
+                        case -1:
+                            Exit();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -359,6 +387,12 @@ namespace Casasoft.MgMenu
                     selPath.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelTime:
+                    break;
+                case LoopStatus.SelSeason:
+                    selSeason.Draw(spriteBatch);
+                    break;
+                case LoopStatus.SelWeather:
+                    selWeather.Draw(spriteBatch);
                     break;
                 default:
                     break;

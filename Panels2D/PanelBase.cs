@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -26,16 +26,10 @@ namespace Casasoft.Panels2D
     public class PanelBase
     {
         protected Dictionary<FontSizes, BitmapFont> fonts;
-
-        protected Texture2D boxBackground;
-        protected Texture2D boxBackgroundInactive;
-
-        protected int maxItems;
+        protected Game game;
 
         protected int screenX;
         protected int screenY;
-        protected Rectangle textBox;
-        protected Rectangle leftBox;
 
         public string Caption { get; set; }
         public int Selected { get; set; }
@@ -44,8 +38,10 @@ namespace Casasoft.Panels2D
         /// Constructor
         /// </summary>
         /// <param name="game"></param>
-        public PanelBase( Game game)
+        public PanelBase(Game game)
         {
+            this.game = game;
+
             screenX = game.GraphicsDevice.DisplayMode.Width;
             screenY = game.GraphicsDevice.DisplayMode.Height;
 
@@ -57,31 +53,10 @@ namespace Casasoft.Panels2D
                 [FontSizes.Header] = game.Content.Load<BitmapFont>("HeaderText")
             };
 
-            boxBackground = new Texture2D(game.GraphicsDevice, 1, 1);
-            Color[] colorData = new Color[1];
-            colorData[0] = Color.WhiteSmoke;
-            boxBackground.SetData<Color>(colorData);
-
-            boxBackgroundInactive = new Texture2D(game.GraphicsDevice, 1, 1);
-            colorData = new Color[1];
-            colorData[0] = Color.LightGray;
-            boxBackgroundInactive.SetData<Color>(colorData);
-
             Caption = "Selector";
-            maxItems = 0;
 
             ReInit();
         }
-
-        /// <summary>
-        /// Resets panel data
-        /// </summary>
-        public virtual void Clear()
-        {
-            Selected = 0;
-            maxItems = 0;
-        }
-
 
         #region input check
         protected MouseState oldMouseState;
@@ -110,7 +85,7 @@ namespace Casasoft.Panels2D
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
-            int ret = CheckInput(); 
+            int ret = CheckInput();
 
             oldMouseState = mouseState;
             oldKeyboardState = keyboardState;
@@ -126,24 +101,6 @@ namespace Casasoft.Panels2D
         protected virtual int CheckInput()
         {
             return 0;
-        }
-
-        /// <summary>
-        /// True if scroll up
-        /// </summary>
-        /// <returns></returns>
-        protected bool MouseScrollerUp()
-        {
-            return mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue;
-        }
-
-        /// <summary>
-        /// True if scroll down
-        /// </summary>
-        /// <returns></returns>
-        protected bool MouseScrollerDown()
-        {
-            return mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue;
         }
 
         /// <summary>
@@ -175,7 +132,19 @@ namespace Casasoft.Panels2D
         public virtual void Draw(SpriteBatch sb)
         {
             if (!string.IsNullOrWhiteSpace(Caption))
-                sb.DrawString(fonts[FontSizes.Header], Caption, new Vector2(20,-5), Color.WhiteSmoke);
+                sb.DrawString(fonts[FontSizes.Header], Caption, new Vector2(20, -5), Color.WhiteSmoke);
+        }
+
+        /// <summary>
+        /// Draw a resized image
+        /// </summary>
+        /// <param name="sb">SpriteBatch to use for drawing</param>
+        /// <param name="img"></param>
+        /// <param name="area">Position and size of the image</param>
+        /// <param name="color">Overlay color</param>
+        protected void DrawResized(SpriteBatch sb, Texture2D img, Rectangle area, Color color)
+        {
+            sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), color);
         }
 
         /// <summary>
@@ -186,11 +155,9 @@ namespace Casasoft.Panels2D
         /// <param name="area">Position and size of the image</param>
         protected void DrawResized(SpriteBatch sb, Texture2D img, Rectangle area)
         {
-            sb.Draw(img, area, new Rectangle(0, 0, img.Width, img.Height), Color.White);
+            DrawResized(sb, img, area, Color.White);
         }
         #endregion
 
- 
     }
 }
-

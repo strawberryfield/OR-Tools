@@ -22,7 +22,7 @@ using MonoGame.Extended.BitmapFonts;
 
 namespace Casasoft.Panels2D
 {
-    public class PanelVScroller : PanelBase
+    public class PanelVScroller : PanelScroller
     {
         protected int detailSizeX;
         protected int detailSizeY;
