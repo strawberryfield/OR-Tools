@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2018,2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -88,5 +88,15 @@ namespace Casasoft.MgMenu
             return activities[pos].Name;
         }
 
+        /// <summary>
+        /// Returns selected activity
+        /// </summary>
+        public Activity Activity
+        {
+            get
+            {
+                return activities.Count > 0 ? activities[Selected] : null;
+            }
+        }
     }
 }

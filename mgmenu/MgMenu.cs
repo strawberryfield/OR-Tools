@@ -275,7 +275,7 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelLoco;
-                            SelectedActivity = Activities[selActivity.Selected];
+                            SelectedActivity = selActivity.Activity;
                             selLocomotive.ReInit();
                             break;
                         default:
@@ -291,7 +291,7 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelConsist;
-                            SelectedLocomotive = Locos[selLocomotive.Selected];
+                            SelectedLocomotive = selLocomotive.Locomotive;
                             selConsist.ReInit();
                             selConsist.Clear();
                             List<Consist> lc = new List<Consist>();
@@ -312,7 +312,7 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelPath;
-                            SelectedConsist = Consists[selConsist.Selected];
+                            SelectedConsist = selConsist.Consist;
                             selPath.ReInit();
                             break;
                         default:

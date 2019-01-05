@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2018,2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -83,5 +83,15 @@ namespace Casasoft.MgMenu
             return consists[pos].Name;
         }
 
+        /// <summary>
+        /// Returns selected consist
+        /// </summary>
+        public Consist Consist
+        {
+            get
+            {
+                return consists.Count > 0 ? consists[Selected] : null;
+            }
+        }
     }
 }

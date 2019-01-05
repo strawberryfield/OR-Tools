@@ -1,4 +1,4 @@
-﻿// COPYRIGHT 2018 Roberto Ceccarelli - Casasoft.
+﻿// COPYRIGHT 2018,2019 Roberto Ceccarelli - Casasoft.
 // 
 // This file is part of OR Tools.
 // 
@@ -83,5 +83,15 @@ namespace Casasoft.MgMenu
             return locomotives[pos].Name;
         }
 
+        /// <summary>
+        /// Returns selected locomotive
+        /// </summary>
+        public Locomotive Locomotive
+        {
+            get
+            {
+                return locomotives.Count > 0 ? locomotives[Selected] : null;
+            }
+        }
     }
 }
