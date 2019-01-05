@@ -17,7 +17,6 @@
 
 using Casasoft.Panels2D;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ORTS.Menu;
 using System.Collections.Generic;
 using System.Linq;
@@ -127,6 +126,17 @@ namespace Casasoft.MgMenu
         protected override string RightScrollerItemText(int pos)
         {
             return headTo[pos].End;
+        }
+
+        /// <summary>
+        /// Returns the selected Path
+        /// </summary>
+        public Path Path
+        {
+            get
+            {
+                return headTo.Count > 0 ? headTo[SelectedRight] : null;
+            }
         }
     }
 }

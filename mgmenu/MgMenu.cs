@@ -328,6 +328,7 @@ namespace Casasoft.MgMenu
                             break;
                         case 1:
                             loopStatus = LoopStatus.SelSeason;
+                            SelectedPath = selPath.Path;
                             selSeason.ReInit();
                             break;
                         default:
