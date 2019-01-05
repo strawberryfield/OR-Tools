@@ -18,6 +18,7 @@
 using Casasoft.Panels2D;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Orts.Formats.Msts;
 using System.IO;
 
 namespace Casasoft.MgMenu
@@ -42,6 +43,51 @@ namespace Casasoft.MgMenu
             using (var fileStream = new FileStream(Path.Combine(imgPath, "spring.png"), FileMode.Open))
                 buttonList.Add(new ButtonData(Texture2D.FromStream(game.GraphicsDevice, fileStream), "Spring"));
 
+        }
+
+        /// <summary>
+        /// Season <-> Selected conversion
+        /// </summary>
+        public SeasonType Season
+        {
+            get
+            {
+                switch (Selected)
+                {
+                    case 0:
+                        return SeasonType.Summer;
+                    case 1:
+                        return SeasonType.Autumn;
+                    case 2:
+                        return SeasonType.Winter;
+                    case 3:
+                        return SeasonType.Spring;
+                    default:
+                        return SeasonType.Summer;
+                }
+            }
+
+            set
+            {
+                switch (value)
+                {
+                    case SeasonType.Summer:
+                        Selected = 0;
+                        break;
+                    case SeasonType.Autumn:
+                        Selected = 1;
+                        break;
+                    case SeasonType.Winter:
+                        Selected = 2;
+                        break;
+                    case SeasonType.Spring:
+                        Selected = 3;
+                        break;
+                    default:
+                        Selected = 0;
+                        break;
+                }
+            }
         }
     }
 }

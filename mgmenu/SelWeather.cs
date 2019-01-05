@@ -18,6 +18,7 @@
 using Casasoft.Panels2D;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Orts.Formats.Msts;
 using System.IO;
 
 namespace Casasoft.MgMenu
@@ -41,5 +42,44 @@ namespace Casasoft.MgMenu
                 buttonList.Add(new ButtonData(Texture2D.FromStream(game.GraphicsDevice, fileStream), "Snow"));
         }
 
+        /// <summary>
+        /// Weather <-> Selected conversion
+        /// </summary>
+        public WeatherType Weather
+        {
+            get
+            {
+                switch (Selected)
+                {
+                    case 0:
+                        return WeatherType.Clear;
+                    case 1:
+                        return WeatherType.Rain;
+                    case 2:
+                        return WeatherType.Snow;
+                    default:
+                        return WeatherType.Clear;
+                }
+            }
+
+            set
+            {
+                switch (value)
+                {
+                    case WeatherType.Clear:
+                        Selected = 0;
+                        break;
+                    case WeatherType.Snow:
+                        Selected = 1;
+                        break;
+                    case WeatherType.Rain:
+                        Selected = 2;
+                        break;
+                    default:
+                        Selected = 0;
+                        break;
+                }
+            }
+        }
     }
 }

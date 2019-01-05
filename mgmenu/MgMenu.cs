@@ -117,6 +117,8 @@ namespace Casasoft.MgMenu
             SelectedPath = null;
             SelectedConsist = null;
             SelectedLocomotive = null;
+            SelectedSeason = SeasonType.Summer;
+            SelectedWeather = WeatherType.Clear;
 
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -325,18 +327,24 @@ namespace Casasoft.MgMenu
                             selConsist.ReInit();
                             break;
                         case 1:
+                            loopStatus = LoopStatus.SelSeason;
+                            selSeason.ReInit();
                             break;
                         default:
                             break;
                     }
                     break;
-                case LoopStatus.SelTime:
-                    break;
                 case LoopStatus.SelSeason:
                     switch (selSeason.Update())
                     {
                         case -1:
-                            Exit();
+                            loopStatus = LoopStatus.SelPath;
+                            selPath.ReInit();
+                            break;
+                        case 1:
+                            loopStatus = LoopStatus.SelWeather;
+                            SelectedSeason = selSeason.Season;
+                            selWeather.ReInit();
                             break;
                         default:
                             break;
@@ -346,11 +354,14 @@ namespace Casasoft.MgMenu
                     switch (selWeather.Update())
                     {
                         case -1:
-                            Exit();
+                            loopStatus = LoopStatus.SelSeason;
+                            selSeason.ReInit();
                             break;
                         default:
                             break;
                     }
+                    break;
+                case LoopStatus.SelTime:
                     break;
                 default:
                     break;
