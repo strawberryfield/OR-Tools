@@ -5,7 +5,8 @@
   <pages>
     <page id="0" file="7SegmentFont_0.png" />
   </pages>
-  <chars count="11">
+  <chars count="12">
+    <char id="32" x="374" y="0" width="3" height="1" xoffset="-1" yoffset="199" xadvance="49" page="0" chnl="15" />
     <char id="48" x="0" y="0" width="80" height="130" xoffset="-1" yoffset="31" xadvance="85" page="0" chnl="15" />
     <char id="49" x="324" y="0" width="24" height="112" xoffset="55" yoffset="40" xadvance="85" page="0" chnl="15" />
     <char id="50" x="81" y="0" width="80" height="130" xoffset="-1" yoffset="31" xadvance="85" page="0" chnl="15" />

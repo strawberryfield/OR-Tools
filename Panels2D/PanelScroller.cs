@@ -59,29 +59,6 @@ namespace Casasoft.Panels2D
             maxItems = 0;
         }
 
-
-        #region input check
-
-        /// <summary>
-        /// True if scroll up
-        /// </summary>
-        /// <returns></returns>
-        protected bool MouseScrollerUp()
-        {
-            return mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue;
-        }
-
-        /// <summary>
-        /// True if scroll down
-        /// </summary>
-        /// <returns></returns>
-        protected bool MouseScrollerDown()
-        {
-            return mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue;
-        }
-
-        #endregion
-
     }
 }
 

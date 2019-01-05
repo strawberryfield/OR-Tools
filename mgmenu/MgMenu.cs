@@ -61,6 +61,7 @@ namespace Casasoft.MgMenu
         public Locomotive SelectedLocomotive { get; private set; }
         public SeasonType SelectedSeason { get; private set; }
         public WeatherType SelectedWeather { get; private set; }
+        public DateTime StartTime { get; private set; }
 
         private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime, SelSeason, SelWeather }
         private LoopStatus loopStatus;
@@ -73,6 +74,7 @@ namespace Casasoft.MgMenu
         private SelPath selPath;
         private SelSeason selSeason;
         private SelWeather selWeather;
+        private Panels2D.PanelTime selTime;
 
         /// <summary>
         /// Constructor
@@ -110,6 +112,9 @@ namespace Casasoft.MgMenu
             selPath = new SelPath(this);
             selSeason = new SelSeason(this);
             selWeather = new SelWeather(this);
+            selTime = new Panels2D.PanelTime(this);
+            selTime.Caption = "Start time";
+            selTime.Hours = 12;
 
             SelectedFolder = null;
             SelectedRoute = null;
@@ -119,6 +124,7 @@ namespace Casasoft.MgMenu
             SelectedLocomotive = null;
             SelectedSeason = SeasonType.Summer;
             SelectedWeather = WeatherType.Clear;
+            StartTime = selTime.Time;
 
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -131,8 +137,8 @@ namespace Casasoft.MgMenu
 #endif
             graphics.ApplyChanges();
 
-            loopStatus = LoopStatus.SelRoute;
-//            loopStatus = LoopStatus.SelWeather;
+//            loopStatus = LoopStatus.SelRoute;
+            loopStatus = LoopStatus.SelTime;
 
             base.Initialize();
         }
@@ -363,6 +369,14 @@ namespace Casasoft.MgMenu
                     }
                     break;
                 case LoopStatus.SelTime:
+                    switch (selTime.Update())
+                    {
+                        case -1:
+                            Exit();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
@@ -399,6 +413,7 @@ namespace Casasoft.MgMenu
                     selPath.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelTime:
+                    selTime.Draw(spriteBatch);
                     break;
                 case LoopStatus.SelSeason:
                     selSeason.Draw(spriteBatch);

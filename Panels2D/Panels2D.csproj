@@ -54,6 +54,7 @@
     <Compile Include="PanelScroller.cs" />
     <Compile Include="PanelButtons.cs" />
     <Compile Include="PanelHScroller.cs" />
+    <Compile Include="PanelTime.cs" />
     <Compile Include="PanelVScroller.cs" />
     <Compile Include="PanelVScrollerDouble.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
