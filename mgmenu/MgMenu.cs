@@ -137,8 +137,7 @@ namespace Casasoft.MgMenu
 #endif
             graphics.ApplyChanges();
 
-//            loopStatus = LoopStatus.SelRoute;
-            loopStatus = LoopStatus.SelTime;
+            loopStatus = LoopStatus.SelRoute;
 
             base.Initialize();
         }
@@ -243,6 +242,14 @@ namespace Casasoft.MgMenu
             selLocomotive.SetList(Locos);
         }
         #endregion
+
+        /// <summary>
+        /// Runs OR
+        /// </summary>
+        private void StartActivity()
+        {
+            Exit();
+        }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -364,6 +371,11 @@ namespace Casasoft.MgMenu
                             loopStatus = LoopStatus.SelSeason;
                             selSeason.ReInit();
                             break;
+                        case 1:
+                            loopStatus = LoopStatus.SelTime;
+                            SelectedWeather = selWeather.Weather;
+                            selTime.ReInit();
+                            break;
                         default:
                             break;
                     }
@@ -372,7 +384,12 @@ namespace Casasoft.MgMenu
                     switch (selTime.Update())
                     {
                         case -1:
-                            Exit();
+                            loopStatus = LoopStatus.SelWeather;
+                            selWeather.ReInit();
+                            break;
+                        case 1:
+                            StartTime = selTime.Time;
+
                             break;
                         default:
                             break;
