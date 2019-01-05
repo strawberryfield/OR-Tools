@@ -14,9 +14,26 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Source/7SegmentFont.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:Source/7SegmentFont.fnt
+
+#begin Source/7SegmentFont_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Source/7SegmentFont_0.png
+
 #begin Source/HeaderText.fnt
-/importer:
-/processor:
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
 /build:Source/HeaderText.fnt
 
 #begin Source/HeaderText_0.png
@@ -44,8 +61,8 @@
 /build:Source/no-image.png
 
 #begin Source/NormalText.fnt
-/importer:
-/processor:
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
 /build:Source/NormalText.fnt
 
 #begin Source/NormalText_0.png
@@ -61,8 +78,8 @@
 /build:Source/NormalText_0.png
 
 #begin Source/SubtitleText.fnt
-/importer:
-/processor:
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
 /build:Source/SubtitleText.fnt
 
 #begin Source/SubtitleText_0.png
@@ -78,8 +95,8 @@
 /build:Source/SubtitleText_0.png
 
 #begin Source/TitleText.fnt
-/importer:
-/processor:
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
 /build:Source/TitleText.fnt
 
 #begin Source/TitleText_0.png

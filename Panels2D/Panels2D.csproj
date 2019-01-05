@@ -61,6 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include="Content\7SegmentFont.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\7SegmentFont_0.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\HeaderText.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -76,6 +82,8 @@
     <None Include="Content\NormalText_0.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Source\7SegmentFont.fnt" />
+    <None Include="Content\Source\Digital Dismay.otf" />
     <None Include="Content\Source\HeaderText.fnt" />
     <None Include="Content\Source\NormalText.fnt" />
     <None Include="Content\Source\SubtitleText.fnt" />
@@ -100,6 +108,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Source\7SegmentFont_0.png" />
     <Content Include="Content\Source\HeaderText_0.png" />
     <Content Include="Content\Source\no-image.png" />
     <Content Include="Content\Source\NormalText_0.png" />
