@@ -32,7 +32,19 @@ namespace Casasoft.MgMenu
         static void Main()
         {
             using (var game = new MgMenu())
+            {
                 game.Run();
+
+                System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
+                processStartInfo.FileName = game.RunActivityProgram;
+                processStartInfo.Arguments = game.RunActivityParameters;
+                processStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+                processStartInfo.WorkingDirectory = game.ORStartPath;
+
+                System.Diagnostics.Process process = System.Diagnostics.Process.Start(processStartInfo);
+            }
+
+
         }
     }
 #endif

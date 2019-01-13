@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-#define WINDOWED
+//#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
@@ -25,15 +25,18 @@ using ORTS.Menu;
 using ORTS.Settings;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Path = ORTS.Menu.Path;
 
 namespace Casasoft.MgMenu
 {
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -55,13 +58,13 @@ namespace Casasoft.MgMenu
 
         public Folder SelectedFolder { get; private set; }
         public Route SelectedRoute { get; private set; }
-        public Activity SelectedActivity { get; private set; }
         public Path SelectedPath { get; private set; }
         public Consist SelectedConsist { get; private set; }
         public Locomotive SelectedLocomotive { get; private set; }
         public SeasonType SelectedSeason { get; private set; }
         public WeatherType SelectedWeather { get; private set; }
         public DateTime StartTime { get; private set; }
+        public Activity SelectedActivity { get; private set; }
 
         private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime, SelSeason, SelWeather }
         private LoopStatus loopStatus;
@@ -243,13 +246,95 @@ namespace Casasoft.MgMenu
         }
         #endregion
 
+        #region start OR
+
+        /// <summary>
+        /// path of OR exe
+        /// </summary>
+        internal string ORStartPath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["ORStartupPath"];
+            }
+        }
+
+        /// <summary>
+        /// Returns OR exe
+        /// </summary>
+        internal string RunActivityProgram
+        {
+            get
+            {
+                string programLAA = System.IO.Path.Combine(ORStartPath, "RunActivityLAA.exe");
+                if (Settings.UseLargeAddressAware && File.Exists(programLAA))
+                    return programLAA;
+                return System.IO.Path.Combine(ORStartPath, "RunActivity.exe"); 
+            }
+        }
+
+        /// <summary>
+        /// Updates activity data
+        /// </summary>
+        private void UpdateExploreActivity()
+        {
+            if (SelectedActivity == null || !(SelectedActivity is ExploreActivity))
+                return;
+
+            var exploreActivity = SelectedActivity as ExploreActivity;
+            exploreActivity.Consist = SelectedConsist;
+            exploreActivity.Path = SelectedPath;
+            exploreActivity.StartTime = StartTime.ToString("H:mm");
+            exploreActivity.Season = SelectedSeason;
+            exploreActivity.Weather = SelectedWeather;
+        }
+
+        /// <summary>
+        /// Paramters for runactivity.exe
+        /// </summary>
+        internal string RunActivityParameters
+        {
+            get
+            {
+                string ret = "-start ";
+                if (SelectedActivity is ORTS.Menu.DefaultExploreActivity)
+                {
+                    var exploreActivity = SelectedActivity as ORTS.Menu.DefaultExploreActivity;
+                    ret += string.Format("-explorer \"{0}\" \"{1}\" {2} {3} {4}",
+                        exploreActivity.Path.FilePath,
+                        exploreActivity.Consist.FilePath,
+                        exploreActivity.StartTime,
+                        (int)exploreActivity.Season,
+                        (int)exploreActivity.Weather);
+                }
+                else if (SelectedActivity is ORTS.Menu.ExploreThroughActivity)
+                {
+                    var exploreActivity = SelectedActivity as ORTS.Menu.ExploreThroughActivity;
+                    ret += string.Format("-exploreactivity \"{0}\" \"{1}\" {2} {3} {4}",
+                        exploreActivity.Path.FilePath,
+                        exploreActivity.Consist.FilePath,
+                        exploreActivity.StartTime,
+                        (int)exploreActivity.Season,
+                        (int)exploreActivity.Weather);
+                }
+                else
+                {
+                    ret += string.Format("-activity \"{0}\"", SelectedActivity.FilePath);
+                }
+                return ret;
+            }
+        }
+
         /// <summary>
         /// Runs OR
         /// </summary>
         private void StartActivity()
         {
+            UpdateExploreActivity();
             Exit();
         }
+
+        #endregion
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -258,148 +343,151 @@ namespace Casasoft.MgMenu
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            switch (loopStatus)
+            if (IsActive)
             {
-                case LoopStatus.SelRoute:
-                    switch (selRoute.Update())
-                    {
-                        case -1:
-                            Exit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelActivity;
-                            SelectedRoute = Routes[selRoute.Selected];
-                            selectFolder(SelectedRoute);
-                            selActivity.ReInit();
-                            selActivity.Clear();
-                            Task loadActivities = new Task(() => loadRouteData());
-                            loadActivities.Start();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelActivity:
-                    switch (selActivity.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelRoute;
-                            selRoute.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelLoco;
-                            SelectedActivity = selActivity.Activity;
-                            selLocomotive.ReInit();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelLoco:
-                    switch(selLocomotive.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelActivity;
-                            selActivity.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelConsist;
-                            SelectedLocomotive = selLocomotive.Locomotive;
-                            selConsist.ReInit();
-                            selConsist.Clear();
-                            List<Consist> lc = new List<Consist>();
-                            foreach (var consist in Consists.Where(c => SelectedLocomotive.Equals(c.Locomotive)).OrderBy(c => c.Name))
-                                lc.Add(consist);
-                            selConsist.SetList(lc);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelConsist:
-                    switch (selConsist.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelLoco;
-                            selLocomotive.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelPath;
-                            SelectedConsist = selConsist.Consist;
-                            selPath.ReInit();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelPath:
-                    switch (selPath.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelConsist;
-                            selConsist.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelSeason;
-                            SelectedPath = selPath.Path;
-                            selSeason.ReInit();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelSeason:
-                    switch (selSeason.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelPath;
-                            selPath.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelWeather;
-                            SelectedSeason = selSeason.Season;
-                            selWeather.ReInit();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelWeather:
-                    switch (selWeather.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelSeason;
-                            selSeason.ReInit();
-                            break;
-                        case 1:
-                            loopStatus = LoopStatus.SelTime;
-                            SelectedWeather = selWeather.Weather;
-                            selTime.ReInit();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case LoopStatus.SelTime:
-                    switch (selTime.Update())
-                    {
-                        case -1:
-                            loopStatus = LoopStatus.SelWeather;
-                            selWeather.ReInit();
-                            break;
-                        case 1:
-                            StartTime = selTime.Time;
+                switch (loopStatus)
+                {
+                    case LoopStatus.SelRoute:
+                        switch (selRoute.Update())
+                        {
+                            case -1:
+                                Exit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelActivity;
+                                SelectedRoute = Routes[selRoute.Selected];
+                                selectFolder(SelectedRoute);
+                                selActivity.ReInit();
+                                selActivity.Clear();
+                                Task loadActivities = new Task(() => loadRouteData());
+                                loadActivities.Start();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelActivity:
+                        switch (selActivity.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelRoute;
+                                selRoute.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelLoco;
+                                SelectedActivity = selActivity.Activity;
+                                selLocomotive.ReInit();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelLoco:
+                        switch (selLocomotive.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelActivity;
+                                selActivity.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelConsist;
+                                SelectedLocomotive = selLocomotive.Locomotive;
+                                selConsist.ReInit();
+                                selConsist.Clear();
+                                List<Consist> lc = new List<Consist>();
+                                foreach (var consist in Consists.Where(c => SelectedLocomotive.Equals(c.Locomotive)).OrderBy(c => c.Name))
+                                    lc.Add(consist);
+                                selConsist.SetList(lc);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelConsist:
+                        switch (selConsist.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelLoco;
+                                selLocomotive.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelPath;
+                                SelectedConsist = selConsist.Consist;
+                                selPath.ReInit();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelPath:
+                        switch (selPath.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelConsist;
+                                selConsist.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelSeason;
+                                SelectedPath = selPath.Path;
+                                selSeason.ReInit();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelSeason:
+                        switch (selSeason.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelPath;
+                                selPath.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelWeather;
+                                SelectedSeason = selSeason.Season;
+                                selWeather.ReInit();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelWeather:
+                        switch (selWeather.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelSeason;
+                                selSeason.ReInit();
+                                break;
+                            case 1:
+                                loopStatus = LoopStatus.SelTime;
+                                SelectedWeather = selWeather.Weather;
+                                selTime.ReInit();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelTime:
+                        switch (selTime.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelWeather;
+                                selWeather.ReInit();
+                                break;
+                            case 1:
+                                StartTime = selTime.Time;
+                                StartActivity();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
 
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
+                base.Update(gameTime);
             }
-
-            base.Update(gameTime);
         }
 
         /// <summary>
