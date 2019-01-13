@@ -374,9 +374,16 @@ namespace Casasoft.MgMenu
                                 selRoute.ReInit();
                                 break;
                             case 1:
-                                loopStatus = LoopStatus.SelLoco;
                                 SelectedActivity = selActivity.Activity;
-                                selLocomotive.ReInit();
+                                if(SelectedActivity is ExploreActivity)
+                                {
+                                    loopStatus = LoopStatus.SelLoco;
+                                    selLocomotive.ReInit();
+                                }
+                                else
+                                {
+                                    StartActivity();
+                                }
                                 break;
                             default:
                                 break;
