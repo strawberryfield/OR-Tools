@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-//#define WINDOWED
+#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
@@ -79,6 +79,23 @@ namespace Casasoft.MgMenu
         private SelWeather selWeather;
         private Panels2D.PanelTime selTime;
 
+        public enum UserAction
+        {
+            ExitProgram,
+            SingleplayerNewGame,
+            SingleplayerResumeSave,
+            SingleplayerReplaySave,
+            SingleplayerReplaySaveFromSave,
+            MultiplayerServer,
+            MultiplayerClient,
+            SinglePlayerTimetableGame,
+            SinglePlayerResumeTimetableGame,
+            MultiplayerServerResumeSave,
+            MultiplayerClientResumeSave
+        }
+
+        public UserAction SelectedAction { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -92,6 +109,7 @@ namespace Casasoft.MgMenu
 //           this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 100); // 100ms = 10fps
 
             this.IsMouseVisible = true;
+            this.SelectedAction = UserAction.ExitProgram;
         }
 
         /// <summary>
@@ -227,6 +245,8 @@ namespace Casasoft.MgMenu
         {
             Activities = Activity.GetActivities(SelectedFolder, SelectedRoute).OrderBy(l => l.Name).ToList();
             selActivity.SetList(Activities);
+            TimetableSets = TimetableInfo.GetTimetableInfo(SelectedFolder, SelectedRoute).OrderBy(l => l.ToString()).ToList();
+            selActivity.SetList(TimetableSets);
             Paths = Path.GetPaths(SelectedRoute, true);
             selPath.SetList(Paths);
         }
@@ -297,7 +317,11 @@ namespace Casasoft.MgMenu
             get
             {
                 string ret = "-start ";
-                if (SelectedActivity is ORTS.Menu.DefaultExploreActivity)
+                if (SelectedActivity == null)
+                {
+                    // Timetable mode
+                }
+                else if (SelectedActivity is ORTS.Menu.DefaultExploreActivity)
                 {
                     var exploreActivity = SelectedActivity as ORTS.Menu.DefaultExploreActivity;
                     ret += string.Format("-explorer \"{0}\" \"{1}\" {2} {3} {4}",
@@ -330,6 +354,7 @@ namespace Casasoft.MgMenu
         /// </summary>
         private void StartActivity()
         {
+            SelectedAction = UserAction.SingleplayerNewGame;
             UpdateExploreActivity();
             Exit();
         }

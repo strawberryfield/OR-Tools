@@ -26,7 +26,10 @@ namespace Casasoft.MgMenu
     public class SelActivity : PanelVScroller
     {
         private List<Activity> activities;
- 
+        private List<TimetableInfo> timetables;
+        private int maxAct;
+        private int maxTT;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -34,7 +37,10 @@ namespace Casasoft.MgMenu
         public SelActivity(Game game) : base(game)
         {
             activities = new List<Activity>();
-            maxItems = activities.Count;
+            timetables = new List<TimetableInfo>();
+            maxAct = activities.Count;
+            maxTT = timetables.Count;
+            maxItems = maxAct + maxTT;
 
             Caption = "Choose an activity";
         }
@@ -45,7 +51,8 @@ namespace Casasoft.MgMenu
         public override void Clear()
         {
             base.Clear();
-            if(activities != null) activities.Clear();
+            if (activities != null) activities.Clear();
+            if (timetables != null) timetables.Clear();
         }
 
         /// <summary>
@@ -55,7 +62,19 @@ namespace Casasoft.MgMenu
         public void SetList(List<Activity> Activities)
         {
             activities = Activities;
-            maxItems = activities.Count;
+            maxAct = activities.Count;
+            maxItems = maxTT + maxAct;
+        }
+
+        /// <summary>
+        /// Assign data list
+        /// </summary>
+        /// <param name="Timetables"></param>
+        public void SetList(List<TimetableInfo> Timetables)
+        {
+            timetables = Timetables;
+            maxTT = timetables.Count;
+            maxItems = maxTT + maxAct;
         }
 
         /// <summary>
@@ -64,18 +83,22 @@ namespace Casasoft.MgMenu
         /// <param name="sb"></param>
         protected override void ScrollerItemDetail(SpriteBatch sb)
         {
-            Activity current = activities[Selected];
-
-            TextBox detail = new TextBox(sb, fonts, textBox);
-            if (!string.IsNullOrWhiteSpace(current.Description))
-                detail.AddTextRowsWrapped(current.Description);
-            if (!string.IsNullOrWhiteSpace(current.Briefing))
+            if (Selected < maxAct)
             {
-                detail.AddTextRows("Briefing", FontSizes.Subtitle);
-                detail.AddTextRowsWrapped(current.Briefing);
-            }
 
-            detail.Draw();
+                Activity current = activities[Selected];
+
+                TextBox detail = new TextBox(sb, fonts, textBox);
+                if (!string.IsNullOrWhiteSpace(current.Description))
+                    detail.AddTextRowsWrapped(current.Description);
+                if (!string.IsNullOrWhiteSpace(current.Briefing))
+                {
+                    detail.AddTextRows("Briefing", FontSizes.Subtitle);
+                    detail.AddTextRowsWrapped(current.Briefing);
+                }
+
+                detail.Draw();
+            }
         }
 
         /// <summary>
@@ -85,7 +108,10 @@ namespace Casasoft.MgMenu
         /// <returns></returns>
         protected override string ScrollerItemText(int pos)
         {
-            return activities[pos].Name;
+            if (pos >= maxAct)
+                return "[TT] " + timetables[pos - maxAct].Description;
+            else
+                return activities[pos].Name;
         }
 
         /// <summary>
@@ -95,7 +121,18 @@ namespace Casasoft.MgMenu
         {
             get
             {
-                return activities.Count > 0 ? activities[Selected] : null;
+                return activities.Count > 0 && Selected < maxAct ? activities[Selected] : null;
+            }
+        }
+
+        /// <summary>
+        /// Returns selected timetable
+        /// </summary>
+        public TimetableInfo Timetable
+        {
+            get
+            {
+                return timetables.Count > 0 && Selected >= maxAct ? timetables[Selected - maxAct] : null;
             }
         }
     }
