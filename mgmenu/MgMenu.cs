@@ -15,12 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-#define WINDOWED
+//#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Orts.Formats.Msts;
+using Orts.Formats.OR;
 using ORTS.Menu;
 using ORTS.Settings;
 using System;
@@ -29,7 +30,6 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Path = ORTS.Menu.Path;
@@ -65,8 +65,11 @@ namespace Casasoft.MgMenu
         public WeatherType SelectedWeather { get; private set; }
         public DateTime StartTime { get; private set; }
         public Activity SelectedActivity { get; private set; }
+        public TimetableInfo SelectedTimetableGroup { get; private set; }
+        public TimetableFileLite SelectedTimetable { get; private set; }
+        public TimetableFileLite.TrainInformation SelectedTimetableTrain { get; private set; }
 
-        private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime, SelSeason, SelWeather }
+        private enum LoopStatus { SelRoute, SelActivity, SelLoco, SelConsist, SelPath, SelTime, SelSeason, SelWeather, SelTimetable }
         private LoopStatus loopStatus;
 
         // Panels
@@ -78,6 +81,7 @@ namespace Casasoft.MgMenu
         private SelSeason selSeason;
         private SelWeather selWeather;
         private Panels2D.PanelTime selTime;
+        private SelTimetable selTimetable;
 
         public enum UserAction
         {
@@ -136,6 +140,7 @@ namespace Casasoft.MgMenu
             selTime = new Panels2D.PanelTime(this);
             selTime.Caption = "Start time";
             selTime.Hours = 12;
+            selTimetable = new SelTimetable(this);
 
             SelectedFolder = null;
             SelectedRoute = null;
@@ -146,6 +151,8 @@ namespace Casasoft.MgMenu
             SelectedSeason = SeasonType.Summer;
             SelectedWeather = WeatherType.Clear;
             StartTime = selTime.Time;
+            SelectedTimetable = null;
+            SelectedTimetableTrain = null;
 
 #if WINDOWED
             graphics.PreferredBackBufferWidth = 1366;
@@ -309,6 +316,17 @@ namespace Casasoft.MgMenu
             exploreActivity.Weather = SelectedWeather;
         }
 
+
+        private void UpdateTimetableSet()
+        {
+            if (SelectedTimetableGroup != null)
+            {
+//                SelectedTimetableGroup.Day = SelectedTimetableDay;
+                SelectedTimetableGroup.Season = Convert.ToInt32(SelectedSeason);
+                SelectedTimetableGroup.Weather = Convert.ToInt32(SelectedWeather);
+            }
+        }
+
         /// <summary>
         /// Paramters for runactivity.exe
         /// </summary>
@@ -316,35 +334,94 @@ namespace Casasoft.MgMenu
         {
             get
             {
-                string ret = "-start ";
-                if (SelectedActivity == null)
+                string ret = "";
+                switch (SelectedAction)
                 {
-                    // Timetable mode
+                    case UserAction.SingleplayerNewGame:
+                        ret = "-start";
+                        break;
+                    case UserAction.SingleplayerResumeSave:
+                        ret = "-resume";
+                        break;
+                    case UserAction.SingleplayerReplaySave:
+                        ret = "-replay";
+                        break;
+                    case UserAction.SingleplayerReplaySaveFromSave:
+                        ret = "-replay_from_save";
+                        break;
+                    case UserAction.MultiplayerClient:
+                        ret = "-multiplayerclient";
+                        break;
+                    case UserAction.MultiplayerServer:
+                        ret = "-multiplayerserver";
+                        break;
+                    case UserAction.SinglePlayerTimetableGame:
+                        ret = "-start";
+                        break;
+                    case UserAction.SinglePlayerResumeTimetableGame:
+                        ret = "-resume";
+                        break;
+                    case UserAction.MultiplayerClientResumeSave:
+                        ret = "-multiplayerclient";
+                        break;
+                    case UserAction.MultiplayerServerResumeSave:
+                        ret = "-multiplayerserver";
+                        break;
                 }
-                else if (SelectedActivity is ORTS.Menu.DefaultExploreActivity)
+                ret += " ";
+
+                switch(SelectedAction)
                 {
-                    var exploreActivity = SelectedActivity as ORTS.Menu.DefaultExploreActivity;
-                    ret += string.Format("-explorer \"{0}\" \"{1}\" {2} {3} {4}",
-                        exploreActivity.Path.FilePath,
-                        exploreActivity.Consist.FilePath,
-                        exploreActivity.StartTime,
-                        (int)exploreActivity.Season,
-                        (int)exploreActivity.Weather);
+                    case UserAction.SingleplayerNewGame:
+                    case UserAction.MultiplayerClient:
+                    case UserAction.MultiplayerServer:
+                        if (SelectedActivity is ORTS.Menu.DefaultExploreActivity)
+                        {
+                            var exploreActivity = SelectedActivity as ORTS.Menu.DefaultExploreActivity;
+                            ret += string.Format("-explorer \"{0}\" \"{1}\" {2} {3} {4}",
+                                exploreActivity.Path.FilePath,
+                                exploreActivity.Consist.FilePath,
+                                exploreActivity.StartTime,
+                                (int)exploreActivity.Season,
+                                (int)exploreActivity.Weather);
+                        }
+                        else if (SelectedActivity is ORTS.Menu.ExploreThroughActivity)
+                        {
+                            var exploreActivity = SelectedActivity as ORTS.Menu.ExploreThroughActivity;
+                            ret += string.Format("-exploreactivity \"{0}\" \"{1}\" {2} {3} {4}",
+                                exploreActivity.Path.FilePath,
+                                exploreActivity.Consist.FilePath,
+                                exploreActivity.StartTime,
+                                (int)exploreActivity.Season,
+                                (int)exploreActivity.Weather);
+                        }
+                        else
+                        {
+                            ret += string.Format("-activity \"{0}\"", SelectedActivity.FilePath);
+                        }
+                        break;
+
+                    case UserAction.SingleplayerResumeSave:
+                    case UserAction.SingleplayerReplaySave:
+                    case UserAction.SingleplayerReplaySaveFromSave:
+                    case UserAction.MultiplayerClientResumeSave:
+                    case UserAction.MultiplayerServerResumeSave:
+                        break;
+
+                    case UserAction.SinglePlayerTimetableGame:
+                        ret += String.Format("-timetable \"{0}\" \"{1}:{2}\" {3} {4} {5}",
+                            SelectedTimetableGroup.fileName,
+                            SelectedTimetable,
+                            SelectedTimetableTrain,
+                            SelectedTimetableGroup.Day,
+                            SelectedTimetableGroup.Season,
+                            SelectedTimetableGroup.Weather);
+                        break;
+
+                    case UserAction.SinglePlayerResumeTimetableGame:
+                        break;
                 }
-                else if (SelectedActivity is ORTS.Menu.ExploreThroughActivity)
-                {
-                    var exploreActivity = SelectedActivity as ORTS.Menu.ExploreThroughActivity;
-                    ret += string.Format("-exploreactivity \"{0}\" \"{1}\" {2} {3} {4}",
-                        exploreActivity.Path.FilePath,
-                        exploreActivity.Consist.FilePath,
-                        exploreActivity.StartTime,
-                        (int)exploreActivity.Season,
-                        (int)exploreActivity.Weather);
-                }
-                else
-                {
-                    ret += string.Format("-activity \"{0}\"", SelectedActivity.FilePath);
-                }
+
                 return ret;
             }
         }
@@ -354,8 +431,15 @@ namespace Casasoft.MgMenu
         /// </summary>
         private void StartActivity()
         {
-            SelectedAction = UserAction.SingleplayerNewGame;
-            UpdateExploreActivity();
+            if (SelectedActivity != null)
+            {
+                SelectedAction = UserAction.SingleplayerNewGame;
+                UpdateExploreActivity();
+            }
+            else
+            {
+                SelectedAction = UserAction.SinglePlayerTimetableGame;
+            }
             Exit();
         }
 
@@ -400,14 +484,26 @@ namespace Casasoft.MgMenu
                                 break;
                             case 1:
                                 SelectedActivity = selActivity.Activity;
-                                if(SelectedActivity is ExploreActivity)
+                                SelectedTimetableGroup = selActivity.Timetable;
+                                if (SelectedActivity != null)
                                 {
-                                    loopStatus = LoopStatus.SelLoco;
-                                    selLocomotive.ReInit();
+                                    // Activity mode
+                                    if (SelectedActivity is ExploreActivity)
+                                    {
+                                        loopStatus = LoopStatus.SelLoco;
+                                        selLocomotive.ReInit();
+                                    }
+                                    else
+                                    {
+                                        StartActivity();
+                                    }
                                 }
                                 else
                                 {
-                                    StartActivity();
+                                    // Timetable mode
+                                    selTimetable.SetList(SelectedTimetableGroup);
+                                    loopStatus = LoopStatus.SelTimetable;
+                                    selTimetable.ReInit();
                                 }
                                 break;
                             default:
@@ -471,8 +567,18 @@ namespace Casasoft.MgMenu
                         switch (selSeason.Update())
                         {
                             case -1:
-                                loopStatus = LoopStatus.SelPath;
-                                selPath.ReInit();
+                                if (SelectedActivity != null)
+                                {
+                                    // Activity mode
+                                    loopStatus = LoopStatus.SelPath;
+                                    selPath.ReInit();
+                                }
+                                else
+                                {
+                                    // Timetable mode
+                                    loopStatus = LoopStatus.SelTimetable;
+                                    selTimetable.ReInit();
+                                }
                                 break;
                             case 1:
                                 loopStatus = LoopStatus.SelWeather;
@@ -491,9 +597,18 @@ namespace Casasoft.MgMenu
                                 selSeason.ReInit();
                                 break;
                             case 1:
-                                loopStatus = LoopStatus.SelTime;
                                 SelectedWeather = selWeather.Weather;
-                                selTime.ReInit();
+                                if (SelectedActivity != null)
+                                {
+                                    // Activity mode
+                                    loopStatus = LoopStatus.SelTime;
+                                    selTime.ReInit();
+                                }
+                                else
+                                {
+                                    // Timetable mode
+                                    StartActivity();
+                                }
                                 break;
                             default:
                                 break;
@@ -509,6 +624,23 @@ namespace Casasoft.MgMenu
                             case 1:
                                 StartTime = selTime.Time;
                                 StartActivity();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case LoopStatus.SelTimetable:
+                        switch(selTimetable.Update())
+                        {
+                            case -1:
+                                loopStatus = LoopStatus.SelActivity;
+                                selActivity.ReInit();
+                                break;
+                            case 1:
+                                SelectedTimetable = selTimetable.Timetable;
+                                SelectedTimetableTrain = selTimetable.Train;
+                                loopStatus = LoopStatus.SelSeason;
+                                selSeason.ReInit();
                                 break;
                             default:
                                 break;
@@ -557,6 +689,9 @@ namespace Casasoft.MgMenu
                     break;
                 case LoopStatus.SelWeather:
                     selWeather.Draw(spriteBatch);
+                    break;
+                case LoopStatus.SelTimetable:
+                    selTimetable.Draw(spriteBatch);
                     break;
                 default:
                     break;

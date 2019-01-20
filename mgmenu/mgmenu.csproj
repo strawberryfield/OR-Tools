@@ -85,6 +85,7 @@
     <Compile Include="SelPath.cs" />
     <Compile Include="SelRoute.cs" />
     <Compile Include="SelSeason.cs" />
+    <Compile Include="SelTimetable.cs" />
     <Compile Include="SelWeather.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,10 @@
     <ProjectReference Include="..\Orts.Formats.Msts\Orts.Formats.Msts.csproj">
       <Project>{570709FA-0C8A-4B1D-BA2D-D9455AFD9B5C}</Project>
       <Name>Orts.Formats.Msts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orts.Formats.OR\Orts.Formats.OR.csproj">
+      <Project>{0D8D312B-2C02-4B77-A795-566394A9DB95}</Project>
+      <Name>Orts.Formats.OR</Name>
     </ProjectReference>
     <ProjectReference Include="..\ORTS.Menu\ORTS.Menu.csproj">
       <Project>{1C5B0B41-2FE9-41C9-8B21-CCDCBEB3DDA5}</Project>
