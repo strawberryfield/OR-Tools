@@ -20,24 +20,25 @@ namespace GNU.Gettext.Test
 			Assert.AreEqual("Class", GettextResourceManager.ExtractClassName("Class"));
 			Assert.AreEqual(String.Empty, GettextResourceManager.ExtractNamespace(".Test"));
 		}
+	
+        // No more support
+		//[Test][ExpectedException]
+		//public void Ex1Test()
+		//{
+		//	GettextResourceManager.ExtractClassName(null);
+		//}
 		
-		[Test][ExpectedException]
-		public void Ex1Test()
-		{
-			GettextResourceManager.ExtractClassName(null);
-		}
-		
-		[Test][ExpectedException]
-		public void Ex2Test()
-		{
-			GettextResourceManager.ExtractClassName(String.Empty);
-		}
+		//[Test][ExpectedException]
+		//public void Ex2Test()
+		//{
+		//	GettextResourceManager.ExtractClassName(String.Empty);
+		//}
 
-		[Test][ExpectedException]
-		public void Ex3Test()
-		{
-			GettextResourceManager.ExtractClassName("Class.");
-		}
+		//[Test][ExpectedException]
+		//public void Ex3Test()
+		//{
+		//	GettextResourceManager.ExtractClassName("Class.");
+		//}
 	}
 }
 
