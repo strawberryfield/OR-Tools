@@ -37,6 +37,68 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panels2D", "Panels2D\Panels
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orts.Simulation", "Orts.Simulation\Orts.Simulation.csproj", "{333C4378-D82E-4B47-B561-6BA923B8FDFD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Locales", "Locales", "{08C9FD7A-0DCD-477A-A639-6FC4A333C462}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\Update.bat = Locales\Update.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MgMenu", "MgMenu", "{60698954-D2E4-4B0C-949E-B53BEE22174A}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\MgMenu\it.po = Locales\MgMenu\it.po
+		Locales\MgMenu\MgMenu.pot = Locales\MgMenu\MgMenu.pot
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ORTS.Common", "ORTS.Common", "{FC156C6F-EEA3-4F38-9E73-6E38B25634D4}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\ORTS.Common\cs.po = Locales\ORTS.Common\cs.po
+		Locales\ORTS.Common\da.po = Locales\ORTS.Common\da.po
+		Locales\ORTS.Common\de.po = Locales\ORTS.Common\de.po
+		Locales\ORTS.Common\fr.po = Locales\ORTS.Common\fr.po
+		Locales\ORTS.Common\hu.po = Locales\ORTS.Common\hu.po
+		Locales\ORTS.Common\it.po = Locales\ORTS.Common\it.po
+		Locales\ORTS.Common\ORTS.Common.pot = Locales\ORTS.Common\ORTS.Common.pot
+		Locales\ORTS.Common\qps-ploc.po = Locales\ORTS.Common\qps-ploc.po
+		Locales\ORTS.Common\zh-CN.po = Locales\ORTS.Common\zh-CN.po
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orts.Formats.OR", "Orts.Formats.OR", "{20754789-1188-4E14-8F7F-CAF6F3FC6A77}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\Orts.Formats.OR\cs.po = Locales\Orts.Formats.OR\cs.po
+		Locales\Orts.Formats.OR\da.po = Locales\Orts.Formats.OR\da.po
+		Locales\Orts.Formats.OR\de.po = Locales\Orts.Formats.OR\de.po
+		Locales\Orts.Formats.OR\fr.po = Locales\Orts.Formats.OR\fr.po
+		Locales\Orts.Formats.OR\hu.po = Locales\Orts.Formats.OR\hu.po
+		Locales\Orts.Formats.OR\it.po = Locales\Orts.Formats.OR\it.po
+		Locales\Orts.Formats.OR\Orts.Formats.OR.pot = Locales\Orts.Formats.OR\Orts.Formats.OR.pot
+		Locales\Orts.Formats.OR\qps-ploc.po = Locales\Orts.Formats.OR\qps-ploc.po
+		Locales\Orts.Formats.OR\zh-CN.po = Locales\Orts.Formats.OR\zh-CN.po
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ORTS.Settings", "ORTS.Settings", "{00761107-44F4-43FE-9C6F-8E3182535C0E}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\ORTS.Settings\cs.po = Locales\ORTS.Settings\cs.po
+		Locales\ORTS.Settings\da.po = Locales\ORTS.Settings\da.po
+		Locales\ORTS.Settings\de.po = Locales\ORTS.Settings\de.po
+		Locales\ORTS.Settings\fr.po = Locales\ORTS.Settings\fr.po
+		Locales\ORTS.Settings\hu.po = Locales\ORTS.Settings\hu.po
+		Locales\ORTS.Settings\it.po = Locales\ORTS.Settings\it.po
+		Locales\ORTS.Settings\ORTS.Settings.pot = Locales\ORTS.Settings\ORTS.Settings.pot
+		Locales\ORTS.Settings\qps-ploc.po = Locales\ORTS.Settings\qps-ploc.po
+		Locales\ORTS.Settings\zh-CN.po = Locales\ORTS.Settings\zh-CN.po
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orts.Simulation", "Orts.Simulation", "{BFE40CC8-F832-44EB-B05E-2E68B38D6AF0}"
+	ProjectSection(SolutionItems) = preProject
+		Locales\Orts.Simulation\cs.po = Locales\Orts.Simulation\cs.po
+		Locales\Orts.Simulation\da.po = Locales\Orts.Simulation\da.po
+		Locales\Orts.Simulation\de.po = Locales\Orts.Simulation\de.po
+		Locales\Orts.Simulation\hu.po = Locales\Orts.Simulation\hu.po
+		Locales\Orts.Simulation\it.po = Locales\Orts.Simulation\it.po
+		Locales\Orts.Simulation\Orts.Simulation.pot = Locales\Orts.Simulation\Orts.Simulation.pot
+		Locales\Orts.Simulation\qps-ploc.po = Locales\Orts.Simulation\qps-ploc.po
+		Locales\Orts.Simulation\zh-CN.po = Locales\Orts.Simulation\zh-CN.po
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -217,6 +279,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60698954-D2E4-4B0C-949E-B53BEE22174A} = {08C9FD7A-0DCD-477A-A639-6FC4A333C462}
+		{FC156C6F-EEA3-4F38-9E73-6E38B25634D4} = {08C9FD7A-0DCD-477A-A639-6FC4A333C462}
+		{20754789-1188-4E14-8F7F-CAF6F3FC6A77} = {08C9FD7A-0DCD-477A-A639-6FC4A333C462}
+		{00761107-44F4-43FE-9C6F-8E3182535C0E} = {08C9FD7A-0DCD-477A-A639-6FC4A333C462}
+		{BFE40CC8-F832-44EB-B05E-2E68B38D6AF0} = {08C9FD7A-0DCD-477A-A639-6FC4A333C462}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {859196B1-FF0E-4F39-BAA0-64D53E7BC593}

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OR Tools.  If not, see <http://www.gnu.org/licenses/>.
 
-//#define WINDOWED
+#define WINDOWED
 
 using GNU.Gettext;
 using Microsoft.Xna.Framework;
@@ -47,7 +47,7 @@ namespace Casasoft.MgMenu
 
         // OR data and settings
         private UserSettings Settings;
-        private GettextResourceManager catalog = new GettextResourceManager("Menu");
+        private GettextResourceManager catalog = new GettextResourceManager("MgMenu");
         private List<Folder> Folders = new List<Folder>();
         private List<Route> Routes = new List<Route>();
         private List<Activity> Activities = new List<Activity>();
@@ -138,7 +138,7 @@ namespace Casasoft.MgMenu
             selSeason = new SelSeason(this);
             selWeather = new SelWeather(this);
             selTime = new Panels2D.PanelTime(this);
-            selTime.Caption = "Start time";
+            selTime.Caption = catalog.GetString("Start time");
             selTime.Hours = 12;
             selTimetable = new SelTimetable(this);
 
@@ -185,6 +185,9 @@ namespace Casasoft.MgMenu
                 catch { }
             }
         }
+
+
+
 
         /// <summary>
         /// Gets a list of assets folders for OR
